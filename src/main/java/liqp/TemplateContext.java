@@ -5,7 +5,7 @@ import liqp.parser.Flavor;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class TemplateContext {
+public class TemplateContext implements PropertyContainer {
 
     protected TemplateContext parent;
     public final ProtectionSettings protectionSettings;

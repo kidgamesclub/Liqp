@@ -1,8 +1,7 @@
 package liqp.filters;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Concat extends Filter {
