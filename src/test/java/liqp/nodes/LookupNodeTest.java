@@ -2,12 +2,14 @@ package liqp.nodes;
 
 import java.util.HashMap;
 import java.util.Map;
+import liqp.PropertyContainer;
 import liqp.Template;
 import liqp.TemplateContext;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
 import static liqp.TestUtils.getNode;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -263,6 +265,18 @@ public class LookupNodeTest {
         assertThat(getNode("product.variants.last.title", "expr").render(context), is((Object)"element151cm"));
     }
 
+  @Test
+  public void resolvesGetterAndPropertyContainer() throws Exception {
+
+    TemplateContext context = new TemplateContext();
+
+    context.put("props", new RecursivePropertyContainer());
+
+
+    assertThat(getNode("props.foo.bar.title", "expr").render(context), is((Object) "Lord of the Grapes"));
+    assertThat(getNode("props.foo.bar", "expr").render(context), is(instanceOf(RecursivePropertyContainer.class)));
+  }
+
     /*
      * def test_size_of_array
      *   assigns = {"array" => [1,2,3,4]}
@@ -290,5 +304,7 @@ public class LookupNodeTest {
 
         assertThat(Template.parse("hash has {{ hash.size }} elements").render(assigns), is("hash has 4 elements"));
     }
+
+
 }
 

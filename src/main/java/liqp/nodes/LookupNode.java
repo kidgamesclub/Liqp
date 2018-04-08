@@ -1,5 +1,8 @@
 package liqp.nodes;
 
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
+import liqp.Getter;
+import liqp.PropertyContainer;
 import liqp.TemplateContext;
 import liqp.exceptions.VariableNotExistException;
 
@@ -57,7 +60,7 @@ public class LookupNode implements LNode {
         Object get(Object value, TemplateContext context);
     }
 
-    public static class Hash implements Indexable {
+    public static class Hash implements Getter, Indexable {
 
         private final String hash;
 
@@ -67,6 +70,11 @@ public class LookupNode implements LNode {
 
         @Override
         public Object get(Object value, TemplateContext context) {
+          return this.get(value);
+        }
+
+        @Override
+        public Object get(Object value) {
 
             if(value == null) {
                 return null;
@@ -112,11 +120,11 @@ public class LookupNode implements LNode {
             if(value instanceof java.util.Map) {
                 return ((java.util.Map)value).get(hash);
             }
-            else if(value instanceof TemplateContext) {
-                return ((TemplateContext)value).get(hash);
+            else if (value instanceof PropertyContainer) {
+                return ((PropertyContainer) value).get(hash);
             }
             else {
-                return null;
+              return null;
             }
         }
 
@@ -166,7 +174,7 @@ public class LookupNode implements LNode {
                 }
 
                 String hash = String.valueOf(key);
-                return new Hash(hash).get(value, context);
+                return new Hash(hash).get(value);
             }
         }
 
