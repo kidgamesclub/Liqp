@@ -12,7 +12,9 @@ plugins {
   id("antlr")
 }
 
+
 mverse {
+  groupId = "club.kidgames"
   //        checkstyleLocation = "/Users/ericm/etc/checkstyle/checkstyle"
   modules {
     compile("jackson-annotations")
