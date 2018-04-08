@@ -13,7 +13,6 @@ plugins {
 }
 
 mverse {
-
   //        checkstyleLocation = "/Users/ericm/etc/checkstyle/checkstyle"
   modules {
     compile("jackson-annotations")
@@ -23,6 +22,11 @@ mverse {
     compile("kotlin-stdlib")
     compile("org.jsoup:jsoup:1.11.2")
   }
+}
+
+findbugs {
+  this.isIgnoreFailures = true
+  effort = "low"
 }
 
 dependencies {

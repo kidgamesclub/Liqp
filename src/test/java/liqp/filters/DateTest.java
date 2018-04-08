@@ -2,6 +2,7 @@ package liqp.filters;
 
 import java.util.Locale;
 import liqp.Template;
+import liqp.TemplateContext;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -91,7 +92,7 @@ public class DateTest {
         assertThat(filter.apply("2006-07-05 10:00:00", "%B"), is((Object)"July"));
 
         assertThat(filter.apply("2006-07-05 10:00:00", ""), is((Object)"2006-07-05 10:00:00"));
-        assertThat(filter.apply("2006-07-05 10:00:00", null), is((Object)"2006-07-05 10:00:00"));
+        assertThat(filter.apply("2006-07-05 10:00:00", (TemplateContext) null), is((Object)"2006-07-05 10:00:00"));
 
         assertThat(filter.apply("2006-07-05 10:00:00", "%m/%d/%Y"), is((Object)"07/05/2006"));
 
