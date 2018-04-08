@@ -26,7 +26,7 @@ mverse {
 
 findbugs {
   this.isIgnoreFailures = true
-  effort = "low"
+  effort = "min"
 }
 
 dependencies {
