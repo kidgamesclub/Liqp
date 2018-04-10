@@ -97,6 +97,13 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 @ToString(callSuper = true)
 public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
 
+  public NodeVisitor(Tags tags, Filters filters, Flavor flavor, boolean isStrictVariables) {
+    this.tags = tags;
+    this.filters = filters;
+    this.flavor = flavor;
+    this.isStrictVariables = isStrictVariables;
+  }
+
   @NonNull
   private final Tags tags;
 

@@ -3,6 +3,7 @@ import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.internal.file.pattern.PatternMatcherFactory.compile
 import org.gradle.internal.impldep.bsh.commands.dir
+import org.gradle.internal.nativeintegration.filesystem.DefaultFileMetadata.file
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.maven
 import org.gradle.kotlin.dsl.repositories
@@ -16,10 +17,8 @@ plugins {
   id("antlr")
 }
 
-
 mverse {
   groupId = "club.kidgames"
-  //        checkstyleLocation = "/Users/ericm/etc/checkstyle/checkstyle"
   modules {
     compile("jackson-annotations")
     compile("jackson-databind")
@@ -27,7 +26,9 @@ mverse {
     compile("findbugs")
     compile("kotlin-stdlib")
   }
+  coverageRequirement = 0.60
 }
+
 
 findbugs {
   this.isIgnoreFailures = true
@@ -47,15 +48,5 @@ dependencies {
 tasks.withType(AntlrTask::class.java) {
   arguments = listOf("-visitor", "-package", "liquid.parser.v4", "-Xexact-output-dir")
   outputDirectory = file("build/generated-src/antlr/main/liquid/parser/v4")
-
-
 }
-
-
-//    <dependency>
-//    <groupId>org.jsoup</groupId>
-//    <artifactId>jsoup</artifactId>
-//    <version>${jsoup.version}</version>
-//    </dependency>
-//
 

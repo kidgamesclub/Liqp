@@ -6,13 +6,12 @@ import static org.junit.Assert.assertThat;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.google.common.collect.ImmutableMap;
-import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
 public class TemplateTest {
 
   @Test
-  public void renderObjectTest() throws RecognitionException {
+  public void renderObjectTest() {
 
     // `a` is public
     assertThat(TemplateFactory.newBuilder().parse("{{foo.a}}").render("foo", new Foo()), is("A"));
@@ -25,7 +24,7 @@ public class TemplateTest {
   }
 
   @Test
-  public void renderJSONStringTest() throws RecognitionException {
+  public void renderJSONStringTest() {
 
     final String expected = "Hey";
 
@@ -33,20 +32,20 @@ public class TemplateTest {
     assertThat(rendered, is(expected));
   }
 
-  public void renderJSONStringTestInvalidJSON() throws RecognitionException {
-    assertThatCode(
-          () -> {
-            final String rendered = TemplateFactory.newBuilder().parse("mu").render("{\"key : \"value\"}"
-            );
-            System.out.println(rendered);
-          })
-          .isInstanceOf(JsonParseException.class);
-    // missing quote after `key`
-
+  @Test
+  public void renderJSONStringTestInvalidJSON_NotAccessed() {
+    assertThatCode(() -> TemplateFactory.newBuilder().parse("mu").render("{\"key : \"value\"}"))
+          .doesNotThrowAnyException();
   }
 
   @Test
-  public void renderVarArgsTest() throws RecognitionException {
+  public void renderJSONStringTestInvalidJSON_Accessed() {
+    assertThatCode(() -> TemplateFactory.newBuilder().parse("{{ key }}").render("{\"key : \"value\"}"))
+          .isInstanceOf(JsonParseException.class);
+  }
+
+  @Test
+  public void renderVarArgsTest() {
 
     final String expected = "Hey";
 
@@ -76,10 +75,11 @@ public class TemplateTest {
     assertThat(rendered, is("ABC"));
   }
 
-  public void renderVarArgsTestInvalidKey2() throws RecognitionException {
+  @Test
+  public void renderVarArgsTestInvalidKey2() {
     assertThatCode(() -> {
       TemplateFactory.newBuilder().parse("mu").render(null, 456);
-    }).isInstanceOf(NullPointerException.class);
+    }).isInstanceOf(IllegalArgumentException.class);
   }
 
   static class Foo {
