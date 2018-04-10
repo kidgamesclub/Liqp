@@ -1,7 +1,5 @@
 package liqp.nodes;
 
-import liqp.TemplateContext;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +18,7 @@ public class OutputNode implements LNode {
     }
 
     @Override
-    public Object render(TemplateContext context) {
+    public Object render(RenderContext context) {
 
         Object value = expression.render(context);
 

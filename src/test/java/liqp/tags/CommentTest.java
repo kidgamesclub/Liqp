@@ -1,11 +1,12 @@
 package liqp.tags;
 
-import liqp.Template;
-import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import liqp.Template;
+import liqp.TemplateFactory;
+import org.antlr.runtime.RecognitionException;
+import org.junit.Test;
 
 public class CommentTest {
 
@@ -19,7 +20,7 @@ public class CommentTest {
 
         for (String[] test : tests) {
 
-            Template template = Template.parse(test[0]);
+            Template template = TemplateFactory.newBuilder().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -54,25 +55,25 @@ public class CommentTest {
     @Test
     public void has_a_block_which_does_nothingTest() throws RecognitionException {
 
-        assertThat(Template.parse("the comment block should be removed {%comment%} be gone.. {%endcomment%} .. right?").render(),
+        assertThat(TemplateFactory.newBuilder().parse("the comment block should be removed {%comment%} be gone.. {%endcomment%} .. right?").render(),
                 is("the comment block should be removed  .. right?"));
 
-        assertThat(Template.parse("{%comment%}{%endcomment%}").render(), is(""));
-        assertThat(Template.parse("{%comment%}{% endcomment %}").render(), is(""));
-        assertThat(Template.parse("{% comment %}{%endcomment%}").render(), is(""));
-        assertThat(Template.parse("{% comment %}{% endcomment %}").render(), is(""));
-        assertThat(Template.parse("{%comment%}comment{%endcomment%}").render(), is(""));
-        assertThat(Template.parse("{% comment %}comment{% endcomment %}").render(), is(""));
+        assertThat(TemplateFactory.newBuilder().parse("{%comment%}{%endcomment%}").render(), is(""));
+        assertThat(TemplateFactory.newBuilder().parse("{%comment%}{% endcomment %}").render(), is(""));
+        assertThat(TemplateFactory.newBuilder().parse("{% comment %}{%endcomment%}").render(), is(""));
+        assertThat(TemplateFactory.newBuilder().parse("{% comment %}{% endcomment %}").render(), is(""));
+        assertThat(TemplateFactory.newBuilder().parse("{%comment%}comment{%endcomment%}").render(), is(""));
+        assertThat(TemplateFactory.newBuilder().parse("{% comment %}comment{% endcomment %}").render(), is(""));
 
-        assertThat(Template.parse("foo{%comment%}comment{%endcomment%}bar").render(), is("foobar"));
-        assertThat(Template.parse("foo{% comment %}comment{% endcomment %}bar").render(), is("foobar"));
-        assertThat(Template.parse("foo{%comment%} comment {%endcomment%}bar").render(), is("foobar"));
-        assertThat(Template.parse("foo{% comment %} comment {% endcomment %}bar").render(), is("foobar"));
+        assertThat(TemplateFactory.newBuilder().parse("foo{%comment%}comment{%endcomment%}bar").render(), is("foobar"));
+        assertThat(TemplateFactory.newBuilder().parse("foo{% comment %}comment{% endcomment %}bar").render(), is("foobar"));
+        assertThat(TemplateFactory.newBuilder().parse("foo{%comment%} comment {%endcomment%}bar").render(), is("foobar"));
+        assertThat(TemplateFactory.newBuilder().parse("foo{% comment %} comment {% endcomment %}bar").render(), is("foobar"));
 
-        assertThat(Template.parse("foo {%comment%} {%endcomment%} bar").render(), is("foo  bar"));
-        assertThat(Template.parse("foo {%comment%}comment{%endcomment%} bar").render(), is("foo  bar"));
-        assertThat(Template.parse("foo {%comment%} comment {%endcomment%} bar").render(), is("foo  bar"));
+        assertThat(TemplateFactory.newBuilder().parse("foo {%comment%} {%endcomment%} bar").render(), is("foo  bar"));
+        assertThat(TemplateFactory.newBuilder().parse("foo {%comment%}comment{%endcomment%} bar").render(), is("foo  bar"));
+        assertThat(TemplateFactory.newBuilder().parse("foo {%comment%} comment {%endcomment%} bar").render(), is("foo  bar"));
 
-        assertThat(Template.parse("foo{%comment%}\n         {%endcomment%}bar").render(), is("foobar"));
+        assertThat(TemplateFactory.newBuilder().parse("foo{%comment%}\n         {%endcomment%}bar").render(), is("foobar"));
     }
 }

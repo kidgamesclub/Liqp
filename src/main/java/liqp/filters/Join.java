@@ -1,7 +1,5 @@
 package liqp.filters;
 
-import java.util.Arrays;
-
 class Join extends Filter {
 
     /*

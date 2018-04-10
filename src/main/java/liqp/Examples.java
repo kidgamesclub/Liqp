@@ -1,236 +1,230 @@
 package liqp;
 
-import java.io.File;
+import static java.util.Collections.singletonMap;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import liqp.filters.Filter;
-import liqp.nodes.LNode;
-import liqp.tags.Tag;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A class holding some examples of how to use Liqp.
  */
 public class Examples {
 
-    private static void demoGuards() {
+  private static TemplateEngine engine = TemplateEngine.getDefaultInstance();
 
-        ProtectionSettings protectionSettings = new ProtectionSettings.Builder()
-                .withMaxSizeRenderedString(300)
-                .withMaxIterations(15)
-                .withMaxRenderTimeMillis(100L)
-                .withMaxTemplateSizeBytes(100)
-                .build();
+  private static void demoGuards() {
 
-        String rendered = Template.parse("{% for i in (1..10) %}{{ text }}{% endfor %}")
-                .withProtectionSettings(protectionSettings)
-                .render("{\"text\": \"abcdefghijklmnopqrstuvwxyz\"}");
+    final TemplateFactory templateCtx = TemplateFactory.newBuilder()
+          .maxTemplateSize(300L)
+          .maxTemplateSize(100L)
+          .build();
 
-        System.out.println(rendered);
-    }
+    String rendered = templateCtx.parse("{% for i in (1..10) %}{{ text }}{% endfor %}")
+          .render(ImmutableMap.of("text", "abcdefghijklmnopqrstuvwxyz"));
 
-    private static void demoSimple() {
+    System.out.println(rendered);
+  }
 
-        Template template = Template.parse("hi {{name}}");
-        String rendered = template.render("name", "tobi");
-        System.out.println(rendered);
+  private static void demoSimple() {
 
-        template = Template.parse("hi {{name}}");
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("name", "tobi");
-        rendered = template.render(map);
-        System.out.println(rendered);
+    System.out.println(TemplateFactory.newInstance()
+          .parse("hi {{name}}")
+          .render(singletonMap("name", "tobi")));
 
-        template = Template.parse("hi {{name}}");
-        rendered = template.render("{\"name\" : \"tobi\"}");
-        System.out.println(rendered);
-    }
+    System.out.println(TemplateFactory.newInstance().parse("hi {{name}}")
+          .render("name", "tobi"));
+  }
 
-    private static void demoCustomStrongFilter() {
+  private static void demoCustomStrongFilter() {
 
-        // first register your custom filter
-        Filter.registerFilter(new Filter("b"){
+    // first register your custom filter
+    final TemplateFactory ctx = TemplateFactory.newInstance()
+          .withFilter(new Filter("b") {
             @Override
             public Object apply(Object value, Object... params) {
-                // create a string from the  value
-                String text = super.asString(value);
+              // create a string from the  value
+              String text = super.asString(value);
 
-                // replace and return *...* with <strong>...</strong>
-                return text.replaceAll("\\*(\\w(.*?\\w)?)\\*", "<strong>$1</strong>");
+              // replace and return *...* with <strong>...</strong>
+              return text.replaceAll("\\*(\\w(.*?\\w)?)\\*", "<strong>$1</strong>");
             }
-        });
+          });
 
-        // use your filter
-        Template template = Template.parse("{{ wiki | b }}");
-        String rendered = template.render("{\"wiki\" : \"Some *bold* text *in here*.\"}");
-        System.out.println(rendered);
-    }
+    // use your filter
+    Template template = ctx.parse("{{ wiki | b }}");
+    String rendered = template.render(singletonMap("wiki", "Some *bold* text *in here*."));
+    System.out.println(rendered);
+  }
 
-    private static void demoCustomRepeatFilter() {
+  private static void demoCustomRepeatFilter() {
 
-        // first register your custom filter
-        Filter.registerFilter(new Filter("repeat"){
+    // first register your custom filter
+    final TemplateFactory ctx = TemplateFactory.newInstance()
+          .withFilter(new Filter("repeat") {
             @Override
             public Object apply(Object value, Object... params) {
 
-                // check if an optional parameter is provided
-                int times = params.length == 0 ? 1 : super.asNumber(params[0]).intValue();
+              // check if an optional parameter is provided
+              int times = params.length == 0 ? 1 : super.asNumber(params[0]).intValue();
 
-                // get the text of the value
-                String text = super.asString(value);
+              // get the text of the value
+              String text = super.asString(value);
 
-                StringBuilder builder = new StringBuilder();
+              StringBuilder builder = new StringBuilder();
 
-                while(times-- > 0) {
-                    builder.append(text);
-                }
+              while (times-- > 0) {
+                builder.append(text);
+              }
 
-                return builder.toString();
+              return builder.toString();
             }
-        });
+          });
 
-        // use your filter
-        Template template = Template.parse("{{ 'a' | repeat }}\n{{ 'b' | repeat:5 }}");
-        String rendered = template.render();
-        System.out.println(rendered);
-    }
+    // use your filter
+    Template template = ctx.parse("{{ 'a' | repeat }}\n{{ 'b' | repeat:5 }}");
+    String rendered = template.render();
+    System.out.println(rendered);
+  }
 
-    private static void demoCustomSumFilter() {
+  private static void demoCustomSumFilter() {
 
-        Filter.registerFilter(new Filter("sum"){
+    final TemplateFactory ctx = TemplateFactory.newInstance()
+          .withFilter(new Filter("sum") {
             @Override
             public Object apply(Object value, Object... params) {
 
-                Object[] numbers = super.asArray(value);
+              Object[] numbers = super.asArray(value);
 
-                double sum = 0;
+              double sum = 0;
 
-                for(Object obj : numbers) {
-                    sum += super.asNumber(obj).doubleValue();
-                }
+              for (Object obj : numbers) {
+                sum += super.asNumber(obj).doubleValue();
+              }
 
-                return sum;
+              return sum;
             }
-        });
+          });
 
-        Template template = Template.parse("{{ numbers | sum }}");
-        String rendered = template.render("{\"numbers\" : [1, 2, 3, 4, 5]}");
-        System.out.println(rendered);
-    }
+    Template template = ctx.parse("{{ numbers | sum }}");
+    String rendered = template.render(singletonMap("numbers", ImmutableList.of(1, 2, 3, 4, 5)));
+    System.out.println(rendered);
+  }
 
-    private static void customLoopTag() {
+  //  private static void customLoopTag() {
+  //
+  //    Tag.registerTag(new Tag("loop") {
+  //      @Override
+  //      public Object render(TemplateFactory context, LNode... nodes) {
+  //
+  //        int n = super.asNumber(nodes[0].render(context)).intValue();
+  //        LNode block = nodes[1];
+  //
+  //        StringBuilder builder = new StringBuilder();
+  //
+  //        while (n-- > 0) {
+  //          builder.append(super.asString(block.render(context)));
+  //        }
+  //
+  //        return builder.toString();
+  //      }
+  //    });
+  //
+  //    String source = "{% loop 5 %}looping!\n{% endloop %}";
+  //
+  //    Template template = Template.parse(source);
+  //
+  //    String rendered = template.render();
+  //
+  //    System.out.println(rendered);
+  //  }
+  //
+  //  public static void instanceTag() {
+  //
+  //    String source = "{% loop 5 %}looping!\n{% endloop %}";
+  //
+  //    Template template = Template.parse(source).with(new Tag("loop") {
+  //      @Override
+  //      public Object render(TemplateFactory context, LNode... nodes) {
+  //
+  //        int n = super.asNumber(nodes[0].render(context)).intValue();
+  //        LNode block = nodes[1];
+  //
+  //        StringBuilder builder = new StringBuilder();
+  //
+  //        while (n-- > 0) {
+  //          builder.append(super.asString(block.render(context)));
+  //        }
+  //
+  //        return builder.toString();
+  //      }
+  //    });
+  //
+  //    String rendered = template.render();
+  //
+  //    System.out.println(rendered);
+  //  }
+  //
+  //  public static void instanceFilter() {
+  //
+  //    Template template = Template.parse("{{ numbers | sum }}").with(new Filter("sum") {
+  //      @Override
+  //      public Object apply(Object value, Object... params) {
+  //
+  //        Object[] numbers = super.asArray(value);
+  //
+  //        double sum = 0;
+  //
+  //        for (Object obj : numbers) {
+  //          sum += super.asNumber(obj).doubleValue();
+  //        }
+  //
+  //        return sum;
+  //      }
+  //    });
+  //
+  //    String rendered = template.render("{\"numbers\" : [1, 2, 3, 4, 5]}");
+  //    System.out.println(rendered);
+  //  }
+  //
+  //  public static void demoStrictVariables() {
+  //    try {
+  //      Template.parse("{{mu}}")
+  //            .withRenderSettings(new RenderSettings.Builder().withStrictVariables(true).build())
+  //            .render();
+  //    } catch (RuntimeException ex) {
+  //      System.out.println("Caught an exception for strict variables");
+  //    }
+  //  }
 
-        Tag.registerTag(new Tag("loop"){
-            @Override
-            public Object render(TemplateContext context, LNode... nodes) {
+  public static void main(String[] args) throws Exception {
 
-                int n = super.asNumber(nodes[0].render(context)).intValue();
-                LNode block = nodes[1];
+    System.out.println("running liqp.Examples");
 
-                StringBuilder builder = new StringBuilder();
+    System.out.println("\n=== demoSimple() ===");
+    demoSimple();
 
-                while(n-- > 0) {
-                    builder.append(super.asString(block.render(context)));
-                }
+    System.out.println("\n=== demoCustomStrongFilter() ===");
+    demoCustomStrongFilter();
 
-                return builder.toString();
-            }
-        });
+    System.out.println("\n=== demoCustomRepeatFilter() ===");
+    demoCustomRepeatFilter();
 
-        String source = "{% loop 5 %}looping!\n{% endloop %}";
+    System.out.println("\n=== demoCustomSumFilter() ===");
+    demoCustomSumFilter();
 
-        Template template = Template.parse(source);
+    //    System.out.println("\n=== customLoopTag() ===");
+    //    customLoopTag();
+    //
+    //    System.out.println("\n=== instanceTag() ===");
+    //    instanceTag();
+    //
+    //    System.out.println("\n=== instanceFilter() ===");
+    //    instanceFilter();
+    //
+    //    System.out.println("\n=== demoStrictVariables() ===");
+    //    demoStrictVariables();
 
-        String rendered = template.render();
-
-        System.out.println(rendered);
-    }
-
-    public static void instanceTag() {
-
-        String source = "{% loop 5 %}looping!\n{% endloop %}";
-
-        Template template = Template.parse(source).with(new Tag("loop"){
-            @Override
-            public Object render(TemplateContext context, LNode... nodes) {
-
-                int n = super.asNumber(nodes[0].render(context)).intValue();
-                LNode block = nodes[1];
-
-                StringBuilder builder = new StringBuilder();
-
-                while(n-- > 0) {
-                    builder.append(super.asString(block.render(context)));
-                }
-
-                return builder.toString();
-            }
-        });
-
-        String rendered = template.render();
-
-        System.out.println(rendered);
-    }
-
-    public static void instanceFilter() {
-
-        Template template = Template.parse("{{ numbers | sum }}").with(new Filter("sum"){
-            @Override
-            public Object apply(Object value, Object... params) {
-
-                Object[] numbers = super.asArray(value);
-
-                double sum = 0;
-
-                for(Object obj : numbers) {
-                    sum += super.asNumber(obj).doubleValue();
-                }
-
-                return sum;
-            }
-        });
-
-        String rendered = template.render("{\"numbers\" : [1, 2, 3, 4, 5]}");
-        System.out.println(rendered);
-    }
-
-    public static void demoStrictVariables() {
-        try {
-            Template.parse("{{mu}}")
-                    .withRenderSettings(new RenderSettings.Builder().withStrictVariables(true).build())
-                    .render();
-        } catch (RuntimeException ex) {
-            System.out.println("Caught an exception for strict variables");
-        }
-    }
-
-    public static void main(String[] args) throws Exception {
-
-        System.out.println("running liqp.Examples");
-
-        System.out.println("\n=== demoSimple() ===");
-        demoSimple();
-
-        System.out.println("\n=== demoCustomStrongFilter() ===");
-        demoCustomStrongFilter();
-
-        System.out.println("\n=== demoCustomRepeatFilter() ===");
-        demoCustomRepeatFilter();
-
-        System.out.println("\n=== demoCustomSumFilter() ===");
-        demoCustomSumFilter();
-
-        System.out.println("\n=== customLoopTag() ===");
-        customLoopTag();
-
-        System.out.println("\n=== instanceTag() ===");
-        instanceTag();
-
-        System.out.println("\n=== instanceFilter() ===");
-        instanceFilter();
-
-        System.out.println("\n=== demoStrictVariables() ===");
-        demoStrictVariables();
-
-        System.out.println("Done!");
-    }
+    System.out.println("Done!");
+  }
 }

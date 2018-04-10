@@ -1,15 +1,15 @@
 package liqp.filters;
 
-import java.util.Locale;
-import liqp.Template;
-import liqp.TemplateContext;
-import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
-
-import java.text.SimpleDateFormat;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import liqp.Template;
+import liqp.TemplateFactory;
+import liqp.nodes.RenderContext;
+import org.antlr.runtime.RecognitionException;
+import org.junit.Test;
 
 public class DateTest {
 
@@ -48,7 +48,7 @@ public class DateTest {
 
         for (String[] test : tests) {
 
-            Template template = Template.parse(test[0]);
+            Template template = TemplateFactory.newBuilder().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -92,7 +92,7 @@ public class DateTest {
         assertThat(filter.apply("2006-07-05 10:00:00", "%B"), is((Object)"July"));
 
         assertThat(filter.apply("2006-07-05 10:00:00", ""), is((Object)"2006-07-05 10:00:00"));
-        assertThat(filter.apply("2006-07-05 10:00:00", (TemplateContext) null), is((Object)"2006-07-05 10:00:00"));
+        assertThat(filter.apply("2006-07-05 10:00:00", (RenderContext) null), is((Object)"2006-07-05 10:00:00"));
 
         assertThat(filter.apply("2006-07-05 10:00:00", "%m/%d/%Y"), is((Object)"07/05/2006"));
 

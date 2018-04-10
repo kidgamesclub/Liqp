@@ -1,9 +1,13 @@
+import io.mverse.gradle.sourceSets
 import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
+import org.gradle.api.internal.HasConvention
 import org.gradle.api.internal.file.pattern.PatternMatcherFactory.compile
+import org.gradle.internal.impldep.bsh.commands.dir
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.maven
 import org.gradle.kotlin.dsl.repositories
 import org.gradle.kotlin.dsl.the
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument.DefaultArgument.arguments
 
 plugins {
@@ -22,7 +26,6 @@ mverse {
     compile("jackson-core")
     compile("findbugs")
     compile("kotlin-stdlib")
-    compile("org.jsoup:jsoup:1.11.2")
   }
 }
 
@@ -31,14 +34,21 @@ findbugs {
   effort = "min"
 }
 
+java.sourceSets["main"].withConvention(KotlinSourceSet::class) {
+  kotlin.srcDir(file("build/classes/generated-src/antlr/main"))
+}
+
 dependencies {
   compile("org.antlr:antlr4-runtime:4.7.1")
+  compile("org.jsoup:jsoup:1.11.2")
   antlr("org.antlr:antlr4:4.7.1")
-
 }
 
 tasks.withType(AntlrTask::class.java) {
-  arguments = listOf("-visitor", "-Xexact-output-dir", "-package", "liquid.parser.v4")
+  arguments = listOf("-visitor", "-package", "liquid.parser.v4", "-Xexact-output-dir")
+  outputDirectory = file("build/generated-src/antlr/main/liquid/parser/v4")
+
+
 }
 
 

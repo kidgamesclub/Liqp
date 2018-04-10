@@ -1,16 +1,9 @@
 package liqp.nodes;
 
-import liqp.TemplateContext;
-import liqp.exceptions.LiquidException;
-import liqp.filters.Filter;
-import org.antlr.runtime.tree.CommonTree;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.misc.Interval;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.TerminalNode;
-
 import java.util.ArrayList;
 import java.util.List;
+import liqp.filters.Filter;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class FilterNode implements LNode {
 
@@ -34,14 +27,14 @@ public class FilterNode implements LNode {
         this.tokenStartIndex = tokenStartIndex;
         this.text = text;
         this.filter = filter;
-        this.params = new ArrayList<LNode>();
+        this.params = new ArrayList<>();
     }
 
     public void add(LNode param) {
         params.add(param);
     }
 
-    public Object apply(Object value, TemplateContext context) {
+    public Object apply(Object value, RenderContext context) {
 
         try {
             List<Object> paramValues = new ArrayList<Object>();
@@ -58,7 +51,7 @@ public class FilterNode implements LNode {
     }
 
     @Override
-    public Object render(TemplateContext context) {
+    public Object render(RenderContext context) {
         throw new RuntimeException("cannot render a filter");
     }
 }

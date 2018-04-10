@@ -1,45 +1,114 @@
 package liqp.parser.v4;
 
-import liqp.ParseSettings;
-import liqp.exceptions.LiquidException;
-import liqp.filters.Filter;
-import liqp.nodes.BlockNode;
-import liqp.nodes.*;
-import liqp.parser.Flavor;
-import liqp.tags.Tag;
-import liquid.parser.v4.LiquidParser;
-import liquid.parser.v4.LiquidParserBaseVisitor;
-import org.antlr.v4.runtime.tree.TerminalNode;
+import static liquid.parser.v4.LiquidParser.And;
+import static liquid.parser.v4.LiquidParser.AssignmentContext;
+import static liquid.parser.v4.LiquidParser.AtomContext;
+import static liquid.parser.v4.LiquidParser.Atom_othersContext;
+import static liquid.parser.v4.LiquidParser.AttributeContext;
+import static liquid.parser.v4.LiquidParser.BlockContext;
+import static liquid.parser.v4.LiquidParser.Capture_tag_IdContext;
+import static liquid.parser.v4.LiquidParser.Capture_tag_StrContext;
+import static liquid.parser.v4.LiquidParser.Case_tagContext;
+import static liquid.parser.v4.LiquidParser.Comment_tagContext;
+import static liquid.parser.v4.LiquidParser.Cycle_tagContext;
+import static liquid.parser.v4.LiquidParser.Elsif_tagContext;
+import static liquid.parser.v4.LiquidParser.Eq;
+import static liquid.parser.v4.LiquidParser.ExprContext;
+import static liquid.parser.v4.LiquidParser.Expr_containsContext;
+import static liquid.parser.v4.LiquidParser.Expr_eqContext;
+import static liquid.parser.v4.LiquidParser.Expr_logicContext;
+import static liquid.parser.v4.LiquidParser.Expr_relContext;
+import static liquid.parser.v4.LiquidParser.Expr_termContext;
+import static liquid.parser.v4.LiquidParser.File_name_or_output_StrContext;
+import static liquid.parser.v4.LiquidParser.File_name_or_output_other_than_tag_end_out_startContext;
+import static liquid.parser.v4.LiquidParser.File_name_or_output_outputContext;
+import static liquid.parser.v4.LiquidParser.FilterContext;
+import static liquid.parser.v4.LiquidParser.For_arrayContext;
+import static liquid.parser.v4.LiquidParser.For_rangeContext;
+import static liquid.parser.v4.LiquidParser.Gt;
+import static liquid.parser.v4.LiquidParser.GtEq;
+import static liquid.parser.v4.LiquidParser.If_tagContext;
+import static liquid.parser.v4.LiquidParser.Include_tagContext;
+import static liquid.parser.v4.LiquidParser.IndexContext;
+import static liquid.parser.v4.LiquidParser.Lookup_IdContext;
+import static liquid.parser.v4.LiquidParser.Lookup_StrContext;
+import static liquid.parser.v4.LiquidParser.Lookup_id_indexesContext;
+import static liquid.parser.v4.LiquidParser.Lt;
+import static liquid.parser.v4.LiquidParser.LtEq;
+import static liquid.parser.v4.LiquidParser.NEq;
+import static liquid.parser.v4.LiquidParser.Or;
+import static liquid.parser.v4.LiquidParser.Other_tagContext;
+import static liquid.parser.v4.LiquidParser.Other_tag_blockContext;
+import static liquid.parser.v4.LiquidParser.OutputContext;
+import static liquid.parser.v4.LiquidParser.Param_exprContext;
+import static liquid.parser.v4.LiquidParser.Param_expr_exprContext;
+import static liquid.parser.v4.LiquidParser.Param_expr_key_valueContext;
+import static liquid.parser.v4.LiquidParser.ParseContext;
+import static liquid.parser.v4.LiquidParser.Raw_tagContext;
+import static liquid.parser.v4.LiquidParser.Table_tagContext;
+import static liquid.parser.v4.LiquidParser.TermContext;
+import static liquid.parser.v4.LiquidParser.Term_DoubleNumContext;
+import static liquid.parser.v4.LiquidParser.Term_EmptyContext;
+import static liquid.parser.v4.LiquidParser.Term_FalseContext;
+import static liquid.parser.v4.LiquidParser.Term_LongNumContext;
+import static liquid.parser.v4.LiquidParser.Term_NilContext;
+import static liquid.parser.v4.LiquidParser.Term_StrContext;
+import static liquid.parser.v4.LiquidParser.Term_TrueContext;
+import static liquid.parser.v4.LiquidParser.Term_exprContext;
+import static liquid.parser.v4.LiquidParser.Term_lookupContext;
+import static liquid.parser.v4.LiquidParser.Unless_tagContext;
+import static liquid.parser.v4.LiquidParser.When_tagContext;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import liqp.exceptions.LiquidException;
+import liqp.filters.Filters;
+import liqp.lookup.Index;
+import liqp.lookup.Property;
+import liqp.nodes.AndNode;
+import liqp.nodes.AtomNode;
+import liqp.nodes.AttributeNode;
+import liqp.nodes.BlockNode;
+import liqp.nodes.ContainsNode;
+import liqp.nodes.EqNode;
+import liqp.nodes.FilterNode;
+import liqp.nodes.GtEqNode;
+import liqp.nodes.GtNode;
+import liqp.nodes.KeyValueNode;
+import liqp.nodes.LNode;
+import liqp.nodes.LookupNode;
+import liqp.nodes.LtEqNode;
+import liqp.nodes.LtNode;
+import liqp.nodes.NEqNode;
+import liqp.nodes.OrNode;
+import liqp.nodes.OutputNode;
+import liqp.nodes.TagNode;
+import liqp.parser.Flavor;
+import liqp.tags.Tags;
+import liquid.parser.v4.LiquidParserBaseVisitor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.ToString;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
-import static liquid.parser.v4.LiquidParser.*;
-
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
 
-  private Map<String, Tag> tags;
-  private Map<String, Filter> filters;
-  private final ParseSettings parseSettings;
+  @NonNull
+  private final Tags tags;
+
+  @NonNull
+  private final Filters filters;
+
+  @NonNull
+  private final Flavor flavor;
+
+  private final boolean isStrictVariables;
+
   private boolean isRootBlock = true;
-
-  public NodeVisitor(Map<String, Tag> tags, Map<String, Filter> filters, ParseSettings parseSettings) {
-
-    if (tags == null)
-      throw new IllegalArgumentException("tags == null");
-
-    if (filters == null)
-      throw new IllegalArgumentException("filters == null");
-
-    if (parseSettings == null)
-      throw new IllegalArgumentException("parseSettings == null");
-
-    this.tags = tags;
-    this.filters = filters;
-    this.parseSettings = parseSettings;
-  }
 
   // parse
   //  : block EOF
@@ -98,7 +167,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       expressions.add(visitOther_tag_block(ctx.other_tag_block()));
     }
 
-    return new TagNode(tags.get(ctx.Id().getText()), expressions.toArray(new LNode[expressions.size()]));
+    return new TagNode(tags.getTag(ctx.Id().getText()), expressions.toArray(new LNode[expressions.size()]));
   }
 
   // custom_tag_block
@@ -121,7 +190,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   //  ;
   @Override
   public LNode visitRaw_tag(Raw_tagContext ctx) {
-    return new TagNode(tags.get("raw"), new AtomNode(ctx.raw_body().getText()));
+    return new TagNode(tags.getTag("raw"), new AtomNode(ctx.raw_body().getText()));
   }
 
   // comment_tag
@@ -129,7 +198,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   //  ;
   @Override
   public LNode visitComment_tag(Comment_tagContext ctx) {
-    return new TagNode(tags.get("comment"), new AtomNode(ctx.comment_body().getText()));
+    return new TagNode(tags.getTag("comment"), new AtomNode(ctx.comment_body().getText()));
   }
 
   // if_tag
@@ -164,7 +233,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       nodes.add(visitBlock(ctx.else_tag().block()));
     }
 
-    return new TagNode(tags.get("if"), nodes.toArray(new LNode[nodes.size()]));
+    return new TagNode(tags.getTag("if"), nodes.toArray(new LNode[nodes.size()]));
   }
 
   // unless_tag
@@ -185,7 +254,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       nodes.add(visitBlock(ctx.else_tag().block()));
     }
 
-    return new TagNode(tags.get("unless"), nodes.toArray(new LNode[nodes.size()]));
+    return new TagNode(tags.getTag("unless"), nodes.toArray(new LNode[nodes.size()]));
   }
 
   // case_tag
@@ -217,7 +286,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       nodes.add(visitBlock(ctx.else_tag().block()));
     }
 
-    return new TagNode(tags.get("case"), nodes.toArray(new LNode[nodes.size()]));
+    return new TagNode(tags.getTag("case"), nodes.toArray(new LNode[nodes.size()]));
   }
 
   // cycle_tag
@@ -238,7 +307,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       nodes.add(visit(child));
     }
 
-    return new TagNode(tags.get("cycle"), nodes.toArray(new LNode[nodes.size()]));
+    return new TagNode(tags.getTag("cycle"), nodes.toArray(new LNode[nodes.size()]));
   }
 
   // for_array
@@ -266,7 +335,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       expressions.add(visit(attribute));
     }
 
-    return new TagNode(tags.get("for"), expressions.toArray(new LNode[expressions.size()]));
+    return new TagNode(tags.getTag("for"), expressions.toArray(new LNode[expressions.size()]));
   }
 
   // for_range
@@ -290,7 +359,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       expressions.add(visit(attribute));
     }
 
-    return new TagNode(tags.get("for"), expressions.toArray(new LNode[expressions.size()]));
+    return new TagNode(tags.getTag("for"), expressions.toArray(new LNode[expressions.size()]));
   }
 
   // attribute
@@ -317,7 +386,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       expressions.add(visit(attribute));
     }
 
-    return new TagNode(tags.get("tablerow"), expressions.toArray(new LNode[expressions.size()]));
+    return new TagNode(tags.getTag("tablerow"), expressions.toArray(new LNode[expressions.size()]));
   }
 
   // capture_tag
@@ -326,7 +395,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   //  ;
   @Override
   public LNode visitCapture_tag_Id(Capture_tag_IdContext ctx) {
-    return new TagNode(tags.get("capture"), new AtomNode(ctx.Id().getText()), visitBlock(ctx.block()));
+    return new TagNode(tags.getTag("capture"), new AtomNode(ctx.Id().getText()), visitBlock(ctx.block()));
   }
 
   // capture_tag
@@ -335,7 +404,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   //  ;
   @Override
   public LNode visitCapture_tag_Str(Capture_tag_StrContext ctx) {
-    return new TagNode(tags.get("capture"), fromString(ctx.Str()), visitBlock(ctx.block()));
+    return new TagNode(tags.getTag("capture"), fromString(ctx.Str()), visitBlock(ctx.block()));
   }
 
   // include_tag
@@ -344,9 +413,9 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   @Override
   public LNode visitInclude_tag(Include_tagContext ctx) {
     if (ctx.Str() != null)  {
-      return new TagNode(tags.get("include"), visit(ctx.file_name_or_output()), fromString(ctx.Str()));
+      return new TagNode(tags.getTag("include"), visit(ctx.file_name_or_output()), fromString(ctx.Str()));
     }
-    return new TagNode(tags.get("include"), visit(ctx.file_name_or_output()));
+    return new TagNode(tags.getTag("include"), visit(ctx.file_name_or_output()));
   }
 
   // file_name_or_output
@@ -366,7 +435,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   @Override
   public LNode visitFile_name_or_output_output(File_name_or_output_outputContext ctx) {
 
-    if (this.parseSettings.flavor != Flavor.JEKYLL)
+    if (flavor != Flavor.JEKYLL)
       throw new LiquidException("`{% include ouput %}` can only be used for Flavor.JEKYLL", ctx);
 
     return visitOutput(ctx.output());
@@ -383,7 +452,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   @Override
   public LNode visitFile_name_or_output_other_than_tag_end_out_start(File_name_or_output_other_than_tag_end_out_startContext ctx) {
 
-    if (this.parseSettings.flavor != Flavor.JEKYLL)
+    if (flavor != Flavor.JEKYLL)
       throw new LiquidException("`{% include other_than_tag_end_out_start %}` can only be used for Flavor.JEKYLL", ctx);
 
     return new AtomNode(ctx.other_than_tag_end_out_start().getText());
@@ -414,7 +483,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   @Override
   public FilterNode visitFilter(FilterContext ctx) {
 
-    FilterNode node = new FilterNode(ctx, filters.get(ctx.Id().getText()));
+    FilterNode node = new FilterNode(ctx, filters.getFilter(ctx.Id().getText()));
 
     if (ctx.params() != null) {
       for (Param_exprContext child : ctx.params().param_expr()) {
@@ -453,7 +522,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
     FilterNode filterNode = ctx.filter() == null ? null : visitFilter(ctx.filter());
     LNode exprNode = visit(ctx.expr());
 
-    return new TagNode(tags.get("assign"), idNode, filterNode, exprNode);
+    return new TagNode(tags.getTag("assign"), idNode, filterNode, exprNode);
   }
 
   // expr
@@ -634,10 +703,10 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
     for (IndexContext index : ctx.index()) {
 
       if (index.Dot() != null) {
-        node.add(new LookupNode.Hash(index.id2().getText()));
+        node.add(new Property(isStrictVariables, index.id2().getText()));
       }
       else {
-        node.add(new LookupNode.Index(visit(index.expr())));
+        node.add(new Index(isStrictVariables, visit(index.expr())));
       }
     }
 

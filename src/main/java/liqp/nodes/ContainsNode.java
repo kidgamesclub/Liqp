@@ -1,9 +1,7 @@
 package liqp.nodes;
 
 import java.util.Arrays;
-import java.util.Map;
 import liqp.LValue;
-import liqp.TemplateContext;
 
 public class ContainsNode extends LValue implements LNode {
 
@@ -16,7 +14,7 @@ public class ContainsNode extends LValue implements LNode {
     }
 
     @Override
-    public Object render(TemplateContext context) {
+    public Object render(RenderContext context) {
 
         Object collection = lhs.render(context);
         Object needle = rhs.render(context);

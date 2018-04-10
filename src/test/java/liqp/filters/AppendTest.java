@@ -1,11 +1,12 @@
 package liqp.filters;
 
-import liqp.Template;
-import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import liqp.Template;
+import liqp.TemplateFactory;
+import org.antlr.runtime.RecognitionException;
+import org.junit.Test;
 
 public class AppendTest {
 
@@ -22,7 +23,7 @@ public class AppendTest {
 
         for (String[] test : tests) {
 
-            Template template = Template.parse(test[0]);
+            Template template = TemplateFactory.newBuilder().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -41,7 +42,7 @@ public class AppendTest {
 
         final String assigns = "{\"a\":\"bc\", \"b\":\"d\" }";
 
-        assertThat(Template.parse("{{ a | append: 'd'}}").render(assigns), is("bcd"));
-        assertThat(Template.parse("{{ a | append: b}}").render(assigns), is("bcd"));
+        assertThat(TemplateFactory.newBuilder().parse("{{ a | append: 'd'}}").render(assigns), is("bcd"));
+        assertThat(TemplateFactory.newBuilder().parse("{{ a | append: b}}").render(assigns), is("bcd"));
     }
 }

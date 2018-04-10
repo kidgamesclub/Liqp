@@ -1,7 +1,8 @@
 package liqp.tags;
 
-import liqp.TemplateContext;
 import liqp.nodes.LNode;
+import liqp.nodes.RenderContext;
+import org.apache.commons.lang.BooleanUtils;
 
 /*
     increment
@@ -33,36 +34,37 @@ import liqp.nodes.LNode;
 */
 public class Increment extends Tag {
 
-    private static final Long INITIAL = 0L;
+  private static final Long INITIAL = 0L;
 
-    @Override
-    public Object render(TemplateContext context, LNode... nodes) {
+  @Override
+  public Object render(RenderContext context, LNode... nodes) {
 
-        Long value = INITIAL;
-        String variable = super.asString(nodes[0].render(context));
-        String incrementVariable = String.format("@increment_%s", variable);
-        String variableExistsFlag = String.format("@variable_%s_exists", variable);
+    String variable = super.asString(nodes[0].render(context));
+    String incrementVariable = String.format("@increment_%s", variable);
+    String variableExistsFlag = String.format("@variable_%s_exists", variable);
 
-        if (context.containsKey(incrementVariable)) {
-            // Retrieve the old 'increment' value
-            value = (Long) context.get(incrementVariable);
-        }
-
-        Long nextValue = value + 1;
-
-        if (value.equals(INITIAL)) {
-            // If this is the first 'increment' tag, check if the variable exists in the outer scope.
-            context.put(variableExistsFlag, context.containsKey(variable));
-        }
-
-        if (!((Boolean) context.get(variableExistsFlag))) {
-            // Set the 'variable' to the next value, only if it was flagged as not being defined in the outer scope
-            context.put(variable, nextValue);
-        }
-
-        // Store the nextValue
-        context.put(incrementVariable, nextValue);
-
-        return value;
+    Long value = context.get(incrementVariable);
+    if (value == null) {
+      value = INITIAL;
     }
+
+    Long nextValue = value + 1;
+
+    if (value.equals(INITIAL)) {
+      // If this is the first 'increment' tag, check if the variable exists in the outer scope.
+      context.set(variableExistsFlag, context.hasVar(variable));
+    }
+
+    final Boolean varExists = context.get(variableExistsFlag);
+    if (!BooleanUtils.isTrue(varExists)) {
+      // Set the 'variable' to the next value, only if it was flagged as not being defined in the outer scope
+      //todo:Ericm This seems really odd - a weird side effect
+      context.set(variable, nextValue);
+    }
+
+    // Store the nextValue
+    context.set(incrementVariable, nextValue);
+
+    return value;
+  }
 }

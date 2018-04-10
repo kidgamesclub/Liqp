@@ -1,7 +1,5 @@
 package liqp.nodes;
 
-import liqp.TemplateContext;
-
 /**
  * Denotes a node in the AST the parse creates from the
  * input source.
@@ -17,5 +15,5 @@ public interface LNode {
      *
      * @return an Object denoting the rendered AST.
      */
-    Object render(TemplateContext context);
+    Object render(RenderContext context);
 }

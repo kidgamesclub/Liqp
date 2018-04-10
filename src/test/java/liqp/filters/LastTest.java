@@ -1,18 +1,19 @@
 package liqp.filters;
 
-import liqp.Template;
-import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import liqp.Template;
+import liqp.TemplateFactory;
+import org.antlr.runtime.RecognitionException;
+import org.junit.Test;
 
 public class LastTest {
 
     @Test
     public void applyTest() throws RecognitionException {
 
-        Template template = Template.parse("{{values | last}}");
+        Template template = TemplateFactory.newBuilder().parse("{{values | last}}");
 
         String rendered = String.valueOf(template.render("{\"values\" : [\"Mu\", \"foo\", \"bar\"]}"));
 

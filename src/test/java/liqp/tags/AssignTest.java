@@ -1,14 +1,12 @@
 package liqp.tags;
 
-import java.util.HashMap;
-import java.util.Map;
-import liqp.Template;
-import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
-
-import static liqp.TestUtils.getNode;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import liqp.Template;
+import liqp.TemplateFactory;
+import org.antlr.runtime.RecognitionException;
+import org.junit.Test;
 
 public class AssignTest {
 
@@ -22,7 +20,7 @@ public class AssignTest {
 
         for (String[] test : tests) {
 
-            Template template = Template.parse(test[0]);
+            Template template = TemplateFactory.newBuilder().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -30,11 +28,11 @@ public class AssignTest {
 
         String json = "{\"values\":[\"A\", [\"B1\", \"B2\"], \"C\"]}";
 
-        assertThat(Template.parse("{% assign foo = values %}.{{ foo[1][1] }}.").render(json), is(".B2."));
+        assertThat(TemplateFactory.newBuilder().parse("{% assign foo = values %}.{{ foo[1][1] }}.").render(json), is(".B2."));
 
         json = "{\"values\":[\"A\", {\"bar\":{\"xyz\":[\"B1\", \"ok\"]}}, \"C\"]}";
 
-        assertThat(Template.parse("{% assign foo = values %}.{{ foo[1].bar.xyz[1] }}.").render(json), is(".ok."));
+        assertThat(TemplateFactory.newBuilder().parse("{% assign foo = values %}.{{ foo[1].bar.xyz[1] }}.").render(json), is(".ok."));
     }
 
     /*
@@ -59,10 +57,10 @@ public class AssignTest {
 
         final String[] values = {"foo", "bar", "baz"};
 
-        assertThat(Template.parse("{% assign foo = values %}.{{ foo[0] }}.").render("values", values), is(".foo."));
-        assertThat(Template.parse("{% assign foo = values %}.{{ foo[1] }}.").render("values", values), is(".bar."));
+        assertThat(TemplateFactory.newBuilder().parse("{% assign foo = values %}.{{ foo[0] }}.").render("values", values), is(".foo."));
+        assertThat(TemplateFactory.newBuilder().parse("{% assign foo = values %}.{{ foo[1] }}.").render("values", values), is(".bar."));
 
-        assertThat(Template.parse("{% assign foo = values | split: \",\" %}.{{ foo[1] }}.").render("values", "foo,bar,baz"), is(".bar."));
+        assertThat(TemplateFactory.newBuilder().parse("{% assign foo = values | split: \",\" %}.{{ foo[1] }}.").render("values", "foo,bar,baz"), is(".bar."));
     }
 
     /*
@@ -76,7 +74,7 @@ public class AssignTest {
     @Test
     public void hyphenatedVariableTest() throws Exception {
 
-        assertThat(Template.parse("{% assign oh-my = 'godz' %}{{ oh-my }}").render(), is("godz"));
+        assertThat(TemplateFactory.newBuilder().parse("{% assign oh-my = 'godz' %}{{ oh-my }}").render(), is("godz"));
     }
 
     /*
@@ -90,7 +88,7 @@ public class AssignTest {
     public void assignTest() throws Exception {
 
         assertThat(
-                Template.parse("var2:{{var2}} {%assign var2 = var%} var2:{{var2}}")
+                TemplateFactory.newBuilder().parse("var2:{{var2}} {%assign var2 = var%} var2:{{var2}}")
                         .render(" { \"var\" : \"content\" } "),
                 is("var2:  var2:content"));
     }
@@ -105,7 +103,7 @@ public class AssignTest {
     public void hyphenated_assignTest() throws Exception {
 
         assertThat(
-                Template.parse("a-b:{{a-b}} {%assign a-b = 2 %}a-b:{{a-b}}")
+                TemplateFactory.newBuilder().parse("a-b:{{a-b}} {%assign a-b = 2 %}a-b:{{a-b}}")
                         .render(" { \"a-b\" : \"1\" } "),
                 is("a-b:1 a-b:2"));
     }
@@ -120,35 +118,35 @@ public class AssignTest {
     public void assign_with_colon_and_spacesTest() throws Exception {
 
         assertThat(
-                Template.parse("{%assign var2 = var[\"a:b c\"].paged %}var2: {{var2}}")
+                TemplateFactory.newBuilder().parse("{%assign var2 = var[\"a:b c\"].paged %}var2: {{var2}}")
                         .render("{\"var\" : {\"a:b c\" : {\"paged\" : \"1\" }}}"),
                 is("var2: 1"));
     }
 
     /*
      * def test_assign
-     *   assert_equal 'variable', Liquid::Template.parse( '{% assign a = "variable"%}{{a}}'  ).render
+     *   assert_equal 'variable', Liquid::TemplateFactory.newBuilder().parse( '{% assign a = "variable"%}{{a}}'  ).render
      * end
      */
     @Test
     public void assign2Test() throws Exception {
 
         assertThat(
-                Template.parse("{% assign a = \"variable\"%}{{a}}")
+                TemplateFactory.newBuilder().parse("{% assign a = \"variable\"%}{{a}}")
                         .render(),
                 is("variable"));
     }
 
     /*
      * def test_assign_an_empty_string
-     *   assert_equal '', Liquid::Template.parse( '{% assign a = ""%}{{a}}'  ).render
+     *   assert_equal '', Liquid::TemplateFactory.newBuilder().parse( '{% assign a = ""%}{{a}}'  ).render
      * end
      */
     @Test
     public void assign_an_empty_stringTest() throws Exception {
 
         assertThat(
-                Template.parse("{% assign a = \"\"%}{{a}}")
+                TemplateFactory.newBuilder().parse("{% assign a = \"\"%}{{a}}")
                         .render(),
                 is(""));
     }
@@ -156,14 +154,14 @@ public class AssignTest {
     /*
      * def test_assign_is_global
      *   assert_equal 'variable',
-     *                Liquid::Template.parse( '{%for i in (1..2) %}{% assign a = "variable"%}{% endfor %}{{a}}'  ).render
+     *                Liquid::TemplateFactory.newBuilder().parse( '{%for i in (1..2) %}{% assign a = "variable"%}{% endfor %}{{a}}'  ).render
      * end
      */
     @Test
     public void assign_is_globalTest() throws Exception {
 
         assertThat(
-                Template.parse("{%for i in (1..2) %}{% assign a = \"variable\"%}{% endfor %}{{a}}")
+                TemplateFactory.newBuilder().parse("{%for i in (1..2) %}{% assign a = \"variable\"%}{% endfor %}{{a}}")
                         .render(),
                 is("variable"));
     }

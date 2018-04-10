@@ -1,13 +1,10 @@
 package liqp.nodes;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import liqp.TemplateContext;
-import liqp.tags.Tag;
-
 import static liqp.LValue.BREAK;
 import static liqp.LValue.CONTINUE;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BlockNode implements LNode {
 
@@ -28,11 +25,11 @@ public class BlockNode implements LNode {
     }
 
     public List<LNode> getChildren() {
-        return new ArrayList<LNode>(children);
+        return new ArrayList<>(children);
     }
 
     @Override
-    public Object render(TemplateContext context) {
+    public Object render(RenderContext context) {
 
         StringBuilder builder = new StringBuilder();
 
@@ -67,8 +64,8 @@ public class BlockNode implements LNode {
                 builder.append(String.valueOf(value));
             }
 
-            if (builder.length() > context.protectionSettings.maxSizeRenderedString) {
-                throw new RuntimeException("rendered string exceeds " + context.protectionSettings.maxSizeRenderedString);
+            if (builder.length() > context.getMaxSizeRenderedString()) {
+                throw new RuntimeException("rendered string exceeds " + context.getMaxSizeRenderedString());
             }
         }
 

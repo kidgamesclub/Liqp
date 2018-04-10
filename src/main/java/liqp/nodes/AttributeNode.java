@@ -1,7 +1,5 @@
 package liqp.nodes;
 
-import liqp.TemplateContext;
-
 public class AttributeNode implements LNode {
 
     private LNode key;
@@ -13,7 +11,7 @@ public class AttributeNode implements LNode {
     }
 
     @Override
-    public Object render(TemplateContext context) {
+    public Object render(RenderContext context) {
 
         return new Object[]{
                 key.render(context),

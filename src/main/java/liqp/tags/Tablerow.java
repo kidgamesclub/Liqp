@@ -1,129 +1,131 @@
 package liqp.tags;
 
-import liqp.TemplateContext;
-import liqp.nodes.LNode;
-
 import java.util.HashMap;
 import java.util.Map;
+import liqp.nodes.LNode;
+import liqp.nodes.RenderContext;
 
 class Tablerow extends Tag {
 
-    private static final String COLS = "cols";
-    private static final String LIMIT = "limit";
+  private static final String COLS = "cols";
+  private static final String LIMIT = "limit";
 
-    /*
-     * tablerowloop.length       # => length of the entire for loop
-     * tablerowloop.index        # => index of the current iteration
-     * tablerowloop.index0       # => index of the current iteration (zero based)
-     * tablerowloop.rindex       # => how many items are still left?
-     * tablerowloop.rindex0      # => how many items are still left? (zero based)
-     * tablerowloop.first        # => is this the first iteration?
-     * tablerowloop.last         # => is this the last iteration?
-     * tablerowloop.col          # => index of column in the current row
-     * tablerowloop.col0         # => index of column in the current row (zero based)
-     * tablerowloop.col_first    # => is this the first column in the row?
-     * tablerowloop.col_last     # => is this the last column in the row?
-     */
-    private static final String TABLEROWLOOP = "tablerowloop";
-    private static final String LENGTH = "length";
-    private static final String INDEX = "index";
-    private static final String INDEX0 = "index0";
-    private static final String RINDEX = "rindex";
-    private static final String RINDEX0 = "rindex0";
-    private static final String FIRST = "first";
-    private static final String LAST = "last";
-    private static final String COL = "col";
-    private static final String COL0 = "col0";
-    private static final String COL_FIRST = "col_first";
-    private static final String COL_LAST = "col_last";
+  /*
+   * tablerowloop.length       # => length of the entire for loop
+   * tablerowloop.index        # => index of the current iteration
+   * tablerowloop.index0       # => index of the current iteration (zero based)
+   * tablerowloop.rindex       # => how many items are still left?
+   * tablerowloop.rindex0      # => how many items are still left? (zero based)
+   * tablerowloop.first        # => is this the first iteration?
+   * tablerowloop.last         # => is this the last iteration?
+   * tablerowloop.col          # => index of column in the current row
+   * tablerowloop.col0         # => index of column in the current row (zero based)
+   * tablerowloop.col_first    # => is this the first column in the row?
+   * tablerowloop.col_last     # => is this the last column in the row?
+   */
+  private static final String TABLEROWLOOP = "tablerowloop";
+  private static final String LENGTH = "length";
+  private static final String INDEX = "index";
+  private static final String INDEX0 = "index0";
+  private static final String RINDEX = "rindex";
+  private static final String RINDEX0 = "rindex0";
+  private static final String FIRST = "first";
+  private static final String LAST = "last";
+  private static final String COL = "col";
+  private static final String COL0 = "col0";
+  private static final String COL_FIRST = "col_first";
+  private static final String COL_LAST = "col_last";
 
-    /*
-     * Tables
-     */
-    @Override
-    public Object render(TemplateContext context, LNode... nodes) {
+  /*
+   * Tables
+   */
+  @Override
+  public Object render(RenderContext context, LNode... nodes) {
 
-        String valueName = super.asString(nodes[0].render(context));
-        Object[] collection = super.asArray(nodes[1].render(context));
-        LNode block = nodes[2];
-        Map<String, Integer> attributes = getAttributes(collection, 3, context, nodes);
+    String valueName = super.asString(nodes[0].render(context));
+    Object[] collection = super.asArray(nodes[1].render(context));
+    LNode block = nodes[2];
+    Map<String, Integer> attributes = getAttributes(collection, 3, context, nodes);
 
-        int cols = attributes.get(COLS);
-        int limit = attributes.get(LIMIT);
+    int cols = attributes.get(COLS);
+    int limit = attributes.get(LIMIT);
 
-        Map<String, Object> tablerowloopContext = new HashMap<String, Object>();
+    Map<String, Object> tablerowloopContext = new HashMap<String, Object>();
 
-        tablerowloopContext.put(LENGTH, collection.length);
+    tablerowloopContext.put(LENGTH, collection.length);
 
-        context.put(TABLEROWLOOP, tablerowloopContext);
+    context.addFrame();
+    context.set(TABLEROWLOOP, tablerowloopContext);
 
-        StringBuilder builder = new StringBuilder();
+    context.startLoop(collection.length, null);
 
-        int total = Math.min(collection.length, limit);
+    StringBuilder builder = new StringBuilder();
 
-        if(total == 0) {
+    int total = Math.min(collection.length, limit);
 
-            builder.append("<tr class=\"row1\">\n</tr>\n");
-        }
-        else {
+    if (total == 0) {
 
-            for(int i = 0, c = 1, r = 0; i < total; i++, c++) {
+      builder.append("<tr class=\"row1\">\n</tr>\n");
+    } else {
 
-                context.incrementIterations();
+      for (int i = 0, c = 1, r = 0; i < total; i++, c++) {
 
-                context.put(valueName, collection[i]);
+        context.incrementIterations();
 
-                tablerowloopContext.put(INDEX0, i);
-                tablerowloopContext.put(INDEX, i + 1);
-                tablerowloopContext.put(RINDEX0, total - i - 1);
-                tablerowloopContext.put(RINDEX, total - i);
-                tablerowloopContext.put(FIRST, i == 0);
-                tablerowloopContext.put(LAST, i == total - 1);
-                tablerowloopContext.put(COL0, c - 1);
-                tablerowloopContext.put(COL, c);
-                tablerowloopContext.put(COL_FIRST, c == 1);
-                tablerowloopContext.put(COL_LAST, c == cols);
+        context.set(valueName, collection[i]);
 
-                if(c == 1) {
-                    r++;
-                    builder.append("<tr class=\"row").append(r).append("\">").append(r == 1 ? "\n" : "");
-                }
+        tablerowloopContext.put(INDEX0, i);
+        tablerowloopContext.put(INDEX, i + 1);
+        tablerowloopContext.put(RINDEX0, total - i - 1);
+        tablerowloopContext.put(RINDEX, total - i);
+        tablerowloopContext.put(FIRST, i == 0);
+        tablerowloopContext.put(LAST, i == total - 1);
+        tablerowloopContext.put(COL0, c - 1);
+        tablerowloopContext.put(COL, c);
+        tablerowloopContext.put(COL_FIRST, c == 1);
+        tablerowloopContext.put(COL_LAST, c == cols);
 
-                builder.append("<td class=\"col").append(c).append("\">");
-                builder.append(super.asString(block.render(context)));
-                builder.append("</td>");
-
-                if(c == cols || i == total - 1) {
-                    builder.append("</tr>\n");
-                    c = 0;
-                }
-            }
+        if (c == 1) {
+          r++;
+          builder.append("<tr class=\"row").append(r).append("\">").append(r == 1 ? "\n" : "");
         }
 
-        context.remove(TABLEROWLOOP);
+        builder.append("<td class=\"col").append(c).append("\">");
+        builder.append(super.asString(block.render(context)));
+        builder.append("</td>");
 
-        return builder.toString();
+        if (c == cols || i == total - 1) {
+          builder.append("</tr>\n");
+          c = 0;
+        }
+      }
     }
 
-    private Map<String, Integer> getAttributes(Object[] collection, int fromIndex, TemplateContext context, LNode... tokens) {
+    context.popFrame();
+    return builder.toString();
+  }
 
-        Map<String, Integer> attributes = new HashMap<String, Integer>();
+  private Map<String, Integer> getAttributes(Object[] collection,
+                                             int fromIndex,
+                                             RenderContext context,
+                                             LNode... tokens) {
 
-        attributes.put(COLS, collection.length);
-        attributes.put(LIMIT, Integer.MAX_VALUE);
+    Map<String, Integer> attributes = new HashMap<String, Integer>();
 
-        for (int i = fromIndex; i < tokens.length; i++) {
+    attributes.put(COLS, collection.length);
+    attributes.put(LIMIT, Integer.MAX_VALUE);
 
-            Object[] attribute = super.asArray(tokens[i].render(context));
+    for (int i = fromIndex; i < tokens.length; i++) {
 
-            try {
-                attributes.put(super.asString(attribute[0]), super.asNumber(attribute[1]).intValue());
-            }
-            catch (Exception e) {
-                /* just ignore incorrect attributes */
-            }
-        }
+      Object[] attribute = super.asArray(tokens[i].render(context));
 
-        return attributes;
+      try {
+        attributes.put(super.asString(attribute[0]), super.asNumber(attribute[1]).intValue());
+      } catch (Exception e) {
+        /* just ignore incorrect attributes */
+      }
     }
+
+    return attributes;
+  }
 }

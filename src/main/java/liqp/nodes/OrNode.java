@@ -1,7 +1,6 @@
 package liqp.nodes;
 
 import liqp.LValue;
-import liqp.TemplateContext;
 
 public class OrNode extends LValue implements LNode {
 
@@ -14,7 +13,7 @@ public class OrNode extends LValue implements LNode {
     }
 
     @Override
-    public Object render(TemplateContext context) {
+    public Object render(RenderContext context) {
 
         return super.asBoolean(lhs.render(context)) || super.asBoolean(rhs.render(context));
 

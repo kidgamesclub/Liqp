@@ -1,10 +1,9 @@
 package liqp.tags;
 
-import liqp.TemplateContext;
-import liqp.nodes.LNode;
-
 import java.util.ArrayList;
 import java.util.List;
+import liqp.nodes.LNode;
+import liqp.nodes.RenderContext;
 
 class Cycle extends Tag {
 
@@ -15,7 +14,7 @@ class Cycle extends Tag {
      * between values, like colors or DOM classes.
      */
     @Override
-    public Object render(TemplateContext context, LNode... nodes) {
+    public Object render(RenderContext context, LNode... nodes) {
 
         // The group-name is either the first token-expression, or if that is
         // null (indicating there is no name), give it the name PREPEND followed
@@ -29,7 +28,6 @@ class Cycle extends Tag {
         groupName = PREPEND + groupName;
 
         Object obj = context.remove(groupName);
-
         List<Object> elements = new ArrayList<Object>();
 
         for (int i = 1; i < nodes.length; i++) {
@@ -45,7 +43,7 @@ class Cycle extends Tag {
             group = (CycleGroup) obj;
         }
 
-        context.put(groupName, group);
+        context.set(groupName, group);
 
         return group.next(elements);
     }

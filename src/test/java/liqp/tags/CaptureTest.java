@@ -1,11 +1,12 @@
 package liqp.tags;
 
-import liqp.Template;
-import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import liqp.Template;
+import liqp.TemplateFactory;
+import org.antlr.runtime.RecognitionException;
+import org.junit.Test;
 
 public class CaptureTest {
 
@@ -19,7 +20,7 @@ public class CaptureTest {
 
         for (String[] test : tests) {
 
-            Template template = Template.parse(test[0]);
+            Template template = TemplateFactory.newBuilder().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -34,7 +35,7 @@ public class CaptureTest {
     @Test
     public void capturesBlockContentInVariableTest() throws RecognitionException {
 
-        assertThat(Template.parse("{% capture 'var' %}test string{% endcapture %}{{var}}").render(), is("test string"));
+        assertThat(TemplateFactory.newBuilder().parse("{% capture 'var' %}test string{% endcapture %}{{var}}").render(), is("test string"));
     }
 
     /*
@@ -49,7 +50,7 @@ public class CaptureTest {
      *   {% endif %}
      *   {{var}}
      *   END_TEMPLATE
-     *   template = Template.parse(template_source)
+     *   template = TemplateFactory.newBuilder().parse(template_source)
      *   rendered = template.render
      *   assert_equal "test-string", rendered.gsub(/\s/, '')
      * end
@@ -66,7 +67,7 @@ public class CaptureTest {
                 "{% endif %}\n" +
                 "{{var}}";
 
-        assertThat(Template.parse(source).render().replaceAll("\\s", ""), is("test-string"));
+        assertThat(TemplateFactory.newBuilder().parse(source).render().replaceAll("\\s", ""), is("test-string"));
     }
 
     /*
@@ -80,7 +81,7 @@ public class CaptureTest {
      *   {% endfor %}
      *   {{ first }}-{{ second }}
      *   END_TEMPLATE
-     *   template = Template.parse(template_source)
+     *   template = TemplateFactory.newBuilder().parse(template_source)
      *   rendered = template.render
      *   assert_equal "3-3", rendered.gsub(/\s/, '')
      * end
@@ -96,7 +97,7 @@ public class CaptureTest {
                 "{% endfor %}\n" +
                 "{{ first }}-{{ second }}";
 
-        assertThat(Template.parse(source).render().replaceAll("\\s", ""), is("3-3"));
+        assertThat(TemplateFactory.newBuilder().parse(source).render().replaceAll("\\s", ""), is("3-3"));
     }
 
     /*
@@ -113,7 +114,7 @@ public class CaptureTest {
         String assigns = "{ \"var\" : \"content\" }";
 
         assertThat(
-                Template.parse("{{ var2 }}{% capture var2 %}{{ var }} foo {% endcapture %}{{ var2 }}{{ var2 }}")
+                TemplateFactory.newBuilder().parse("{{ var2 }}{% capture var2 %}{{ var }} foo {% endcapture %}{{ var2 }}{{ var2 }}")
                         .render(assigns),
                 is("content foo content foo "));
     }
@@ -130,6 +131,6 @@ public class CaptureTest {
     @Test(expected=RuntimeException.class)
     public void capture_detects_bad_syntaxTest() throws Exception {
 
-        Template.parse("{{ var2 }}{% capture %}{{ var }} foo {% endcapture %}{{ var2 }}{{ var2 }}");
+        TemplateFactory.newBuilder().parse("{{ var2 }}{% capture %}{{ var }} foo {% endcapture %}{{ var2 }}{{ var2 }}");
     }
 }

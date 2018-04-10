@@ -1,7 +1,5 @@
 package liqp.nodes;
 
-import liqp.TemplateContext;
-
 public class AtomNode implements LNode {
 
     public static final AtomNode EMPTY = new AtomNode(new Object());
@@ -17,7 +15,7 @@ public class AtomNode implements LNode {
     }
 
     @Override
-    public Object render(TemplateContext context) {
+    public Object render(RenderContext context) {
 
         return value;
     }

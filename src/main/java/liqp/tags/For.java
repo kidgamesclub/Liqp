@@ -1,15 +1,13 @@
 package liqp.tags;
 
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import liqp.LValue;
-import liqp.TemplateContext;
 import liqp.exceptions.ExceededMaxIterationsException;
 import liqp.nodes.BlockNode;
 import liqp.nodes.LNode;
-
-import java.util.HashMap;
-import java.util.Map;
+import liqp.nodes.RenderContext;
 
 class For extends Tag {
 
@@ -26,240 +24,198 @@ class For extends Tag {
      * forloop.first       # => is this the first iteration?
      * forloop.last        # => is this the last iteration?
      */
-    static final String FORLOOP = "forloop";
-    static final String LENGTH = "length";
-    static final String INDEX = "index";
-    static final String INDEX0 = "index0";
-    static final String RINDEX = "rindex";
-    static final String RINDEX0 = "rindex0";
-    static final String FIRST = "first";
-    static final String LAST = "last";
-    static final String NAME = "name";
 
-    /*
-     * For loop
-     */
-    @Override
-    public Object render(TemplateContext context, LNode... nodes) {
+  /*
+   * For loop
+   */
+  @Override
+  public Object render(RenderContext context, LNode... nodes) {
 
-        // The first node in the array denotes whether this is a for-tag
-        // over an array, `for item in array ...`, or a for-tag over a
-        // range, `for i in (4..item.length)`.
-        boolean array = super.asBoolean(nodes[0].render(context));
+    // The first node in the array denotes whether this is a for-tag
+    // over an array, `for item in array ...`, or a for-tag over a
+    // range, `for i in (4..item.length)`.
+    boolean array = super.asBoolean(nodes[0].render(context));
 
-        String id = super.asString(nodes[1].render(context));
+    String id = super.asString(nodes[1].render(context));
 
-        // Each for tag has its own context that keeps track of its own variables (scope)
-        TemplateContext nestedContext = new TemplateContext(context);
+    // Each for tag has its own context that keeps track of its own variables (scope)
+    context.addFrame();
 
-        nestedContext.put(FORLOOP, new HashMap<String, Object>());
+    Object rendered = array ? renderArray(id, context, nodes) : renderRange(id, context, nodes);
 
-        Object rendered = array ? renderArray(id, nestedContext, nodes) : renderRange(id, nestedContext, nodes);
+    context.popFrame();
+    return rendered;
+  }
 
-        return rendered;
+  private Object renderArray(String id, RenderContext context, LNode... tokens) {
+
+    StringBuilder builder = new StringBuilder();
+
+    // attributes start from index 5
+    Map<String, Integer> attributes = getAttributes(5, context, tokens);
+
+    int offset = attributes.get(OFFSET);
+    int limit = attributes.get(LIMIT);
+
+    Object[] array = super.asArray(tokens[2].render(context));
+
+    LNode block = tokens[3];
+    LNode blockIfEmptyOrNull = tokens[4];
+
+    if (array == null || array.length == 0) {
+      return blockIfEmptyOrNull == null ? null : blockIfEmptyOrNull.render(context);
     }
 
-    private Object renderArray(String id, TemplateContext context, LNode... tokens) {
+    int length = Math.min(limit, array.length);
 
-        StringBuilder builder = new StringBuilder();
+    final String loopName = id + "-" + tokens[2].toString();
+    context.startLoop(length, loopName);
 
-        // attributes start from index 5
-        Map<String, Integer> attributes = getAttributes(5, context, tokens);
+    int continueIndex = offset;
 
-        int offset = attributes.get(OFFSET);
-        int limit = attributes.get(LIMIT);
+    for (int i = offset, n = 0; n < limit && i < array.length; i++, n++) {
 
-        Object[] array = super.asArray(tokens[2].render(context));
+      context.incrementIterations();
 
-        LNode block = tokens[3];
-        LNode blockIfEmptyOrNull = tokens[4];
+      continueIndex = i;
+      context.set(id, array[i]);
 
-        if(array == null || array.length == 0) {
-            return blockIfEmptyOrNull == null ? null : blockIfEmptyOrNull.render(context);
+      List<LNode> children = ((BlockNode) block).getChildren();
+      boolean isBreak = false;
+
+      for (LNode node : children) {
+
+        Object value = node.render(context);
+
+        if (value == LValue.CONTINUE) {
+          // break from this inner loop: equals continue outer loop!
+          break;
         }
 
-        int length = Math.min(limit, array.length);
-
-        Map<String, Object> forLoopMap = (Map<String, Object>)context.get(FORLOOP);
-
-        forLoopMap.put(NAME, id + "-" + tokens[2].toString());
-
-        int continueIndex = offset;
-
-        for (int i = offset, n = 0; n < limit && i < array.length; i++, n++) {
-
-            context.incrementIterations();
-
-            continueIndex = i;
-
-            boolean first = (i == offset);
-            boolean last = ((n == limit - 1) || (i == array.length - 1));
-
-            context.put(id, array[i]);
-
-            forLoopMap.put(LENGTH, length);
-            forLoopMap.put(INDEX, n + 1);
-            forLoopMap.put(INDEX0, n);
-            forLoopMap.put(RINDEX, length - n);
-            forLoopMap.put(RINDEX0, length - n - 1);
-            forLoopMap.put(FIRST, first);
-            forLoopMap.put(LAST, last);
-
-            List<LNode> children = ((BlockNode)block).getChildren();
-            boolean isBreak = false;
-
-            for (LNode node : children) {
-
-                Object value = node.render(context);
-
-                if(value == LValue.CONTINUE) {
-                    // break from this inner loop: equals continue outer loop!
-                    break;
-                }
-
-                if(value == LValue.BREAK) {
-                    // break from inner loop
-                    isBreak = true;
-                    break;
-                }
-
-                if (value != null && value.getClass().isArray()) {
-
-                    Object[] arr = (Object[]) value;
-
-                    for (Object obj : arr) {
-                        builder.append(String.valueOf(obj));
-                    }
-                }
-                else {
-                    builder.append(super.asString(value));
-                }
-            }
-
-            if(isBreak) {
-                // break from outer loop
-                break;
-            }
+        if (value == LValue.BREAK) {
+          // break from inner loop
+          isBreak = true;
+          break;
         }
 
-        context.put(CONTINUE, continueIndex + 1, true);
+        if (value != null && value.getClass().isArray()) {
 
-        return builder.toString();
+          Object[] arr = (Object[]) value;
+
+          for (Object obj : arr) {
+            builder.append(String.valueOf(obj));
+          }
+        } else {
+          builder.append(super.asString(value));
+        }
+      }
+
+      if (isBreak) {
+        // break from outer loop
+        break;
+      }
     }
 
-    private Object renderRange(String id, TemplateContext context, LNode... tokens) {
+    context.setRoot(CONTINUE, continueIndex + 1);
 
-        StringBuilder builder = new StringBuilder();
+    return builder.toString();
+  }
 
-        // attributes start from index 5
-        Map<String, Integer> attributes = getAttributes(5, context, tokens);
+  private Object renderRange(String id, RenderContext context, LNode... tokens) {
 
-        int offset = attributes.get(OFFSET);
-        int limit = attributes.get(LIMIT);
+    StringBuilder builder = new StringBuilder();
 
-        LNode block = tokens[4];
+    // attributes start from index 5
+    Map<String, Integer> attributes = getAttributes(5, context, tokens);
 
-        try {
-            int from = super.asNumber(tokens[2].render(context)).intValue();
-            int to = super.asNumber(tokens[3].render(context)).intValue();
+    int offset = attributes.get(OFFSET);
+    int limit = attributes.get(LIMIT);
 
-            int length = (to - from);
+    LNode block = tokens[4];
 
-            Map<String, Object> forLoopMap = (Map<String, Object>)context.get(FORLOOP);
+    try {
+      int from = super.asNumber(tokens[2].render(context)).intValue();
+      int to = super.asNumber(tokens[3].render(context)).intValue();
 
-            int continueIndex = from + offset;
+      int length = (to - from);
 
-            for (int i = from + offset, n = 0; i <= to && n < limit; i++, n++) {
+      context.startLoop(length, null);
+      int continueIndex = from + offset;
 
-                context.incrementIterations();
+      for (int i = from + offset, n = 0; i <= to && n < limit; i++, n++) {
 
-                continueIndex = i;
+        context.incrementIterations();
+        continueIndex = i;
+        context.set(id, i);
 
-                boolean first = (i == (from + offset));
-                boolean last = ((i == to) || (n == limit - 1));
+        List<LNode> children = ((BlockNode) block).getChildren();
+        boolean isBreak = false;
 
-                context.put(id, i);
+        for (LNode node : children) {
 
-                forLoopMap.put(LENGTH, length);
-                forLoopMap.put(INDEX, n + 1);
-                forLoopMap.put(INDEX0, n);
-                forLoopMap.put(RINDEX, length - n);
-                forLoopMap.put(RINDEX0, length - n - 1);
-                forLoopMap.put(FIRST, first);
-                forLoopMap.put(LAST, last);
+          Object value = node.render(context);
 
-                List<LNode> children = ((BlockNode)block).getChildren();
-                boolean isBreak = false;
+          if (value == null) {
+            continue;
+          }
 
-                for (LNode node : children) {
+          if (value == LValue.CONTINUE) {
+            // break from this inner loop: equals continue outer loop!
+            break;
+          }
 
-                    Object value = node.render(context);
+          if (value == LValue.BREAK) {
+            // break from inner loop
+            isBreak = true;
+            break;
+          }
 
-                    if(value == null) {
-                        continue;
-                    }
+          if (super.isArray(value)) {
 
-                    if(value == LValue.CONTINUE) {
-                        // break from this inner loop: equals continue outer loop!
-                        break;
-                    }
+            Object[] arr = super.asArray(value);
 
-                    if(value == LValue.BREAK) {
-                        // break from inner loop
-                        isBreak = true;
-                        break;
-                    }
-
-                    if(super.isArray(value)) {
-
-                        Object[] arr = super.asArray(value);
-
-                        for (Object obj : arr) {
-                            builder.append(String.valueOf(obj));
-                        }
-                    }
-                    else {
-                        builder.append(super.asString(value));
-                    }
-                }
-
-                if(isBreak) {
-                    // break from outer loop
-                    break;
-                }
+            for (Object obj : arr) {
+              builder.append(String.valueOf(obj));
             }
-
-            context.put(CONTINUE, continueIndex + 1);
-        }
-        catch (ExceededMaxIterationsException e) {
-            throw e;
-        }
-        catch (Exception e) {
-            /* just ignore incorrect expressions */
+          } else {
+            builder.append(super.asString(value));
+          }
         }
 
-        return builder.toString();
+        if (isBreak) {
+          // break from outer loop
+          break;
+        }
+      }
+
+      context.set(CONTINUE, continueIndex + 1);
+    } catch (ExceededMaxIterationsException e) {
+      throw e;
+    } catch (Exception e) {
+      /* just ignore incorrect expressions */
     }
 
-    private Map<String, Integer> getAttributes(int fromIndex, TemplateContext context, LNode... tokens) {
+    return builder.toString();
+  }
 
-        Map<String, Integer> attributes = new HashMap<String, Integer>();
+  private Map<String, Integer> getAttributes(int fromIndex, RenderContext context, LNode... tokens) {
 
-        attributes.put(OFFSET, 0);
-        attributes.put(LIMIT, Integer.MAX_VALUE);
+    Map<String, Integer> attributes = new HashMap<String, Integer>();
 
-        for (int i = fromIndex; i < tokens.length; i++) {
+    attributes.put(OFFSET, 0);
+    attributes.put(LIMIT, Integer.MAX_VALUE);
 
-            Object[] attribute = super.asArray(tokens[i].render(context));
+    for (int i = fromIndex; i < tokens.length; i++) {
 
-            try {
-                attributes.put(super.asString(attribute[0]), super.asNumber(attribute[1]).intValue());
-            }
-            catch (Exception e) {
-                /* just ignore incorrect attributes */
-            }
-        }
+      Object[] attribute = super.asArray(tokens[i].render(context));
 
-        return attributes;
+      try {
+        attributes.put(super.asString(attribute[0]), super.asNumber(attribute[1]).intValue());
+      } catch (Exception e) {
+        /* just ignore incorrect attributes */
+      }
     }
+
+    return attributes;
+  }
 }
