@@ -1,7 +1,6 @@
 package liqp.nodes;
 
 import liqp.LValue;
-import liqp.TemplateContext;
 
 public class GtEqNode extends LValue implements LNode {
 
@@ -14,7 +13,7 @@ public class GtEqNode extends LValue implements LNode {
     }
 
     @Override
-    public Object render(TemplateContext context) {
+    public Object render(RenderContext context) {
 
         Object a = lhs.render(context);
         Object b = rhs.render(context);

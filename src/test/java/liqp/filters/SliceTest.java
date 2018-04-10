@@ -1,10 +1,11 @@
 package liqp.filters;
 
-import liqp.Template;
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import liqp.Template;
+import liqp.TemplateFactory;
+import org.junit.Test;
 
 public class SliceTest {
 
@@ -50,7 +51,7 @@ public class SliceTest {
 
         for (String[] test : tests) {
 
-            Template template = Template.parse(test[0]);
+            Template template = TemplateFactory.newBuilder().parse(test[0]);
             String rendered = String.valueOf(template.render(test[2]));
 
             assertThat(rendered, is(test[1]));
@@ -59,21 +60,21 @@ public class SliceTest {
 
     @Test(expected = RuntimeException.class)
     public void noParamsThrowsException() {
-        Template.parse("{{ 'mu' | slice }}").render();
+        TemplateFactory.newBuilder().parse("{{ 'mu' | slice }}").render();
     }
 
     @Test(expected = RuntimeException.class)
     public void noIntegerParamThrowsException() {
-        Template.parse("{{ 'mu' | slice: false }}").render();
+        TemplateFactory.newBuilder().parse("{{ 'mu' | slice: false }}").render();
     }
 
     @Test(expected = RuntimeException.class)
     public void noIntegersParamThrowsException() {
-        Template.parse("{{ 'mu' | slice: 1, 3.1415 }}").render();
+        TemplateFactory.newBuilder().parse("{{ 'mu' | slice: 1, 3.1415 }}").render();
     }
 
     @Test(expected = RuntimeException.class)
     public void threeParamsThrowsException() {
-        Template.parse("{{ 'mu' | slice: 1, 2, 3 }}").render();
+        TemplateFactory.newBuilder().parse("{{ 'mu' | slice: 1, 2, 3 }}").render();
     }
 }

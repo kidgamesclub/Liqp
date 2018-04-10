@@ -1,12 +1,12 @@
 package liqp.tags;
 
-import liqp.TemplateContext;
 import liqp.nodes.LNode;
+import liqp.nodes.RenderContext;
 
 public class Continue extends Tag {
 
     @Override
-    public Object render(TemplateContext context, LNode... nodes) {
+    public Object render(RenderContext context, LNode... nodes) {
         return CONTINUE;
     }
 }

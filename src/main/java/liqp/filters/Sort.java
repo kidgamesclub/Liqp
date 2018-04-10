@@ -1,7 +1,9 @@
 package liqp.filters;
 
-import java.util.*;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 class Sort extends Filter {
 

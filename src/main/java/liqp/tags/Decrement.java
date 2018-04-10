@@ -1,7 +1,7 @@
 package liqp.tags;
 
-import liqp.TemplateContext;
 import liqp.nodes.LNode;
+import liqp.nodes.RenderContext;
 
 /*
     decrement
@@ -27,30 +27,30 @@ public class Decrement extends Tag {
     private static final Long INITIAL = -1L;
 
     @Override
-    public Object render(TemplateContext context, LNode... nodes) {
+    public Object render(RenderContext context, LNode... nodes) {
 
         Long value = INITIAL;
         String variable = super.asString(nodes[0].render(context));
         String decrementVariable = String.format("@decrement_%s", variable);
         String variableExistsFlag = String.format("@variable_%s_exists", variable);
 
-        if (context.containsKey(decrementVariable)) {
+        if (context.hasVar(decrementVariable)) {
             // Retrieve the old 'decrement' value
-            value = (Long) context.get(decrementVariable);
+            value = context.get(decrementVariable);
         }
 
         if (value.equals(INITIAL)) {
             // If this is the first 'decrement' tag, check if the variable exists in the outer scope.
-            context.put(variableExistsFlag, context.containsKey(variable));
+            context.set(variableExistsFlag, context.hasVar(variable));
         }
 
         if (!((Boolean) context.get(variableExistsFlag))) {
             // Set the 'variable' to the current value, only if it was flagged as not being defined in the outer scope
-            context.put(variable, value);
+            context.set(variable, value);
         }
 
         // Store the nextValue
-        context.put(decrementVariable, value - 1);
+        context.set(decrementVariable, value - 1);
 
         return value;
     }

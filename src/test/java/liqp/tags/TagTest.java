@@ -1,31 +1,29 @@
 package liqp.tags;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import liqp.Template;
-import liqp.TemplateContext;
+import liqp.TemplateFactory;
 import liqp.nodes.LNode;
+import liqp.nodes.RenderContext;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
-
-import java.util.Map;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class TagTest {
 
     @Test
     public void testCustomTag() throws RecognitionException {
 
-        Tag.registerTag(new Tag("twice") {
-            @Override
-            public Object render(TemplateContext context, LNode... nodes) {
-                Double number = super.asNumber(nodes[0].render(context)).doubleValue();
-                return number * 2;
-            }
-        });
+      final Tag custom = new Tag("twice") {
+        @Override
+        public Object render(RenderContext context, LNode... nodes) {
+          Double number = super.asNumber(nodes[0].render(context)).doubleValue();
+          return number * 2;
+        }
+      };
 
-        Template template = Template.parse("{% twice 10 %}");
+        Template template = TemplateFactory.newBuilder().withTags(custom).parse("{% twice 10 %}");
         String rendered = String.valueOf(template.render());
 
         assertThat(rendered, is("20.0"));
@@ -34,16 +32,16 @@ public class TagTest {
     @Test
     public void testCustomTagBlock() throws RecognitionException {
 
-        Tag.registerTag(new Tag("twice") {
-            @Override
-            public Object render(TemplateContext context, LNode... nodes) {
-                LNode blockNode = nodes[nodes.length - 1];
-                String blockValue = super.asString(blockNode.render(context));
-                return blockValue + " " + blockValue;
-            }
-        });
+      final Tag custom = new Tag("twice") {
+        @Override
+        public Object render(RenderContext context, LNode... nodes) {
+          LNode blockNode = nodes[nodes.length - 1];
+          String blockValue = super.asString(blockNode.render(context));
+          return blockValue + " " + blockValue;
+        }
+      };
 
-        Template template = Template.parse("{% twice %}abc{% endtwice %}");
+        Template template = TemplateFactory.newBuilder().withTags(custom).parse("{% twice %}abc{% endtwice %}");
         String rendered = String.valueOf(template.render());
 
         assertThat(rendered, is("abc abc"));
@@ -60,7 +58,7 @@ public class TagTest {
                 "{{ item }}" +
                 "{% endfor %}";
 
-        assertThat(Template.parse(markup).render(context), is("112233"));
+        assertThat(TemplateFactory.newBuilder().parse(markup).render(context), is("112233"));
     }
 
     /*
@@ -75,7 +73,7 @@ public class TagTest {
     @Test
     public void breakWithNoBlockTest() throws RecognitionException {
 
-        assertThat(Template.parse("{% break %}").render(), is(""));
+        assertThat(TemplateFactory.newBuilder().parse("{% break %}").render(), is(""));
     }
 
     @Test
@@ -88,7 +86,7 @@ public class TagTest {
                 "{{ item }}" +
                 "{% endfor %}";
 
-        assertThat(Template.parse(markup).render(context), is("4455"));
+        assertThat(TemplateFactory.newBuilder().parse(markup).render(context), is("4455"));
     }
 
     /*
@@ -103,7 +101,7 @@ public class TagTest {
     @Test
     public void continueWithNoBlockTest() throws RecognitionException {
 
-        assertThat(Template.parse("{% continue %}").render(), is(""));
+        assertThat(TemplateFactory.newBuilder().parse("{% continue %}").render(), is(""));
     }
 
     /*
@@ -124,15 +122,15 @@ public class TagTest {
     @Test
     public void no_transformTest() throws RecognitionException {
 
-        assertThat(Template.parse("this text should come out of the template without change...").render(),
+        assertThat(TemplateFactory.newBuilder().parse("this text should come out of the template without change...").render(),
                 is("this text should come out of the template without change..."));
 
-        assertThat(Template.parse("blah").render(), is("blah"));
-        assertThat(Template.parse("<blah>").render(), is("<blah>"));
-        assertThat(Template.parse("|,.:").render(), is("|,.:"));
-        assertThat(Template.parse("").render(), is(""));
+        assertThat(TemplateFactory.newBuilder().parse("blah").render(), is("blah"));
+        assertThat(TemplateFactory.newBuilder().parse("<blah>").render(), is("<blah>"));
+        assertThat(TemplateFactory.newBuilder().parse("|,.:").render(), is("|,.:"));
+        assertThat(TemplateFactory.newBuilder().parse("").render(), is(""));
 
         String text = "this shouldnt see any transformation either but has multiple lines\n as you can clearly see here ...";
-        assertThat(Template.parse(text).render(), is(text));
+        assertThat(TemplateFactory.newBuilder().parse(text).render(), is(text));
     }
 }

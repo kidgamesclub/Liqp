@@ -1,11 +1,12 @@
 package liqp.tags;
 
-import liqp.Template;
-import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import liqp.Template;
+import liqp.TemplateFactory;
+import org.antlr.runtime.RecognitionException;
+import org.junit.Test;
 
 public class CaseTest {
 
@@ -23,7 +24,7 @@ public class CaseTest {
 
         for (String[] test : tests) {
 
-            Template template = Template.parse(test[0]);
+            Template template = TemplateFactory.newBuilder().parse(test[0]);
             String rendered = String.valueOf(template.render(json));
 
             assertThat(rendered, is(test[1]));
@@ -62,27 +63,27 @@ public class CaseTest {
     public void caseTest() throws RecognitionException {
 
         assertThat(
-                Template.parse("{% case condition %}{% when 1 %} its 1 {% when 2 %} its 2 {% endcase %}")
+                TemplateFactory.newBuilder().parse("{% case condition %}{% when 1 %} its 1 {% when 2 %} its 2 {% endcase %}")
                         .render("{ \"condition\":2 }"),
                 is(" its 2 "));
 
         assertThat(
-                Template.parse("{% case condition %}{% when 1 %} its 1 {% when 2 %} its 2 {% endcase %}")
+                TemplateFactory.newBuilder().parse("{% case condition %}{% when 1 %} its 1 {% when 2 %} its 2 {% endcase %}")
                         .render("{ \"condition\":1 }"),
                 is(" its 1 "));
 
         assertThat(
-                Template.parse("{% case condition %}{% when 1 %} its 1 {% when 2 %} its 2 {% endcase %}")
+                TemplateFactory.newBuilder().parse("{% case condition %}{% when 1 %} its 1 {% when 2 %} its 2 {% endcase %}")
                         .render("{ \"condition\":3 }"),
                 is(""));
 
         assertThat(
-                Template.parse("{% case condition %}{% when \"string here\" %} hit {% endcase %}")
+                TemplateFactory.newBuilder().parse("{% case condition %}{% when \"string here\" %} hit {% endcase %}")
                         .render("{ \"condition\":\"string here\" }"),
                 is(" hit "));
 
         assertThat(
-                Template.parse("{% case condition %}{% when \"string here\" %} hit {% endcase %}")
+                TemplateFactory.newBuilder().parse("{% case condition %}{% when \"string here\" %} hit {% endcase %}")
                         .render("{ \"condition\":\"bad string here\" }"),
                 is(""));
     }
@@ -109,17 +110,17 @@ public class CaseTest {
     public void case_with_elseTest() throws RecognitionException {
 
         assertThat(
-                Template.parse("{% case condition %}{% when 5 %} hit {% else %} else {% endcase %}")
+                TemplateFactory.newBuilder().parse("{% case condition %}{% when 5 %} hit {% else %} else {% endcase %}")
                         .render("{ \"condition\":5 }"),
                 is(" hit "));
 
         assertThat(
-                Template.parse("{% case condition %}{% when 5 %} hit {% else %} else {% endcase %}")
+                TemplateFactory.newBuilder().parse("{% case condition %}{% when 5 %} hit {% else %} else {% endcase %}")
                         .render("{ \"condition\":6 }"),
                 is(" else "));
 
         assertThat(
-                Template.parse("{% case condition %} {% when 5 %} hit {% else %} else {% endcase %}")
+                TemplateFactory.newBuilder().parse("{% case condition %} {% when 5 %} hit {% else %} else {% endcase %}")
                         .render("{ \"condition\":6 }"),
                 is(" else "));
     }
@@ -137,12 +138,12 @@ public class CaseTest {
     @Test
     public void case_on_sizeTest() throws RecognitionException {
 
-        assertThat(Template.parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").render("{ \"a\":[] }"), is(""));
-        assertThat(Template.parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").render("{ \"a\":[1] }"), is("1"));
-        assertThat(Template.parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").render("{ \"a\":[1,1] }"), is("2"));
-        assertThat(Template.parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").render("{ \"a\":[1,1,1] }"), is(""));
-        assertThat(Template.parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").render("{ \"a\":[1,1,1,1] }"), is(""));
-        assertThat(Template.parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").render("{ \"a\":[1,1,1,1,1] }"), is(""));
+        assertThat(TemplateFactory.newBuilder().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").render("{ \"a\":[] }"), is(""));
+        assertThat(TemplateFactory.newBuilder().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").render("{ \"a\":[1] }"), is("1"));
+        assertThat(TemplateFactory.newBuilder().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").render("{ \"a\":[1,1] }"), is("2"));
+        assertThat(TemplateFactory.newBuilder().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").render("{ \"a\":[1,1,1] }"), is(""));
+        assertThat(TemplateFactory.newBuilder().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").render("{ \"a\":[1,1,1,1] }"), is(""));
+        assertThat(TemplateFactory.newBuilder().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").render("{ \"a\":[1,1,1,1,1] }"), is(""));
     }
 
     /*
@@ -175,12 +176,12 @@ public class CaseTest {
     @Test
     public void case_on_size_with_elseTest() throws RecognitionException {
 
-        assertThat(Template.parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}").render("{ \"a\":[] }"), is("else"));
-        assertThat(Template.parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}").render("{ \"a\":[1] }"), is("1"));
-        assertThat(Template.parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}").render("{ \"a\":[1,1] }"), is("2"));
-        assertThat(Template.parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}").render("{ \"a\":[1,1,1] }"), is("else"));
-        assertThat(Template.parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}").render("{ \"a\":[1,1,1,1] }"), is("else"));
-        assertThat(Template.parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}").render("{ \"a\":[1,1,1,1,1] }"), is("else"));
+        assertThat(TemplateFactory.newBuilder().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}").render("{ \"a\":[] }"), is("else"));
+        assertThat(TemplateFactory.newBuilder().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}").render("{ \"a\":[1] }"), is("1"));
+        assertThat(TemplateFactory.newBuilder().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}").render("{ \"a\":[1,1] }"), is("2"));
+        assertThat(TemplateFactory.newBuilder().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}").render("{ \"a\":[1,1,1] }"), is("else"));
+        assertThat(TemplateFactory.newBuilder().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}").render("{ \"a\":[1,1,1,1] }"), is("else"));
+        assertThat(TemplateFactory.newBuilder().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase %}").render("{ \"a\":[1,1,1,1,1] }"), is("else"));
     }
 
     /*
@@ -205,17 +206,17 @@ public class CaseTest {
     @Test
     public void case_on_length_with_elseTest() throws RecognitionException {
 
-        assertThat(Template.parse("{% case a.empty? %}{% when true %}true{% when false %}false{% else %}else{% endcase %}").render(), is("else"));
-        assertThat(Template.parse("{% case false %}{% when true %}true{% when false %}false{% else %}else{% endcase %}").render(), is("false"));
-        assertThat(Template.parse("{% case true %}{% when true %}true{% when false %}false{% else %}else{% endcase %}").render(), is("true"));
-        assertThat(Template.parse("{% case NULL %}{% when true %}true{% when false %}false{% else %}else{% endcase %}").render(), is("else"));
+        assertThat(TemplateFactory.newBuilder().parse("{% case a.empty? %}{% when true %}true{% when false %}false{% else %}else{% endcase %}").render(), is("else"));
+        assertThat(TemplateFactory.newBuilder().parse("{% case false %}{% when true %}true{% when false %}false{% else %}else{% endcase %}").render(), is("false"));
+        assertThat(TemplateFactory.newBuilder().parse("{% case true %}{% when true %}true{% when false %}false{% else %}else{% endcase %}").render(), is("true"));
+        assertThat(TemplateFactory.newBuilder().parse("{% case NULL %}{% when true %}true{% when false %}false{% else %}else{% endcase %}").render(), is("else"));
     }
 
     /*
      * def test_assign_from_case
      *   # Example from the shopify forums
      *   code = %q({% case collection.handle %}{% when 'menswear-jackets' %}{% assign ptitle = 'menswear' %}{% when 'menswear-t-shirts' %}{% assign ptitle = 'menswear' %}{% else %}{% assign ptitle = 'womenswear' %}{% endcase %}{{ ptitle }})
-     *   template = Liquid::Template.parse(code)
+     *   template = Liquid::TemplateFactory.newBuilder().parse(code)
      *   assert_equal "menswear",   template.render("collection" => {'handle' => 'menswear-jackets'})
      *   assert_equal "menswear",   template.render("collection" => {'handle' => 'menswear-t-shirts'})
      *   assert_equal "womenswear", template.render("collection" => {'handle' => 'x'})
@@ -227,7 +228,7 @@ public class CaseTest {
     public void assign_from_caseTest() throws RecognitionException {
 
         String code = "{% case collection.handle %}{% when 'menswear-jackets' %}{% assign ptitle = 'menswear' %}{% when 'menswear-t-shirts' %}{% assign ptitle = 'menswear' %}{% else %}{% assign ptitle = 'womenswear' %}{% endcase %}{{ ptitle }}";
-        Template template = Template.parse(code);
+        Template template = TemplateFactory.newBuilder().parse(code);
 
         assertThat(template.render("{ \"collection\" : {\"handle\" : \"menswear-jackets\"} }"), is("menswear"));
         assertThat(template.render("{ \"collection\" : {\"handle\" : \"menswear-t-shirts\"} }"), is("menswear"));
@@ -257,11 +258,11 @@ public class CaseTest {
 
         String code = "{% case condition %}{% when 1 or 2 or 3 %} its 1 or 2 or 3 {% when 4 %} its 4 {% endcase %}";
 
-        assertThat(Template.parse(code).render("{ \"condition\" : 1 }"), is(" its 1 or 2 or 3 "));
-        assertThat(Template.parse(code).render("{ \"condition\" : 2 }"), is(" its 1 or 2 or 3 "));
-        assertThat(Template.parse(code).render("{ \"condition\" : 3 }"), is(" its 1 or 2 or 3 "));
-        assertThat(Template.parse(code).render("{ \"condition\" : 4 }"), is(" its 4 "));
-        assertThat(Template.parse(code).render("{ \"condition\" : 5 }"), is(""));
+        assertThat(TemplateFactory.newBuilder().parse(code).render("{ \"condition\" : 1 }"), is(" its 1 or 2 or 3 "));
+        assertThat(TemplateFactory.newBuilder().parse(code).render("{ \"condition\" : 2 }"), is(" its 1 or 2 or 3 "));
+        assertThat(TemplateFactory.newBuilder().parse(code).render("{ \"condition\" : 3 }"), is(" its 1 or 2 or 3 "));
+        assertThat(TemplateFactory.newBuilder().parse(code).render("{ \"condition\" : 4 }"), is(" its 4 "));
+        assertThat(TemplateFactory.newBuilder().parse(code).render("{ \"condition\" : 5 }"), is(""));
     }
 
     /*
@@ -285,18 +286,18 @@ public class CaseTest {
 
         String code = "{% case condition %}{% when 1, 2, 3 %} its 1 or 2 or 3 {% when 4 %} its 4 {% endcase %}";
 
-        assertThat(Template.parse(code).render("{ \"condition\" : 1 }"), is(" its 1 or 2 or 3 "));
-        assertThat(Template.parse(code).render("{ \"condition\" : 2 }"), is(" its 1 or 2 or 3 "));
-        assertThat(Template.parse(code).render("{ \"condition\" : 3 }"), is(" its 1 or 2 or 3 "));
-        assertThat(Template.parse(code).render("{ \"condition\" : 4 }"), is(" its 4 "));
-        assertThat(Template.parse(code).render("{ \"condition\" : 5 }"), is(""));
+        assertThat(TemplateFactory.newBuilder().parse(code).render("{ \"condition\" : 1 }"), is(" its 1 or 2 or 3 "));
+        assertThat(TemplateFactory.newBuilder().parse(code).render("{ \"condition\" : 2 }"), is(" its 1 or 2 or 3 "));
+        assertThat(TemplateFactory.newBuilder().parse(code).render("{ \"condition\" : 3 }"), is(" its 1 or 2 or 3 "));
+        assertThat(TemplateFactory.newBuilder().parse(code).render("{ \"condition\" : 4 }"), is(" its 4 "));
+        assertThat(TemplateFactory.newBuilder().parse(code).render("{ \"condition\" : 5 }"), is(""));
 
         code = "{% case condition %}{% when 1, \"string\", null %} its 1 or 2 or 3 {% when 4 %} its 4 {% endcase %}";
 
-        assertThat(Template.parse(code).render("{ \"condition\" : 1 }"), is(" its 1 or 2 or 3 "));
-        assertThat(Template.parse(code).render("{ \"condition\" : \"string\" }"), is(" its 1 or 2 or 3 "));
-        assertThat(Template.parse(code).render("{ \"condition\" : null }"), is(" its 1 or 2 or 3 "));
-        assertThat(Template.parse(code).render("{ \"condition\" : \"something else\" }"), is(""));
+        assertThat(TemplateFactory.newBuilder().parse(code).render("{ \"condition\" : 1 }"), is(" its 1 or 2 or 3 "));
+        assertThat(TemplateFactory.newBuilder().parse(code).render("{ \"condition\" : \"string\" }"), is(" its 1 or 2 or 3 "));
+        assertThat(TemplateFactory.newBuilder().parse(code).render("{ \"condition\" : null }"), is(" its 1 or 2 or 3 "));
+        assertThat(TemplateFactory.newBuilder().parse(code).render("{ \"condition\" : \"something else\" }"), is(""));
     }
 
     /*
@@ -313,11 +314,11 @@ public class CaseTest {
      */
     @Test(expected=RuntimeException.class)
     public void case_detects_bad_syntax1Test() throws Exception {
-        Template.parse("{% case false %}{% when %}true{% endcase %}");
+        TemplateFactory.newBuilder().parse("{% case false %}{% when %}true{% endcase %}");
     }
 
     @Test(expected=RuntimeException.class)
     public void case_detects_bad_syntax2Test() throws Exception {
-        Template.parse("{% case false %}{% huh %}true{% endcase %}");
+        TemplateFactory.newBuilder().parse("{% case false %}{% huh %}true{% endcase %}");
     }
 }

@@ -1,21 +1,19 @@
 package liqp.filters;
 
-import liqp.Template;
-import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import liqp.Template;
+import liqp.TemplateFactory;
+import org.antlr.runtime.RecognitionException;
+import org.junit.Test;
 
 public class FirstTest {
 
     @Test
     public void applyTest() throws RecognitionException {
 
-        Template template = Template.parse("{{values | first}}");
+        Template template = TemplateFactory.newBuilder().parse("{{values | first}}");
 
         String rendered = String.valueOf(template.render("{\"values\" : [\"Mu\", \"foo\", \"bar\"]}"));
 

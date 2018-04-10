@@ -1,11 +1,12 @@
 package liqp.filters;
 
-import liqp.Template;
-import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import liqp.Template;
+import liqp.TemplateFactory;
+import org.antlr.runtime.RecognitionException;
+import org.junit.Test;
 
 public class ModuloTest {
 
@@ -22,7 +23,7 @@ public class ModuloTest {
 
         for (String[] test : tests) {
 
-            Template template = Template.parse(test[0]);
+            Template template = TemplateFactory.newBuilder().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -48,6 +49,6 @@ public class ModuloTest {
     @Test
     public void applyOriginalTest() {
 
-        assertThat(Template.parse("{{ 3 | modulo:2 }}").render(), is((Object)"1"));
+        assertThat(TemplateFactory.newBuilder().parse("{{ 3 | modulo:2 }}").render(), is((Object)"1"));
     }
 }

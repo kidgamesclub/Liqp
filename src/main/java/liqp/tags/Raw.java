@@ -1,7 +1,7 @@
 package liqp.tags;
 
-import liqp.TemplateContext;
 import liqp.nodes.LNode;
+import liqp.nodes.RenderContext;
 
 class Raw extends Tag {
 
@@ -9,7 +9,7 @@ class Raw extends Tag {
      * temporarily disable tag processing to avoid syntax conflicts.
      */
     @Override
-    public Object render(TemplateContext context, LNode... nodes) {
+    public Object render(RenderContext context, LNode... nodes) {
         return nodes[0].render(context);
     }
 }

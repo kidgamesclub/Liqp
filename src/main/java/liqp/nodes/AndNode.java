@@ -1,9 +1,6 @@
 package liqp.nodes;
 
 import liqp.LValue;
-import liqp.TemplateContext;
-
-import java.util.Map;
 
 public class AndNode extends LValue implements LNode {
 
@@ -16,7 +13,7 @@ public class AndNode extends LValue implements LNode {
     }
 
     @Override
-    public Object render(TemplateContext context) {
+    public Object render(RenderContext context) {
 
         return super.asBoolean(lhs.render(context)) && super.asBoolean(rhs.render(context));
 

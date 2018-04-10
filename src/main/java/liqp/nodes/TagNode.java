@@ -1,13 +1,7 @@
 package liqp.nodes;
 
-import liqp.TemplateContext;
-import liqp.parser.Flavor;
-import liqp.tags.Include;
-import liqp.tags.Tag;
-
-import java.io.File;
 import java.util.List;
-import java.util.Map;
+import liqp.tags.Tag;
 
 public class TagNode implements LNode {
 
@@ -34,7 +28,7 @@ public class TagNode implements LNode {
     }
 
     @Override
-    public Object render(TemplateContext context) {
+    public Object render(RenderContext context) {
         return tag.render(context, tokens);
     }
 }

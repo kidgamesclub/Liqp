@@ -1,12 +1,13 @@
 package liqp.filters;
 
-import liqp.Template;
-import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+
+import liqp.Template;
+import liqp.TemplateFactory;
+import org.antlr.runtime.RecognitionException;
+import org.junit.Test;
 
 public class TimesTest {
 
@@ -24,7 +25,7 @@ public class TimesTest {
 
         for (String[] test : tests) {
 
-            Template template = Template.parse(test[0]);
+            Template template = TemplateFactory.newBuilder().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -47,7 +48,7 @@ public class TimesTest {
      *   assert_template_result "0", "{{ 'foo' | times:4 }}"
      *
      *   # Ruby v1.9.2-rc1, or higher, backwards compatible Float test
-     *   assert_match(/(6\.3)|(6\.(0{13})1)/, Template.parse("{{ '2.1' | times:3 }}").render)
+     *   assert_match(/(6\.3)|(6\.(0{13})1)/, TemplateFactory.newBuilder().parse("{{ '2.1' | times:3 }}").render)
      *
      *   assert_template_result "6", "{{ '2.1' | times:3 | replace: '.','-' | plus:0}}"
      * end

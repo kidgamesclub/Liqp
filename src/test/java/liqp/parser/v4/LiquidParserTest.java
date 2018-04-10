@@ -1,17 +1,16 @@
 package liqp.parser.v4;
 
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertThat;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import liquid.parser.v4.LiquidParser;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.Test;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
 
 public class LiquidParserTest {
 

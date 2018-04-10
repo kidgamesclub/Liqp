@@ -1,14 +1,15 @@
 package liqp.tags;
 
-import liqp.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import liqp.Template;
+import liqp.TemplateFactory;
 import liqp.parser.Flavor;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
-
-import java.io.File;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
 
 public class IncludeTest {
 
@@ -23,7 +24,7 @@ public class IncludeTest {
                 "{% assign shape = 'square' %}\n" +
                 "{% include 'color' with 'red' %}";
 
-        Template template = Template.parse(source);
+        Template template = TemplateFactory.newBuilder().parse(source);
 
         String rendered = template.render();
 
@@ -38,12 +39,12 @@ public class IncludeTest {
                 "color: 'red'\n" +
                 "shape: 'square'"));
     }
-    
+
     @Test
     public void renderTestWithIncludeDirectorySpecifiedInContextLiquidFlavor() throws Exception {
         File jekyll = new File(new File("").getAbsolutePath(), "src/test/jekyll");
         File index = new File(jekyll, "index_with_quotes.html");
-        Template template = Template.parse(index);
+        Template template = TemplateFactory.newBuilder().parseFile(index);
         String result = template.render();
         assertTrue(result.contains("HEADER"));
     }
@@ -52,7 +53,7 @@ public class IncludeTest {
     public void renderTestWithIncludeDirectorySpecifiedInContextJekyllFlavor() throws Exception {
         File jekyll = new File(new File("").getAbsolutePath(), "src/test/jekyll");
         File index = new File(jekyll, "index_without_quotes.html");
-        Template template = Template.parse(index, Flavor.JEKYLL);
+        Template template = TemplateFactory.newBuilder().flavor(Flavor.JEKYLL).parseFile(index);
         String result = template.render();
         assertTrue(result.contains("HEADER"));
     }
@@ -60,7 +61,7 @@ public class IncludeTest {
     @Test
     public void renderTestWithIncludeDirectorySpecifiedInJekyllFlavor() throws Exception {
         File index = new File("src/test/jekyll/index_without_quotes.html");
-        Template template = Template.parse(index, Flavor.JEKYLL);
+        Template template = TemplateFactory.newBuilder().flavor(Flavor.JEKYLL).parseFile(index);
         String result = template.render();
         assertTrue(result.contains("HEADER"));
     }
@@ -68,7 +69,7 @@ public class IncludeTest {
     @Test
     public void renderTestWithIncludeDirectorySpecifiedInLiquidFlavor() throws Exception {
         File index = new File("src/test/jekyll/index_with_quotes.html");
-        Template template = Template.parse(index, Flavor.LIQUID);
+        Template template = TemplateFactory.newBuilder().flavor(Flavor.LIQUID).parseFile(index);
         String result = template.render();
         assertTrue(result.contains("HEADER"));
     }
@@ -79,8 +80,7 @@ public class IncludeTest {
 
         String source = "{% assign variable = 'header.html' %}{% include {{variable}} %}";
 
-        ParseSettings settings = new ParseSettings.Builder().withFlavor(Flavor.JEKYLL).build();
-        String rendered = Template.parse(source, settings).render();
+        String rendered = TemplateFactory.newBuilder().flavor(Flavor.JEKYLL).parse(source).render();
 
         assertTrue(rendered.contains("HEADER"));
     }
@@ -91,8 +91,7 @@ public class IncludeTest {
 
         String source = "{% assign variable = 'header.html' %}{% include {{variable}} %}";
 
-        ParseSettings settings = new ParseSettings.Builder().withFlavor(Flavor.LIQUID).build();
-        Template.parse(source, settings).render();
+        TemplateFactory.newBuilder().flavor(Flavor.LIQUID).parse(source).render();
     }
 
     // https://github.com/bkiers/Liqp/issues/75
@@ -101,6 +100,6 @@ public class IncludeTest {
 
         String source = "{% assign variable = 'header.html' %}{% include {{variable}} %}";
 
-        Template.parse(source).render();
+        TemplateFactory.newBuilder().flavor(Flavor.LIQUID).parse(source).render();
     }
 }

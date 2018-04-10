@@ -1,15 +1,18 @@
 package liqp.parser.v4;
 
-import liquid.parser.v4.LiquidLexer;
-import org.antlr.v4.runtime.*;
-import org.junit.Test;
-
-import java.util.List;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+
+import java.util.List;
+import liquid.parser.v4.LiquidLexer;
+import org.antlr.v4.runtime.BaseErrorListener;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.Token;
+import org.junit.Test;
 
 public class LiquidLexerTest {
 
@@ -68,7 +71,7 @@ public class LiquidLexerTest {
     }
 
     // mode IN_TAG;
-    // 
+    //
     //   OutStart2 : '{{' -> pushMode(IN_TAG);
     @Test
     public void testOutStart2() {
@@ -472,7 +475,7 @@ public class LiquidLexerTest {
     }
 
     // mode IN_RAW;
-    // 
+    //
     //   RawEnd : '{%' WhitespaceChar* 'endraw' -> popMode;
     @Test
     public void testRawEnd() {

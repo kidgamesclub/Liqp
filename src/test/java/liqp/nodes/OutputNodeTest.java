@@ -1,11 +1,12 @@
 package liqp.nodes;
 
-import liqp.Template;
-import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import liqp.Template;
+import liqp.TemplateFactory;
+import org.antlr.runtime.RecognitionException;
+import org.junit.Test;
 
 public class OutputNodeTest {
 
@@ -19,7 +20,7 @@ public class OutputNodeTest {
 
         for (String[] test : tests) {
 
-            Template template = Template.parse(test[0]);
+            Template template = TemplateFactory.newBuilder().parse(test[0]);
             String rendered = String.valueOf(template.render("{\"X\" : \"mu\"}"));
 
             assertThat(rendered, is(test[1]));
@@ -66,7 +67,7 @@ public class OutputNodeTest {
             String test = "{{" + keyword + "}}";
             String expected = keyword + "_" + Integer.toString(keyword.length());
             String json = "{\"" + keyword + "\" : \"" + expected + "\" }";
-            Template template = Template.parse(test);
+            Template template = TemplateFactory.newBuilder().parse(test);
             String rendered = template.render(json);
 
             assertThat(rendered, is(expected));
@@ -88,7 +89,7 @@ public class OutputNodeTest {
             String test = "{{" + keyword[0] + "}}";
             String expected = keyword[1];
             String json = "{\"" + keyword[0] + "\" : \"bad\" }";
-            Template template = Template.parse(test);
+            Template template = TemplateFactory.newBuilder().parse(test);
             String rendered = template.render(json);
 
             assertThat(rendered, is(expected));

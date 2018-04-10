@@ -1,12 +1,13 @@
 package liqp.filters;
 
-import java.util.HashMap;
-import liqp.Template;
-import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import java.util.HashMap;
+import liqp.Template;
+import liqp.TemplateFactory;
+import org.antlr.runtime.RecognitionException;
+import org.junit.Test;
 
 public class MapTest {
 
@@ -29,7 +30,7 @@ public class MapTest {
 
         for (String[] test : tests) {
 
-            Template template = Template.parse(test[0]);
+            Template template = TemplateFactory.newBuilder().parse(test[0]);
             String rendered = String.valueOf(template.render(json));
 
             assertThat(rendered, is(test[1]));
@@ -64,6 +65,6 @@ public class MapTest {
 
         final String json = "{\"ary\":[{\"foo\":{\"bar\":\"a\"}}, {\"foo\":{\"bar\":\"b\"}}, {\"foo\":{\"bar\":\"c\"}}]}";
 
-        assertThat(Template.parse("{{ ary | map:'foo' | map:'bar' }}").render(json), is("abc"));
+        assertThat(TemplateFactory.newBuilder().parse("{{ ary | map:'foo' | map:'bar' }}").render(json), is("abc"));
     }
 }

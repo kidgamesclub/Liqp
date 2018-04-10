@@ -1,11 +1,12 @@
 package liqp.filters;
 
-import liqp.Template;
-import org.antlr.runtime.RecognitionException;
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import liqp.Template;
+import liqp.TemplateFactory;
+import org.antlr.runtime.RecognitionException;
+import org.junit.Test;
 
 public class Remove_FirstTest {
 
@@ -21,7 +22,7 @@ public class Remove_FirstTest {
 
         for (String[] test : tests) {
 
-            Template template = Template.parse(test[0]);
+            Template template = TemplateFactory.newBuilder().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -30,7 +31,7 @@ public class Remove_FirstTest {
 
     @Test(expected = RuntimeException.class)
     public void applyTestInvalidPattern() throws RecognitionException {
-        Template.parse("{{ 'ababab' | remove_first:nil }}").render();
+        TemplateFactory.newBuilder().parse("{{ 'ababab' | remove_first:nil }}").render();
     }
 
     /*
@@ -46,6 +47,6 @@ public class Remove_FirstTest {
         Filter filter = Filter.getFilter("remove_first");
 
         assertThat(filter.apply("a a a a", "a "), is((Object)"a a a"));
-        assertThat(Template.parse("{{ 'a a a a' | remove_first: 'a ' }}").render(), is((Object)"a a a"));
+        assertThat(TemplateFactory.newBuilder().parse("{{ 'a a a a' | remove_first: 'a ' }}").render(), is((Object)"a a a"));
     }
 }

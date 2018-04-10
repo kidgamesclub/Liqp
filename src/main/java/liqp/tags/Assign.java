@@ -1,8 +1,8 @@
 package liqp.tags;
 
-import liqp.TemplateContext;
 import liqp.nodes.FilterNode;
 import liqp.nodes.LNode;
+import liqp.nodes.RenderContext;
 
 class Assign extends Tag {
 
@@ -10,7 +10,7 @@ class Assign extends Tag {
      * Assigns some value to a variable
      */
     @Override
-    public Object render(TemplateContext context, LNode... nodes) {
+    public Object render(RenderContext context, LNode... nodes) {
 
         String id = String.valueOf(nodes[0].render(context));
         LNode expression = nodes[1];
@@ -22,7 +22,7 @@ class Assign extends Tag {
         }
 
         // Assign causes variable to be saved "globally"
-        context.put(id, value, true);
+        context.setRoot(id, value);
 
         return "";
     }
