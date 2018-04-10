@@ -50,3 +50,4 @@ tasks.withType(AntlrTask::class.java) {
   outputDirectory = file("build/generated-src/antlr/main/liquid/parser/v4")
 }
 
+tasks["compileKotlin"].dependsOn("generateGrammarSource")
