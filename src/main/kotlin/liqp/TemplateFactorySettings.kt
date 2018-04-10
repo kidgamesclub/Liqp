@@ -12,6 +12,7 @@ data class TemplateFactorySettings(var flavor: Flavor = Flavor.LIQUID,
                                    var isStripSpacesAroundTags: Boolean = false,
                                    var isStripSingleLine: Boolean = false,
                                    var maxTemplateSize: Long? = null,
+                                   var isKeepParseTree: Boolean = false,
                                    var tags: Tags = Tags.getDefaultTags(),
                                    var filters: Filters = Filters.getDefaultFilters(),
                                    var cacheSettings: CacheSetup? = null) {
