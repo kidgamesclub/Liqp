@@ -19,6 +19,7 @@ class ProtectionSettingsTest {
           executor = Executors.newSingleThreadExecutor()
         })
         .isNotError()
+        .contains("234")
   }
 
   @Test
@@ -38,6 +39,7 @@ class ProtectionSettingsTest {
         .parse("{% for i in (1..100) %}{{ i }}{% endfor %}")
 
     template.assertRenderResult { maxIterations = 1000 }
+        .contains("234")
         .isNotError()
   }
 
