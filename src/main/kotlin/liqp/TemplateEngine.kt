@@ -87,8 +87,12 @@ data class TemplateEngine(val accessors: PropertyAccessors = PropertyAccessors.n
   }
 
   @JvmOverloads
-  fun execute(template: Template, inputData: Any?): Any? {
+  fun execute(template: Template, inputData: Any? = null): Any? {
     return executeTemplate(template, createRenderContext(inputData))
+  }
+
+  fun executeWithContext(template: Template, context: RenderContext): Any? {
+    return executeTemplate(template, context)
   }
 
   fun render(template: Template, context: RenderContext): String {
