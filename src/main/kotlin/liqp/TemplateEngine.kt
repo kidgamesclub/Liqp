@@ -2,6 +2,7 @@ package liqp
 
 import liqp.lookup.PropertyAccessors
 import liqp.nodes.RenderContext
+import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
 
@@ -44,13 +45,13 @@ data class TemplateEngine(val accessors: PropertyAccessors = PropertyAccessors.n
   }
 
   private val executeTemplate: executeTemplate = when (executor) {
-    null -> { template, context -> template.rootNode.render(context) }
-    else -> { template, context ->
-      val future = executor.submit({
-        template.rootNode.render(context)
+    null -> inthread@{ template, context -> return@inthread template.rootNode.render(context) }
+    else -> executor@{ template, context ->
+      val future = executor.submit(Callable<Any?> task@{
+        return@task template.rootNode.render(context)
       })
 
-      future.get(this.maxRenderTime, TimeUnit.MILLISECONDS)
+      return@executor future.get(this.maxRenderTime, TimeUnit.MILLISECONDS)
     }
   }
 
