@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument.DefaultArgu
 
 plugins {
   id("org.gradle.kotlin.kotlin-dsl").version("0.16.0")
-  id("io.mverse.project").version("0.5.16")
+  id("io.mverse.project").version("0.5.22")
   id("antlr")
 }
 
@@ -23,10 +23,12 @@ mverse {
     compile("jackson-annotations")
     compile("jackson-databind")
     compile("jackson-core")
-    compile("findbugs")
     compile("kotlin-stdlib")
+    compileOnly("lombok")
   }
   coverageRequirement = 0.60
+
+
 }
 
 
@@ -41,8 +43,14 @@ java.sourceSets["main"].withConvention(KotlinSourceSet::class) {
 
 dependencies {
   compile("org.antlr:antlr4-runtime:4.7.1")
-  compile("org.jsoup:jsoup:1.11.2")
+  compileOnly("org.jsoup:jsoup:1.11.2") {
+    isTransitive = false
+  }
+  compileOnly("com.google.code.findbugs:findbugs:3.0.1") {
+    isTransitive = false
+  }
   antlr("org.antlr:antlr4:4.7.1")
+  fatJar("org.antlr:antlr4-runtime:4.7.1")
 }
 
 tasks.withType(AntlrTask::class.java) {
