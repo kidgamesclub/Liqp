@@ -88,11 +88,11 @@ data class TemplateFactory(val flavor: Flavor = Flavor.LIQUID,
         cacheSettings = this.cacheSettings)
   }
 
-  private val cache: LoadingCache<String, Template> = (CacheBuilder.newBuilder() as CacheBuilder<String, Template>)
+  private val cache: LoadingCache<String?, Template> = CacheBuilder.newBuilder()
       .withSettings(cacheSettings)
-      .build(CacheLoader.from({ template ->
-        internalCreateTemplate(template!!)
-      }))
+      .build(CacheLoader.from {
+        template:String?-> internalCreateTemplate(template!!)
+      })
 
   private fun internalCreateTemplate(template: String): Template {
     if (maxTemplateSize != null && template.length.toLong() > maxTemplateSize) {
