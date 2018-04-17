@@ -1,3 +1,4 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import io.mverse.gradle.sourceSets
 import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
 import org.gradle.api.internal.HasConvention
@@ -14,43 +15,70 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument.DefaultArgu
 plugins {
   id("org.gradle.kotlin.kotlin-dsl").version("0.16.0")
   id("io.mverse.project").version("0.5.22")
+  id("com.github.johnrengelman.shadow").version("2.0.3")
   id("antlr")
 }
 
 mverse {
   groupId = "club.kidgames"
   modules {
-    compile("jackson-annotations")
     compile("jackson-databind")
     compile("jackson-core")
     compile("kotlin-stdlib")
     compileOnly("lombok")
+    compile("guava")
+
   }
   coverageRequirement = 0.60
-
-
+  java.sourceSets["main"].withConvention(KotlinSourceSet::class) {
+    kotlin.srcDir(file("build/classes/generated-src/antlr/main"))
+  }
+  dependencies.commonsLang3 = false
+  dependencies.guava = false
+  dependencies.groovy = false
 }
-
 
 findbugs {
   this.isIgnoreFailures = true
   effort = "min"
 }
 
-java.sourceSets["main"].withConvention(KotlinSourceSet::class) {
-  kotlin.srcDir(file("build/classes/generated-src/antlr/main"))
-}
-
 dependencies {
-  compile("org.antlr:antlr4-runtime:4.7.1")
   compileOnly("org.jsoup:jsoup:1.11.2") {
     isTransitive = false
   }
+
   compileOnly("com.google.code.findbugs:findbugs:3.0.1") {
     isTransitive = false
   }
+
   antlr("org.antlr:antlr4:4.7.1")
   fatJar("org.antlr:antlr4-runtime:4.7.1")
+}
+
+configurations.compile.extendsFrom(configurations.fatJar)
+
+
+//
+// Configure shadow
+//
+val shadowJar: ShadowJar by tasks
+shadowJar.apply {
+  configurations = listOf(project.configurations.fatJar)
+  dependencies {
+    include(dependency(":kotlin-stdlib"))
+    include(dependency(":kotlin-stdlib-jdk8"))
+    include(dependency(":jackson-core"))
+    include(dependency(":jackson-databind"))
+    include(dependency(":guava"))
+  }
+}
+
+//
+// Configure antlr
+//
+java.sourceSets["main"].withConvention(KotlinSourceSet::class) {
+  kotlin.srcDir(file("build/classes/generated-src/antlr/main"))
 }
 
 tasks.withType(AntlrTask::class.java) {
@@ -59,3 +87,4 @@ tasks.withType(AntlrTask::class.java) {
 }
 
 tasks["compileKotlin"].dependsOn("generateGrammarSource")
+

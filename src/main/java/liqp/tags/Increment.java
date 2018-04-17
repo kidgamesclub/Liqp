@@ -2,7 +2,6 @@ package liqp.tags;
 
 import liqp.nodes.LNode;
 import liqp.nodes.RenderContext;
-import org.apache.commons.lang.BooleanUtils;
 
 /*
     increment
@@ -56,7 +55,7 @@ public class Increment extends Tag {
     }
 
     final Boolean varExists = context.get(variableExistsFlag);
-    if (!BooleanUtils.isTrue(varExists)) {
+    if (varExists == null || varExists == false) {
       // Set the 'variable' to the next value, only if it was flagged as not being defined in the outer scope
       //todo:Ericm This seems really odd - a weird side effect
       context.set(variable, nextValue);

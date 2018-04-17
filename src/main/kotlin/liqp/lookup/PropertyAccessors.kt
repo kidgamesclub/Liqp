@@ -1,7 +1,6 @@
 package liqp.lookup
 
 import liqp.exceptions.VariableNotExistException
-import org.apache.commons.lang3.StringUtils
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
@@ -90,10 +89,11 @@ private constructor(
 
     @JvmStatic
     fun <T> findGetter(type: Class<T>, name: String): PropertyAccessor? {
+
       return type.declaredMethods
           .filter {
-            (it.name == "get${StringUtils.capitalize(name)}"
-                || it.name == "is${StringUtils.capitalize(name)}")
+            (it.name == "get${name.capitalize()}"
+                || it.name == "is${name.capitalize()}")
                 && it.returnType != Unit::class
                 && it.returnType != Void::class
                 && Modifier.isPublic(it.modifiers)
