@@ -23,10 +23,14 @@ mverse {
   groupId = "club.kidgames"
   isDefaultDependencies = false
   dependencies {
+    testCompile(junit())
+    testCompile(junitParams())
+    testCompile(assertj())
+
+    compileOnly(lombok())
     fatJar("jackson-databind")
     fatJar("jackson-core")
     fatJar("kotlin-stdlib")
-    compileOnly(lombok())
     fatJar(guava())
     fatJar(streamEx())
   }
@@ -45,6 +49,8 @@ dependencies {
   compileOnly("org.jsoup:jsoup:1.11.2") {
     isTransitive = false
   }
+
+  testRuntime("org.jsoup:jsoup:1.11.2") 
 
   compileOnly("com.google.code.findbugs:findbugs:3.0.1") {
     isTransitive = false
