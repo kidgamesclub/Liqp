@@ -14,28 +14,26 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument.DefaultArgu
 
 plugins {
   id("org.gradle.kotlin.kotlin-dsl").version("0.16.0")
-  id("io.mverse.project").version("0.5.22")
+  id("io.mverse.project").version("0.5.23")
   id("com.github.johnrengelman.shadow").version("2.0.3")
   id("antlr")
 }
 
 mverse {
   groupId = "club.kidgames"
-  modules {
-    compile("jackson-databind")
-    compile("jackson-core")
-    compile("kotlin-stdlib")
-    compileOnly("lombok")
-    compile("guava")
-
+  isDefaultDependencies = false
+  dependencies {
+    fatJar("jackson-databind")
+    fatJar("jackson-core")
+    fatJar("kotlin-stdlib")
+    compileOnly(lombok())
+    fatJar(guava())
+    fatJar(streamEx())
   }
   coverageRequirement = 0.60
   java.sourceSets["main"].withConvention(KotlinSourceSet::class) {
     kotlin.srcDir(file("build/classes/generated-src/antlr/main"))
   }
-  dependencies.commonsLang3 = false
-  dependencies.guava = false
-  dependencies.groovy = false
 }
 
 findbugs {
@@ -64,6 +62,7 @@ configurations.compile.extendsFrom(configurations.fatJar)
 //
 val shadowJar: ShadowJar by tasks
 shadowJar.apply {
+  classifier = null
   configurations = listOf(project.configurations.fatJar)
   dependencies {
     include(dependency(":kotlin-stdlib"))
@@ -73,6 +72,8 @@ shadowJar.apply {
     include(dependency(":guava"))
   }
 }
+
+tasks["assemble"].dependsOn(shadowJar)
 
 //
 // Configure antlr
