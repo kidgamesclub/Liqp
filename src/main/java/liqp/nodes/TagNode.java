@@ -1,7 +1,7 @@
 package liqp.nodes;
 
-import liqp.tags.InitializingTag;
 import java.util.List;
+import liqp.tags.CustomTag;
 import liqp.tags.Tag;
 import lombok.Getter;
 

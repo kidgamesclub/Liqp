@@ -536,7 +536,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       allNodes.add(visit(filterContext));
     }
 
-    return new TagNode(tags.get("assign"), allNodes);
+    return new TagNode(tags.getTag("assign"), allNodes);
   }
 
   // expr

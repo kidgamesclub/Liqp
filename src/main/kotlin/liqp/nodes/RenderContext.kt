@@ -16,7 +16,6 @@ import liqp.tags.Tag
 import java.util.*
 
 val FORLOOP = "forloop"
-val stack = "stack"
 
 class RenderContext(input: Any?,
                     val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
