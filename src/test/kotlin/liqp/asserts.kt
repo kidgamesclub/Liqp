@@ -45,7 +45,7 @@ typealias FactoryConfigurer = TemplateFactorySettings.() -> TemplateFactorySetti
 typealias EngineConfigurer = RenderSettings.() -> RenderSettings
 typealias CreateTestTemplate = TemplateFactory.() -> Template
 
-fun Template.assertRenderResult(data: Any? = null, renderer: RenderSettings.()->Unit = {}): TemplateRenderAssert {
+fun Template.rendering(data: Any? = null, renderer: RenderSettings.()->Unit = {}): TemplateRenderAssert {
   return renderAssert(this, TemplateEngine.newInstance(renderer), data)
 }
 

@@ -21,7 +21,7 @@ class TemplateRenderAssert(val template: Template? = null, val renderResult: Any
     return this
   }
 
-  fun isRenderError(type: Class<out Throwable> = Throwable::class.java): TemplateRenderAssert {
+  fun hasRenderError(type: Class<out Throwable> = Throwable::class.java): TemplateRenderAssert {
     if (template == null && error != null) {
       fail("There was a failure, but it happened during parsing $error")
     }

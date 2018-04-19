@@ -3,10 +3,13 @@ package liqp.lookup
 import liqp.lookup.PropertyAccessors.Companion.propertyAccessor
 
 /**
- * Represents
+ * Locates a {@link PropertyAccessor} given a model instance and a property name.  For nested
+ * properties, this method would be called for each nested property that was accessed.
+ *
+ * The {@link PropertyAccessor}
  */
 interface AccessorResolutionStrategy {
-  fun getAccessor(instance: Any, lookup: String): PropertyAccessor?
+  fun getAccessor(model: Any, property: String): PropertyAccessor?
 }
 
 private const val SIZE = "size"
@@ -17,10 +20,10 @@ private const val LAST = "last"
  * Handles the synthetic "size" property
  */
 class StringSizeAccessor : AccessorResolutionStrategy {
-  override fun getAccessor(instance: Any, lookup: String): PropertyAccessor? {
-    return when (lookup) {
+  override fun getAccessor(model: Any, property: String): PropertyAccessor? {
+    return when (property) {
       SIZE -> {
-        when (instance) {
+        when (model) {
           is Collection<*> -> propertyAccessor { i: Collection<Any> -> i.size }
           is Map<*, *> -> propertyAccessor { i: Map<*, *> -> i[SIZE] ?: i.size }
           is Array<*> -> propertyAccessor { i: Array<*> -> i.size }
@@ -35,13 +38,13 @@ class StringSizeAccessor : AccessorResolutionStrategy {
 
 class FirstElementAccessor : AccessorResolutionStrategy {
 
-  override fun getAccessor(instance: Any, lookup: String): PropertyAccessor? {
+  override fun getAccessor(model: Any, property: String): PropertyAccessor? {
 
-    if (lookup != FIRST) {
+    if (property != FIRST) {
       return null
     }
 
-    return when (instance) {
+    return when (model) {
       is Collection<*> -> propertyAccessor { i: Collection<Any> -> i.firstOrNull() }
       is Array<*> -> propertyAccessor { i: Array<*> -> i.firstOrNull() }
       else -> null
@@ -50,13 +53,13 @@ class FirstElementAccessor : AccessorResolutionStrategy {
 }
 
 class LastElementAccessor : AccessorResolutionStrategy {
-  override fun getAccessor(instance: Any, lookup: String): PropertyAccessor? {
+  override fun getAccessor(model: Any, property: String): PropertyAccessor? {
 
-    if (lookup != LAST) {
+    if (property != LAST) {
       return null
     }
 
-    return when (instance) {
+    return when (model) {
       is Collection<*> -> propertyAccessor { i: Collection<Any> -> i.lastOrNull() }
       is Array<*> -> propertyAccessor { i: Array<*> -> i.lastOrNull() }
       else -> null

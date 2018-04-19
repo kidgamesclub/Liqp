@@ -12,7 +12,7 @@ class ProtectionSettingsTest {
     val template = TemplateFactory()
         .parse("{% for i in (1..100) %}{{ i }}{% endfor %}")
 
-    template.assertRenderResult(
+    template.rendering(
         data = "{\"abc\": \"abcdefghijklmnopqrstuvwxyz\"}",
         renderer = {
           maxRenderTimeMillis = 1000
@@ -26,11 +26,11 @@ class ProtectionSettingsTest {
   fun testExceedMaxRenderTimeMillis() {
     val template = TemplateFactory.newInstance()
         .parse("{% for i in (1..10000) %}{{ i }}{% endfor %}")
-        .assertRenderResult {
+        .rendering {
           maxRenderTimeMillis = 1
           executor = Executors.newSingleThreadExecutor()
         }
-        .isRenderError(TimeoutException::class.java)
+        .hasRenderError(TimeoutException::class.java)
   }
 
   @Test
@@ -38,7 +38,7 @@ class ProtectionSettingsTest {
     val template = TemplateFactory.newBuilder()
         .parse("{% for i in (1..100) %}{{ i }}{% endfor %}")
 
-    template.assertRenderResult { maxIterations = 1000 }
+    template.rendering { maxIterations = 1000 }
         .contains("234")
         .isNotError()
   }
@@ -47,10 +47,10 @@ class ProtectionSettingsTest {
   fun testExceedMaxIterationsRange() {
     TemplateFactory.newInstance()
         .parse("{% for i in (1..100) %}{{ i }}{% endfor %}")
-        .assertRenderResult{
+        .rendering{
           maxIterations = 10
         }
-        .isRenderError(ExceededMaxIterationsException::class.java)
+        .hasRenderError(ExceededMaxIterationsException::class.java)
   }
 
   @Test
@@ -71,7 +71,7 @@ class ProtectionSettingsTest {
         templateString = "{% for i in array %}{{ i }}{% endfor %}",
         data = "{\"array\": [1, 2, 3, 4, 5, 6, 7, 8, 9]}",
         renderer = { maxIterations(5) })
-        .isRenderError(ExceededMaxIterationsException::class.java)
+        .hasRenderError(ExceededMaxIterationsException::class.java)
   }
 
   @Test
@@ -81,7 +81,7 @@ class ProtectionSettingsTest {
         templateString = "{% for a in array %}{% for i in a %}{{ i }}{% endfor %}{% endfor %}",
         data = "{\"array\": [[1,2,3,4,5], [11,12,13,14,15], [21,22,23,24,25]]}",
         renderer = { maxIterations(10) })
-        .isRenderError(RuntimeException::class.java)
+        .hasRenderError(RuntimeException::class.java)
   }
 
   @Test
@@ -99,7 +99,7 @@ class ProtectionSettingsTest {
     assertStringTemplate(
         templateString = "{% tablerow n in collections.frontpage cols:3%} {{n}} {% endtablerow %}",
         data = "{ \"collections\" : { \"frontpage\" : [1,2,3,4,5,6] } }", renderer = { maxIterations(5) })
-        .isRenderError(RuntimeException::class.java)
+        .hasRenderError(RuntimeException::class.java)
   }
 
   @Test
@@ -122,7 +122,7 @@ class ProtectionSettingsTest {
   fun testWithinMaxSizeRenderedString() {
     TemplateFactory.newBuilder()
         .parse("{% for i in (1..100) %}{{ abc }}{% endfor %}")
-        .assertRenderResult(
+        .rendering(
             data = "{\"abc\": \"abcdefghijklmnopqrstuvwxyz\"}",
             renderer = { maxSizeRenderedString(2700) })
         .isNotError()
@@ -133,11 +133,11 @@ class ProtectionSettingsTest {
     TemplateFactory.newBuilder()
 
         .parse("{% for i in (1..1000) %}{{ abc }}{% endfor %}")
-        .assertRenderResult(
+        .rendering(
             data = "{\"abc\": \"abcdefghijklmnopqrstuvwxyz\"}",
             renderer = {
               maxSizeRenderedString(2500)
             })
-        .isRenderError()
+        .hasRenderError()
   }
 }
