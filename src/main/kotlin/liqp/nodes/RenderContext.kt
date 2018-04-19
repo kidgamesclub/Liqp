@@ -12,9 +12,11 @@ import liqp.lookup.PropertyAccessors
 import liqp.lookup.PropertyContainer
 import liqp.lookup.propertyContainer
 import liqp.parseJSON
+import liqp.tags.Tag
 import java.util.*
 
 val FORLOOP = "forloop"
+val stack = "stack"
 
 class RenderContext(input: Any?,
                     val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
@@ -33,6 +35,27 @@ class RenderContext(input: Any?,
       is Pair<*, *> -> propertyContainer(input.first, input.second)
       else -> accessors.propertyContainer(isStrictVariables, input)
     }
+  }
+
+  fun <I> getTagStack(tag: Tag):Deque<I> {
+    val varName = "stack:${tag.name}"
+    val stack = rootFrame.get(varName) as Deque<I>?
+    return when {
+      stack != null -> stack
+      else-> {
+        val stack = ArrayDeque<I>()
+        rootFrame.set(varName, stack)
+        stack
+      }
+    }
+  }
+
+  fun <I> pushTagStack(tag: Tag, i:I):Deque<I> {
+    return getTagStack<I>(tag).also { it.addLast(i) }
+  }
+
+  fun <I> popTagStack(tag: Tag):Deque<I> {
+    return getTagStack<I>(tag).also { it.removeLast() }
   }
 
   private val stack: Deque<RenderFrame> by lazy {
@@ -59,7 +82,7 @@ class RenderContext(input: Any?,
       throw ExceededMaxIterationsException(maxIterations)
     }
 
-    loopState?.increment()
+    loopState.increment()
   }
 
   fun addFrame(): RenderFrame {
@@ -149,6 +172,11 @@ class RenderContext(input: Any?,
     }
     frame.set(varName, value)
   }
+
+  val rootFrame: RenderFrame
+    get() {
+      return stack.last()
+    }
 
   fun hasVar(name: String): Boolean {
     return current.hasVar(name) || current.hasScopedVar(name)

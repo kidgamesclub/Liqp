@@ -3,7 +3,7 @@ package liqp.tags;
 import liqp.nodes.LNode;
 import liqp.nodes.RenderContext;
 
-class If extends Tag {
+public class If extends Tag {
 
     /*
      * Standard if/else block

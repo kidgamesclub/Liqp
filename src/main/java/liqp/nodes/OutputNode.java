@@ -2,7 +2,9 @@ package liqp.nodes;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 
+@Getter
 public class OutputNode implements LNode {
 
     private LNode expression;

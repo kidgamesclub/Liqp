@@ -3,7 +3,7 @@ package liqp.tags;
 import liqp.nodes.LNode;
 import liqp.nodes.RenderContext;
 
-class Capture extends Tag {
+public class Capture extends Tag {
 
     /*
      * Block tag that captures text into a variable

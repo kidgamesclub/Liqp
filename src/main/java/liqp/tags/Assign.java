@@ -4,7 +4,7 @@ import liqp.nodes.FilterNode;
 import liqp.nodes.LNode;
 import liqp.nodes.RenderContext;
 
-class Assign extends Tag {
+public class Assign extends Tag {
 
     /*
      * Assigns some value to a variable

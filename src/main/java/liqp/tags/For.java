@@ -9,7 +9,7 @@ import liqp.nodes.BlockNode;
 import liqp.nodes.LNode;
 import liqp.nodes.RenderContext;
 
-class For extends Tag {
+public class For extends Tag {
 
     private static final String OFFSET = "offset";
     private static final String LIMIT = "limit";

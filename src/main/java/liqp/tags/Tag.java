@@ -8,8 +8,6 @@ import liqp.nodes.RenderContext;
  * Tags are used for the logic in a template.
  */
 public abstract class Tag extends LValue {
-
-
     /**
      * The name of this tag.
      */
@@ -47,4 +45,6 @@ public abstract class Tag extends LValue {
      * @return an Object denoting the rendered AST.
      */
     public abstract Object render(RenderContext context, LNode... nodes);
+
+
 }

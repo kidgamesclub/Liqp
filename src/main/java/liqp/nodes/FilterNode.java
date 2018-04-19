@@ -3,8 +3,10 @@ package liqp.nodes;
 import java.util.ArrayList;
 import java.util.List;
 import liqp.filters.Filter;
+import lombok.Getter;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+@Getter
 public class FilterNode implements LNode {
 
     private final int line;

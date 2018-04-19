@@ -5,7 +5,7 @@ import java.util.Map;
 import liqp.nodes.LNode;
 import liqp.nodes.RenderContext;
 
-class Tablerow extends Tag {
+public class Tablerow extends Tag {
 
   private static final String COLS = "cols";
   private static final String LIMIT = "limit";

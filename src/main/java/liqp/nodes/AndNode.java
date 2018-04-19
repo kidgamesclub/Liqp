@@ -1,7 +1,9 @@
 package liqp.nodes;
 
 import liqp.LValue;
+import lombok.Getter;
 
+@Getter
 public class AndNode extends LValue implements LNode {
 
     private LNode lhs;
