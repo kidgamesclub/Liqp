@@ -19,4 +19,9 @@ public class AtomNode implements LNode {
 
         return value;
     }
+
+    @SuppressWarnings("checked")
+    public <X> X get() {
+      return (X) value;
+    }
 }

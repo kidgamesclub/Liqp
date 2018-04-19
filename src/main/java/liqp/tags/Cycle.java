@@ -5,7 +5,7 @@ import java.util.List;
 import liqp.nodes.LNode;
 import liqp.nodes.RenderContext;
 
-class Cycle extends Tag {
+public class Cycle extends Tag {
 
     private static final String PREPEND = "\"'";
 

@@ -1,7 +1,10 @@
 package liqp.nodes;
 
+import liqp.tags.InitializingTag;
 import liqp.tags.Tag;
+import lombok.Getter;
 
+@Getter
 public class TagNode implements LNode {
 
     private Tag tag;
@@ -20,10 +23,16 @@ public class TagNode implements LNode {
         }
         this.tag = tag;
         this.tokens = tokens;
+
+        if (tag instanceof InitializingTag) {
+          ((InitializingTag)tag).init(tokens);
+        }
     }
 
     @Override
     public Object render(RenderContext context) {
         return tag.render(context, tokens);
     }
+
+
 }

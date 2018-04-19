@@ -2,7 +2,9 @@ package liqp.nodes;
 
 import java.util.Arrays;
 import liqp.LValue;
+import lombok.Getter;
 
+@Getter
 public class ContainsNode extends LValue implements LNode {
 
     private LNode lhs;

@@ -3,7 +3,7 @@ package liqp.tags;
 import liqp.nodes.LNode;
 import liqp.nodes.RenderContext;
 
-class Unless extends Tag {
+public class Unless extends Tag {
 
     /*
      * Mirror of if statement

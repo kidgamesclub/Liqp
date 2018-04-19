@@ -5,7 +5,9 @@ import static liqp.LValue.CONTINUE;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 
+@Getter
 public class BlockNode implements LNode {
 
     private List<LNode> children;

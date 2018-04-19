@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import liqp.exceptions.VariableNotExistException;
 import liqp.lookup.Indexable;
+import lombok.Getter;
 
+@Getter
 public class LookupNode implements LNode {
 
   private final String id;

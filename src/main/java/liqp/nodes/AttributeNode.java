@@ -1,5 +1,8 @@
 package liqp.nodes;
 
+import lombok.Getter;
+
+@Getter
 public class AttributeNode implements LNode {
 
     private LNode key;

@@ -3,7 +3,7 @@ package liqp.tags;
 import liqp.nodes.LNode;
 import liqp.nodes.RenderContext;
 
-class Comment extends Tag {
+public class Comment extends Tag {
 
     /*
      * Block tag, comments out the text in the block

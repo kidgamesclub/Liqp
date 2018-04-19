@@ -3,7 +3,7 @@ package liqp.tags;
 import liqp.nodes.LNode;
 import liqp.nodes.RenderContext;
 
-class Raw extends Tag {
+public class Raw extends Tag {
 
     /*
      * temporarily disable tag processing to avoid syntax conflicts.

@@ -2,7 +2,9 @@ package liqp.nodes;
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 
+@Getter
 public class KeyValueNode implements LNode {
 
     public final String key;
