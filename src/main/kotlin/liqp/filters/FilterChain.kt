@@ -71,4 +71,11 @@ class FilterChain(private val context: RenderContext,
   override fun unflag(key: String) {
     data.remove(key)
   }
+
+  override fun withFlag(key:String, block:()->Unit) {
+    if (isFlagged(key)) {
+      block()
+      unflag(key)
+    }
+  }
 }

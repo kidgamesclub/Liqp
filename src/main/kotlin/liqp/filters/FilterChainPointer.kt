@@ -37,5 +37,7 @@ interface FilterChainPointer {
    * Sets a flag to false (same as removing it)
    */
   fun unflag(key: String)
+
+  fun withFlag(key: String, block: () -> Unit)
 }
 
