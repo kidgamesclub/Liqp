@@ -13,6 +13,7 @@ class FilterChain(private val context: RenderContext,
                   private val filters: List<FilterWithParams>,
                   private val filterAction: (AtomicReference<Any?>) -> Any?): FilterChainPointer {
 
+  private val data = mutableMapOf<String, Any?>()
   private val pointer: Iterator<FilterWithParams> = filters.reversed().iterator()
   private val result: AtomicReference<Any?> = AtomicReference()
 
@@ -44,5 +45,26 @@ class FilterChain(private val context: RenderContext,
       }
     }
     return result.get()
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  operator fun <I> get(key: String):I? {
+    return data[key] as I
+  }
+
+  operator fun set(key: String, value:Any?) {
+    data[key] = value
+  }
+
+  fun isFlagged(key:String):Boolean {
+    return data.containsKey(key)
+  }
+
+  fun flag(key:String) {
+    data[key] = true
+  }
+
+  fun unflag(key:String) {
+    data.remove(key)
   }
 }
