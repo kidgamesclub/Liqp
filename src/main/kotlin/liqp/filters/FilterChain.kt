@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicReference
  */
 class FilterChain(private val context: RenderContext,
                   private val filters: List<FilterWithParams>,
-                  private val filterAction: (AtomicReference<Any?>) -> Any?): FilterChainPointer {
+                  private val filterAction: (AtomicReference<Any?>) -> Any?) : FilterChainPointer {
 
   private val data = mutableMapOf<String, Any?>()
   private val pointer: Iterator<FilterWithParams> = filters.reversed().iterator()
@@ -48,23 +48,24 @@ class FilterChain(private val context: RenderContext,
   }
 
   @Suppress("UNCHECKED_CAST")
-  operator fun <I> get(key: String):I? {
+  override
+  operator fun <I> get(key: String): I? {
     return data[key] as I
   }
 
-  operator fun set(key: String, value:Any?) {
+  override operator fun set(key: String, value: Any?) {
     data[key] = value
   }
 
-  fun isFlagged(key:String):Boolean {
+  override fun isFlagged(key: String): Boolean {
     return data.containsKey(key)
   }
 
-  fun flag(key:String) {
+  override fun flag(key: String) {
     data[key] = true
   }
 
-  fun unflag(key:String) {
+  override fun unflag(key: String) {
     data.remove(key)
   }
 }
