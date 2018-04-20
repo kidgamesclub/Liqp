@@ -77,7 +77,7 @@ public abstract class Filter extends LValue implements LFilter {
    *
    * @return the result of the filter.
    */
-  public Object apply(Object value, Object... params) {
+  protected Object apply(Object value, Object... params) {
 
     // Default "no-op" filter.
     return value;
@@ -92,7 +92,7 @@ public abstract class Filter extends LValue implements LFilter {
    *
    * @return the result of the filter.
    */
-  public Object apply(Object value, RenderContext context, Object... params) {
+  protected Object apply(Object value, RenderContext context, Object... params) {
     return apply(value, params);
   }
 
@@ -108,6 +108,12 @@ public abstract class Filter extends LValue implements LFilter {
       throw new RuntimeException("Liquid error: wrong number of arguments (given " +
             (params == null ? 1 : (params.length + 1)) + " for " + (expected + 1) + ")");
     }
+  }
+
+  @NotNull
+  @Override
+  public String getName() {
+    return name;
   }
 
   final void checkParams(Object[] params, int min, int max) {
@@ -126,22 +132,6 @@ public abstract class Filter extends LValue implements LFilter {
     final Object value = chain.continueChain();
     final Object filterResult = this.apply(value, context, params.resolve(context));
     result.set(filterResult);
-  }
-
-  @Override
-  public void doStartFilterChain(@NotNull FilterParams params,
-                                 @NotNull FilterChainPointer chain,
-                                 @NotNull RenderContext context,
-                                 @NotNull AtomicReference<Object> result) {
-    //SimpleFilter is a no-op
-  }
-
-  @Override
-  public void doEndFilterChain(@NotNull FilterParams params,
-                               @NotNull FilterChainPointer chain,
-                               @NotNull RenderContext context,
-                               @NotNull AtomicReference<Object> result) {
-    //SimpleFilter is a no-op
   }
 
   /**

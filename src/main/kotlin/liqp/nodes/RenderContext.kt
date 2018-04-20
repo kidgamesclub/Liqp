@@ -17,6 +17,7 @@ import java.util.*
 
 val FORLOOP = "forloop"
 
+@Suppress("UNCHECKED_CAST")
 class RenderContext(input: Any?,
                     val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
                     val maxIterations: Int = Integer.MAX_VALUE,
@@ -24,36 +25,32 @@ class RenderContext(input: Any?,
                     val engine: TemplateEngine,
                     val isStrictVariables: Boolean = false,
                     val maxStackSize: Int = 100,
-                    val maxSizeRenderedString:Int = Integer.MAX_VALUE): HasProperties {
+                    val maxSizeRenderedString: Int = Integer.MAX_VALUE) : HasProperties {
 
   val inputData: PropertyContainer by lazy {
     when (input) {
-      is String-> input.parseJSON()::get
-      is HasProperties -> (input as HasProperties)::getProperty
+      is String -> input.parseJSON()::get
+      is HasProperties -> {prop-> input.getProperty(prop)}
       is Map<*, *> -> (input as Map<String, Any>)::get
       is Pair<*, *> -> propertyContainer(input.first, input.second)
       else -> accessors.propertyContainer(isStrictVariables, input)
     }
   }
 
-  fun <I> getTagStack(tag: Tag):Deque<I> {
+  fun <I> getTagStack(tag: Tag): Deque<I> {
     val varName = "stack:${tag.name}"
     val stack = rootFrame.get(varName) as Deque<I>?
     return when {
       stack != null -> stack
-      else-> {
-        val stack = ArrayDeque<I>()
-        rootFrame.set(varName, stack)
-        stack
-      }
+      else -> ArrayDeque<I>().apply { rootFrame.set(varName, this) }
     }
   }
 
-  fun <I> pushTagStack(tag: Tag, i:I):Deque<I> {
+  fun <I> pushTagStack(tag: Tag, i: I): Deque<I> {
     return getTagStack<I>(tag).also { it.addLast(i) }
   }
 
-  fun <I> popTagStack(tag: Tag):Deque<I> {
+  fun <I> popTagStack(tag: Tag): Deque<I> {
     return getTagStack<I>(tag).also { it.removeLast() }
   }
 
@@ -154,7 +151,7 @@ class RenderContext(input: Any?,
   val loopState: LoopState
     get() = current.loop
 
-  fun startLoop(length: Int, name:String? = null) {
+  fun startLoop(length: Int, name: String? = null) {
     current.loop = LoopState(length, name)
   }
 

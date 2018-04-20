@@ -70,17 +70,17 @@ public class Filters {
           new Url_Encode()));
   }
 
-  private final Map<String, Filter> filters;
+  private final Map<String, LFilter> filters;
 
   @Builder
-  private Filters(@NonNull @Singular List<Filter> filters) {
+  private Filters(@NonNull @Singular List<LFilter> filters) {
     this.filters = StreamEx.of(filters)
-          .mapToEntry(t -> t.name, t -> t)
+          .mapToEntry(LFilter::getName, t -> t)
           .toImmutableMap();
   }
 
-  public Filters withFilters(Filter... filters) {
-    return new Filters(ImmutableList.<Filter>builder()
+  public Filters withFilters(LFilter... filters) {
+    return new Filters(ImmutableList.<LFilter>builder()
           .addAll(this.filters.values())
           .add(filters)
           .build());
@@ -90,9 +90,8 @@ public class Filters {
     return new FiltersBuilder().filters(this.filters.values());
   }
 
-
-  public Filter getFilter(String filterName) {
-    final Filter b = filters.get(filterName);
+  public LFilter getFilter(String filterName) {
+    final LFilter b = filters.get(filterName);
     if (b == null) {
       throw new IllegalArgumentException("No filter exists with name: " + filterName);
     }

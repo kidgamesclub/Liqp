@@ -16,11 +16,11 @@ public class FilterNode implements LNode {
   private final LFilter filter;
   private final List<LNode> params;
 
-  public FilterNode(ParserRuleContext context, Filter filter) {
+  public FilterNode(ParserRuleContext context, LFilter filter) {
     this(context.start.getLine(), context.start.getCharPositionInLine(), context.getText(), filter);
   }
 
-  private FilterNode(int line, int tokenStartIndex, String text, Filter filter) {
+  private FilterNode(int line, int tokenStartIndex, String text, LFilter filter) {
 
     if (filter == null) {
       throw new IllegalArgumentException("error on line " + line + ", index " + tokenStartIndex + ": no filter " +
