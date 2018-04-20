@@ -38,6 +38,8 @@ interface FilterChainPointer {
    */
   fun unflag(key: String)
 
-  fun withFlag(key: String, block: () -> Unit)
+  fun <I> with(key: String, block: (I) -> Unit)
+
+  fun <I> once(key: String, block: () -> I)
 }
 

@@ -9,7 +9,7 @@ class H extends Filter {
      */
     @Override
     public Object apply(Object value, Object... params) {
-
-        return Filter.getFilter("escape").apply(value, params);
+      final Escape escape = (Escape) getFilter("escape");
+      return escape.apply(value, params);
     }
 }

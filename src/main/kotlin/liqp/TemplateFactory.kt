@@ -6,6 +6,7 @@ import com.google.common.cache.LoadingCache
 import liqp.exceptions.InvalidTemplateException
 import liqp.filters.Filter
 import liqp.filters.Filters
+import liqp.filters.LFilter
 import liqp.parser.Flavor
 import liqp.parser.v4.NodeVisitor
 import liqp.tags.Tags
@@ -72,7 +73,7 @@ data class TemplateFactory(val flavor: Flavor = Flavor.LIQUID,
     return parse(file.readText(UTF_8))
   }
 
-  fun withFilter(filter: Filter): TemplateFactory {
+  fun withFilter(filter: LFilter): TemplateFactory {
     return this.copy(filters = filters.withFilters(filter))
   }
 

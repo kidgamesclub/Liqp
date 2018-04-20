@@ -2,6 +2,7 @@ package liqp
 
 import liqp.filters.Filter
 import liqp.filters.Filters
+import liqp.filters.LFilter
 import liqp.parser.Flavor
 import liqp.tags.Tag
 import liqp.tags.Tags
@@ -47,7 +48,7 @@ data class TemplateFactorySettings(var flavor: Flavor = Flavor.LIQUID,
     return this
   }
 
-  fun withFilters(vararg filters: Filter):TemplateFactorySettings {
+  fun withFilters(vararg filters: LFilter):TemplateFactorySettings {
     this.filters = this.filters.withFilters(*filters)
     return this
   }

@@ -20,7 +20,7 @@ public abstract class Filter extends LValue implements LFilter {
   /**
    * A map holding all filters.
    */
-  private static final Map<String, Filter> DEFAULT_FILTERS = createDefaultFilters();
+  private static final Map<String, LFilter> DEFAULT_FILTERS = createDefaultFilters();
 
   /**
    * Retrieves a filter with a specific name.
@@ -31,13 +31,13 @@ public abstract class Filter extends LValue implements LFilter {
    */
   public static Filter getFilter(String name) {
 
-    Filter filter = DEFAULT_FILTERS.get(name);
+    LFilter filter = DEFAULT_FILTERS.get(name);
 
     if (filter == null) {
       throw new RuntimeException("unknown filter: " + name);
     }
 
-    return filter;
+    return (Filter) filter;
   }
 
   /**
@@ -45,7 +45,7 @@ public abstract class Filter extends LValue implements LFilter {
    *
    * @return all default filters.
    */
-  public static Map<String, Filter> getDefaultFilters() {
+  public static Map<String, LFilter> getDefaultFilters() {
     return DEFAULT_FILTERS;
   }
   /**
@@ -154,10 +154,10 @@ public abstract class Filter extends LValue implements LFilter {
     return params[index];
   }
 
-  private static Map<String, Filter> createDefaultFilters() {
+  private static Map<String, LFilter> createDefaultFilters() {
     return StreamEx.of(
           // Initialize all standard filters.
-          new Abs(),
+          (LFilter) new Abs(),
           new Append(),
           new At_Least(),
           new At_Most(),
@@ -205,7 +205,7 @@ public abstract class Filter extends LValue implements LFilter {
           new Upcase(),
           new Url_Decode(),
           new Url_Encode())
-          .mapToEntry(f -> f.name, f -> f)
+          .mapToEntry(LFilter::getName, f -> f)
           .toImmutableMap();
   }
 }

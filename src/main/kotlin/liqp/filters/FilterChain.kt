@@ -72,10 +72,17 @@ class FilterChain(private val context: RenderContext,
     data.remove(key)
   }
 
-  override fun withFlag(key:String, block:()->Unit) {
+  override fun <I> with(key:String, block:(I)->Unit) {
     if (isFlagged(key)) {
-      block()
+      val i:I = this[key]!!
+      block(i)
       unflag(key)
+    }
+  }
+
+  override fun <I> once(key: String, block: () -> I) {
+    if (!isFlagged(key)) {
+      this[key] = block()
     }
   }
 }
