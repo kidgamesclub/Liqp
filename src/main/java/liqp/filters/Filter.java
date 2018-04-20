@@ -2,9 +2,11 @@ package liqp.filters;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import liqp.LValue;
 import liqp.nodes.RenderContext;
 import one.util.streamex.StreamEx;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Output markup takes filters. Filters are simple methods. The first parameter is always the output of the left side of
@@ -13,7 +15,7 @@ import one.util.streamex.StreamEx;
  * <p/>
  * -- https://github.com/Shopify/liquid/wiki/Liquid-for-Designers
  */
-public abstract class Filter extends LValue {
+public abstract class Filter extends LValue implements LFilter {
 
   /**
    * A map holding all filters.
@@ -91,7 +93,6 @@ public abstract class Filter extends LValue {
    * @return the result of the filter.
    */
   public Object apply(Object value, RenderContext context, Object... params) {
-
     return apply(value, params);
   }
 
@@ -117,6 +118,32 @@ public abstract class Filter extends LValue {
     }
   }
 
+  @Override
+  public void doFilter(@NotNull FilterParams params,
+                       @NotNull FilterChain chain,
+                       @NotNull RenderContext context,
+                       @NotNull AtomicReference<Object> result) {
+    final Object value = chain.continueChain();
+    final Object filterResult = this.apply(value, context, params.resolve(context));
+    result.set(filterResult);
+  }
+
+  @Override
+  public void doStartFilterChain(@NotNull FilterParams params,
+                                 @NotNull FilterChain chain,
+                                 @NotNull RenderContext context,
+                                 @NotNull AtomicReference<Object> result) {
+    //SimpleFilter is a no-op
+  }
+
+  @Override
+  public void doFilterEnd(@NotNull FilterParams params,
+                          @NotNull FilterChain chain,
+                          @NotNull RenderContext context,
+                          @NotNull AtomicReference<Object> result) {
+    //SimpleFilter is a no-op
+  }
+
   /**
    * Returns a value at a specific index from an array of parameters. If no such index exists, a RuntimeException is
    * thrown.
@@ -136,6 +163,9 @@ public abstract class Filter extends LValue {
 
     return params[index];
   }
+
+
+
 
   private static Map<String, Filter> createDefaultFilters() {
     return StreamEx.of(

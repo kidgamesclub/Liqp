@@ -2,7 +2,11 @@ package liqp.nodes;
 
 import java.util.ArrayList;
 import java.util.List;
+import liqp.filters.FilterChain;
+import liqp.filters.FilterParams;
+import liqp.filters.FilterWithParams;
 import lombok.Getter;
+import one.util.streamex.StreamEx;
 
 @Getter
 public class OutputNode implements LNode {
@@ -12,7 +16,7 @@ public class OutputNode implements LNode {
 
     public OutputNode(LNode expression) {
         this.expression = expression;
-        this.filters = new ArrayList<FilterNode>();
+        this.filters = new ArrayList<>();
     }
 
     public void addFilter(FilterNode filter) {
@@ -22,12 +26,17 @@ public class OutputNode implements LNode {
     @Override
     public Object render(RenderContext context) {
 
-        Object value = expression.render(context);
-
-        for (FilterNode node : filters) {
-            value = node.apply(value, context);
-        }
-
-        return value;
+      if (filters.isEmpty()) {
+        return expression.render(context);
+      } else {
+        final List<FilterWithParams> filters = StreamEx.of(this.filters)
+              .map(f -> new FilterWithParams(f.getFilter(), new FilterParams(f.getParams())))
+              .toImmutableList();
+        final FilterChain filterChain = new FilterChain(context, filters, ref -> {
+          ref.set(expression.render(context));
+          return ref.get();
+        });
+        return filterChain.processFilters();
+      }
     }
 }
