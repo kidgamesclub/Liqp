@@ -137,10 +137,10 @@ public abstract class Filter extends LValue implements LFilter {
   }
 
   @Override
-  public void doFilterEnd(@NotNull FilterParams params,
-                          @NotNull FilterChainPointer chain,
-                          @NotNull RenderContext context,
-                          @NotNull AtomicReference<Object> result) {
+  public void doEndFilterChain(@NotNull FilterParams params,
+                               @NotNull FilterChainPointer chain,
+                               @NotNull RenderContext context,
+                               @NotNull AtomicReference<Object> result) {
     //SimpleFilter is a no-op
   }
 

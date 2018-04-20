@@ -26,7 +26,7 @@ class FilterChain(private val context: RenderContext,
     }
     continueChain()
     filters.forEach {
-      it.filter.doFilterEnd(it.params, this, context, result)
+      it.filter.doEndFilterChain(it.params, this, context, result)
     }
     return result.get()
   }
@@ -42,6 +42,9 @@ class FilterChain(private val context: RenderContext,
       val actionResult = filterAction(result)
       if (actionResult != null) {
         result.set(actionResult)
+      }
+      filters.forEach {
+        it.filter.doFilterAction(it.params, this, context, result)
       }
     }
     return result.get()

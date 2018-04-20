@@ -17,8 +17,13 @@ interface LFilter {
                          context: RenderContext,
                          result: AtomicReference<Any?>)
 
-  fun doFilterEnd(params: FilterParams,
-                  chain: FilterChainPointer,
-                  context: RenderContext,
-                  result: AtomicReference<Any?>)
+  fun doFilterAction(params: FilterParams,
+                     chain: FilterChainPointer,
+                     context: RenderContext,
+                     result: AtomicReference<Any?>)
+
+  fun doEndFilterChain(params: FilterParams,
+                       chain: FilterChainPointer,
+                       context: RenderContext,
+                       result: AtomicReference<Any?>)
 }
