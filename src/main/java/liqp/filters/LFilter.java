@@ -1,6 +1,8 @@
 package liqp.filters;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import liqp.nodes.LNode;
 import liqp.nodes.RenderContext;
 
 /**

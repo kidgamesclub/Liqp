@@ -1,6 +1,8 @@
 package liqp.nodes;
 
+import com.google.common.collect.ImmutableList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 
@@ -21,4 +23,9 @@ public class KeyValueNode implements LNode {
         map.put(key, value.render(context));
         return map;
     }
+
+  @Override
+  public List<LNode> children() {
+    return ImmutableList.of(value);
+  }
 }

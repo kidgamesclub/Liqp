@@ -5,14 +5,10 @@ import liqp.LValue;
 import lombok.Getter;
 
 @Getter
-public class ContainsNode extends LValue implements LNode {
-
-    private LNode lhs;
-    private LNode rhs;
+public class ContainsNode extends ExpressionNode {
 
     public ContainsNode(LNode lhs, LNode rhs) {
-        this.lhs = lhs;
-        this.rhs = rhs;
+      super(lhs, rhs);
     }
 
     @Override

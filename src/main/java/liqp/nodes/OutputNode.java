@@ -1,5 +1,6 @@
 package liqp.nodes;
 
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
 import liqp.filters.FilterChain;
@@ -39,4 +40,12 @@ public class OutputNode implements LNode {
         return filterChain.processFilters();
       }
     }
+
+  @Override
+  public List<LNode> children() {
+    return ImmutableList.<LNode>builder()
+          .add(expression)
+          .addAll(filters)
+          .build();
+  }
 }

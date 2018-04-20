@@ -15,11 +15,4 @@ fun Any?.toNonNullString(): String {
   }
 }
 
-//fun String.capitalize():String {
-//  return when{
-//    this.isEmpty() -> this
-//    else-> Character.toUpperCase(this.charAt(0)) + this.substring(1);
-//  }
-//}
-//
-//
+

@@ -1,5 +1,7 @@
 package liqp.nodes;
 
+import java.util.List;
+
 /**
  * Denotes a node in the AST the parse creates from the
  * input source.
@@ -16,4 +18,6 @@ public interface LNode {
      * @return an Object denoting the rendered AST.
      */
     Object render(RenderContext context);
+
+    List<LNode> children();
 }

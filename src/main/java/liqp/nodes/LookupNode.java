@@ -1,6 +1,7 @@
 package liqp.nodes;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import liqp.exceptions.VariableNotExistException;
 import liqp.lookup.Indexable;
@@ -66,5 +67,10 @@ public class LookupNode implements LNode {
       variableFullName.append(index.toString());
     }
     return variableFullName.toString();
+  }
+
+  @Override
+  public List<LNode> children() {
+    return Collections.emptyList();
   }
 }

@@ -1,9 +1,11 @@
 package liqp.nodes;
 
+import com.google.common.collect.ImmutableList;
 import java.util.List;
 import liqp.tags.CustomTag;
 import liqp.tags.Tag;
 import lombok.Getter;
+import one.util.streamex.StreamEx;
 
 @Getter
 public class TagNode implements LNode {
@@ -36,8 +38,17 @@ public class TagNode implements LNode {
     this.tokens = tokens;
   }
 
+  public Tag getTag() {
+    return tag;
+  }
+
   @Override
   public Object render(RenderContext context) {
     return tag.render(context, tokens);
+  }
+
+  @Override
+  public List<LNode> children() {
+    return StreamEx.of(tokens).toImmutableList();
   }
 }

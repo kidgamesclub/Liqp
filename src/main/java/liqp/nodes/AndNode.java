@@ -1,23 +1,17 @@
 package liqp.nodes;
 
-import liqp.LValue;
+import java.util.List;
 import lombok.Getter;
 
 @Getter
-public class AndNode extends LValue implements LNode {
+public class AndNode extends ExpressionNode {
 
-    private LNode lhs;
-    private LNode rhs;
+  public AndNode(LNode lhs, LNode rhs) {
+    super(lhs, rhs);
+  }
 
-    public AndNode(LNode lhs, LNode rhs) {
-        this.lhs = lhs;
-        this.rhs = rhs;
-    }
-
-    @Override
-    public Object render(RenderContext context) {
-
-        return super.asBoolean(lhs.render(context)) && super.asBoolean(rhs.render(context));
-
-    }
+  @Override
+  public Object render(RenderContext context) {
+    return super.asBoolean(lhs.render(context)) && super.asBoolean(rhs.render(context));
+  }
 }

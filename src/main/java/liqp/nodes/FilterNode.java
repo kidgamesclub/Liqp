@@ -1,5 +1,6 @@
 package liqp.nodes;
 
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
 import liqp.filters.Filter;
@@ -36,6 +37,13 @@ public class FilterNode implements LNode {
 
   public void add(LNode param) {
     params.add(param);
+  }
+
+  @Override
+  public List<LNode> children() {
+    return ImmutableList.<LNode>builder()
+          .addAll(params)
+          .build();
   }
 
   @Override

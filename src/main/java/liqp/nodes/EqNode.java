@@ -4,17 +4,13 @@ import liqp.LValue;
 import lombok.Getter;
 
 @Getter
-public class EqNode implements LNode {
+public class EqNode extends ExpressionNode{
 
-    private LNode lhs;
-    private LNode rhs;
+  public EqNode(LNode lhs, LNode rhs) {
+    super(lhs, rhs);
+  }
 
-    public EqNode(LNode lhs, LNode rhs) {
-        this.lhs = lhs;
-        this.rhs = rhs;
-    }
-
-    @Override
+  @Override
     public Object render(RenderContext context) {
 
         Object a = lhs.render(context);

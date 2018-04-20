@@ -73,4 +73,9 @@ public class BlockNode implements LNode {
 
         return builder.toString();
     }
+
+  @Override
+  public List<LNode> children() {
+    return children;
+  }
 }
