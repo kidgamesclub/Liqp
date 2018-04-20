@@ -2,10 +2,10 @@ package liqp.filters
 
 import liqp.nodes.LNode
 import liqp.nodes.RenderContext
-import java.util.concurrent.atomic.AtomicReference
 
 /**
- * Interface that allows for nested filters to control lifecycle.
+ * Contains filter parameters that can be resolved when needed.  The instance ensures that the
+ * params are resolved exactly once, and cached thereafter.
  */
 class FilterParams(private val paramNodes: List<LNode?>) {
 
@@ -14,7 +14,7 @@ class FilterParams(private val paramNodes: List<LNode?>) {
   /**
    * Resolve the params as late as possible, do a double-check lock to ensure they are resolved once
    */
-  fun resolve(context: RenderContext):Array<Any?> {
+  fun resolve(context: RenderContext): Array<Any?> {
     if (resolvedParams == null) {
       synchronized(this) {
         if (resolvedParams == null) {

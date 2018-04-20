@@ -120,7 +120,7 @@ public abstract class Filter extends LValue implements LFilter {
 
   @Override
   public void doFilter(@NotNull FilterParams params,
-                       @NotNull FilterChain chain,
+                       @NotNull FilterChainPointer chain,
                        @NotNull RenderContext context,
                        @NotNull AtomicReference<Object> result) {
     final Object value = chain.continueChain();
@@ -130,7 +130,7 @@ public abstract class Filter extends LValue implements LFilter {
 
   @Override
   public void doStartFilterChain(@NotNull FilterParams params,
-                                 @NotNull FilterChain chain,
+                                 @NotNull FilterChainPointer chain,
                                  @NotNull RenderContext context,
                                  @NotNull AtomicReference<Object> result) {
     //SimpleFilter is a no-op
@@ -138,7 +138,7 @@ public abstract class Filter extends LValue implements LFilter {
 
   @Override
   public void doFilterEnd(@NotNull FilterParams params,
-                          @NotNull FilterChain chain,
+                          @NotNull FilterChainPointer chain,
                           @NotNull RenderContext context,
                           @NotNull AtomicReference<Object> result) {
     //SimpleFilter is a no-op
@@ -163,9 +163,6 @@ public abstract class Filter extends LValue implements LFilter {
 
     return params[index];
   }
-
-
-
 
   private static Map<String, Filter> createDefaultFilters() {
     return StreamEx.of(
