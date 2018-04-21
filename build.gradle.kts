@@ -50,7 +50,6 @@ mverse {
 
 dependencyManagement {
   dependencies {
-    dependency("com.joelws:groothy:1.1")
     dependency("org.jsoup:jsoup:1.11.2")
     dependency("org.antlr:antlr4:4.7.1")
     dependency("org.antlr:antlr4-runtime:4.7.1")
@@ -81,7 +80,6 @@ val shadowJar: ShadowJar by tasks
 shadowJar.apply {
   classifier = null
   configurations = listOf(project.configurations.fatJar)
-  relocate("kotlin", "kg.kotlin")
   relocate("com.fasterxml", "kg.com.fasterxml")
   relocate("one", "kg.one")
 }
