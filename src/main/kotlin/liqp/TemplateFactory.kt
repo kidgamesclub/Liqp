@@ -4,7 +4,6 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
 import liqp.exceptions.InvalidTemplateException
-import liqp.filters.Filter
 import liqp.filters.Filters
 import liqp.filters.LFilter
 import liqp.parser.Flavor
@@ -22,15 +21,16 @@ import java.io.File
 import java.util.function.Consumer
 import kotlin.text.Charsets.UTF_8
 
-data class TemplateFactory(val flavor: Flavor = Flavor.LIQUID,
-                           val isStrictVariables: Boolean = false,
-                           val isStripSpacesAroundTags: Boolean = false,
-                           val isStripSingleLine: Boolean = false,
-                           val maxTemplateSize: Long? = null,
-                           val isKeepParseTree: Boolean = false,
-                           val tags: Tags = Tags.getDefaultTags(),
-                           val filters: Filters = Filters.getDefaultFilters(),
-                           private val cacheSettings: CacheSetup? = null) {
+data class TemplateFactory
+@JvmOverloads constructor(val flavor: Flavor = Flavor.LIQUID,
+                          val isStrictVariables: Boolean = false,
+                          val isStripSpacesAroundTags: Boolean = false,
+                          val isStripSingleLine: Boolean = false,
+                          val maxTemplateSize: Long? = null,
+                          val isKeepParseTree: Boolean = false,
+                          val tags: Tags = Tags.getDefaultTags(),
+                          val filters: Filters = Filters.getDefaultFilters(),
+                          private val cacheSettings: CacheSetup? = null) {
 
   constructor(settings: TemplateFactorySettings) : this(
       flavor = settings.flavor,
@@ -91,8 +91,8 @@ data class TemplateFactory(val flavor: Flavor = Flavor.LIQUID,
 
   private val cache: LoadingCache<String?, Template> = CacheBuilder.newBuilder()
       .withSettings(cacheSettings)
-      .build(CacheLoader.from {
-        template:String?-> internalCreateTemplate(template!!)
+      .build(CacheLoader.from { template: String? ->
+        internalCreateTemplate(template!!)
       })
 
   private fun internalCreateTemplate(template: String): Template {

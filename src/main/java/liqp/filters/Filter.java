@@ -119,7 +119,7 @@ public abstract class Filter extends LValue implements LFilter {
                        @NotNull RenderContext context,
                        @NotNull AtomicReference<Object> result) {
     final Object value = chain.continueChain();
-    final Object filterResult = this.apply(context, value, context, params.resolve(context));
+    final Object filterResult = this.apply(context, value, params.resolve(context));
     result.set(filterResult);
   }
 

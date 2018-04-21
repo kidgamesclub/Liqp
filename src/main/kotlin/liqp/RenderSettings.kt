@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService
 data class RenderSettings(var isStrictVariables: Boolean = false,
                           var maxIterations: Int = Integer.MAX_VALUE,
                           var maxStackSize: Int = 100,
-                          var isTruthy:Boolean = true,
+                          var isUseTruthyChecks:Boolean = false,
                           var maxSizeRenderedString: Int = Integer.MAX_VALUE,
                           var maxRenderTimeMillis: Long = Long.MAX_VALUE,
                           var executor: ExecutorService? = null) {
@@ -26,7 +26,7 @@ data class RenderSettings(var isStrictVariables: Boolean = false,
   }
 
   fun isTruthy(isTruthy: Boolean): RenderSettings {
-    this.isTruthy = isTruthy
+    this.isUseTruthyChecks = isTruthy
     return this
   }
 

@@ -1,14 +1,10 @@
 package liqp.filters;
 
-import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 
 import liqp.Template;
-import liqp.TemplateEngine;
 import liqp.TemplateFactory;
-import liqp.nodes.RenderContext;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -43,10 +39,7 @@ public class DowncaseTest {
   public void applyOriginalTest() {
 
     final Filter filter = Filter.getFilter("downcase");
-    final RenderContext context = new RenderContext(emptyMap(),
-          mock(TemplateFactory.class),
-          mock(TemplateEngine.class));
-    assertThat(filter.apply(context, "Testing"), is((Object) "testing"));
-    assertThat(filter.apply(context, null), is((Object) ""));
+    assertThat(filter.apply(Mocks.mockRenderContext(), "Testing"), is((Object) "testing"));
+    assertThat(filter.apply(Mocks.mockRenderContext(), null), is((Object) ""));
   }
 }

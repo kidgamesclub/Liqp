@@ -1,14 +1,10 @@
 package liqp.filters;
 
-import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 
 import liqp.Template;
-import liqp.TemplateEngine;
 import liqp.TemplateFactory;
-import liqp.nodes.RenderContext;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -54,9 +50,6 @@ public class ReplaceTest {
   public void applyOriginalTest() {
 
     Filter filter = Filter.getFilter("replace");
-    final RenderContext context = new RenderContext(emptyMap(),
-          mock(TemplateFactory.class),
-          mock(TemplateEngine.class));
-    assertThat(filter.apply(context, "a a a a", "a", "b"), is((Object) "b b b b"));
+    assertThat(filter.apply(Mocks.mockRenderContext(), "a a a a", "a", "b"), is((Object) "b b b b"));
   }
 }

@@ -29,7 +29,7 @@ class RenderContext
                           val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
                           val maxIterations: Int = Integer.MAX_VALUE,
                           val isStrictVariables: Boolean = false,
-                          val isUseTruthyChecks: Boolean = true,
+                          val isUseTruthyChecks: Boolean = false,
                           val maxStackSize: Int = 100,
                           val maxSizeRenderedString: Int = Integer.MAX_VALUE) : HasProperties {
 

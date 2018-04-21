@@ -1,5 +1,6 @@
 package liqp.filters;
 
+import liqp.TruthKt;
 import liqp.nodes.RenderContext;
 
 public class Default extends Filter {
@@ -11,7 +12,7 @@ public class Default extends Filter {
       return value;
     }
 
-    if (context.isTrue(value)) {
+    if (TruthKt.isFalsy(value)) {
       return params[0];
     }
 

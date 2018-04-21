@@ -8,15 +8,16 @@ import java.util.concurrent.TimeUnit
 
 typealias executeTemplate = (Template, RenderContext) -> Any?
 
-data class TemplateEngine(val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
-                                           val executor: ExecutorService? = null,
-                                           val templateFactory: TemplateFactory = TemplateFactory(),
-                                           val isStrictVariables: Boolean = false,
-                                           val isTruthy: Boolean = true,
-                                           val maxStackSize: Int = 100,
-                                           val maxSizeRenderedString: Int = Integer.MAX_VALUE,
-                                           val maxIterations: Int = Integer.MAX_VALUE,
-                                           val maxRenderTimeMillis: Long = Long.MAX_VALUE) {
+data class TemplateEngine
+@JvmOverloads constructor(val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
+                          val executor: ExecutorService? = null,
+                          val templateFactory: TemplateFactory = TemplateFactory(),
+                          val isStrictVariables: Boolean = false,
+                          val isUseTruthyChecks: Boolean = true,
+                          val maxStackSize: Int = 100,
+                          val maxSizeRenderedString: Int = Integer.MAX_VALUE,
+                          val maxIterations: Int = Integer.MAX_VALUE,
+                          val maxRenderTimeMillis: Long = Long.MAX_VALUE) {
 
   init {
     if (maxRenderTimeMillis != Long.MAX_VALUE && executor == null) {
@@ -33,7 +34,7 @@ data class TemplateEngine(val accessors: PropertyAccessors = PropertyAccessors.n
       return TemplateEngine(isStrictVariables = settings.isStrictVariables,
           maxStackSize = settings.maxStackSize,
           maxSizeRenderedString = settings.maxSizeRenderedString,
-          isTruthy = settings.isTruthy,
+          isUseTruthyChecks = settings.isUseTruthyChecks,
           maxIterations = settings.maxIterations,
           executor = settings.executor,
           maxRenderTimeMillis = settings.maxRenderTimeMillis)
@@ -60,7 +61,7 @@ data class TemplateEngine(val accessors: PropertyAccessors = PropertyAccessors.n
   fun withTemplateFactory(factory: TemplateFactory): TemplateEngine {
     return when (factory == this.templateFactory) {
       true -> this
-      false -> this.copy(templateFactory=factory)
+      false -> this.copy(templateFactory = factory)
     }
   }
 
@@ -72,7 +73,7 @@ data class TemplateEngine(val accessors: PropertyAccessors = PropertyAccessors.n
     return this.copy(maxStackSize = settings.maxIterations,
         maxRenderTimeMillis = settings.maxRenderTimeMillis,
         maxIterations = settings.maxIterations,
-        isTruthy = settings.isTruthy,
+        isUseTruthyChecks = settings.isUseTruthyChecks,
         isStrictVariables = settings.isStrictVariables,
         maxSizeRenderedString = settings.maxSizeRenderedString)
   }
@@ -91,13 +92,13 @@ data class TemplateEngine(val accessors: PropertyAccessors = PropertyAccessors.n
 
   fun createRenderContext(inputData: Any?): RenderContext {
     return RenderContext(
-        inputData=inputData,
+        inputData = inputData,
         accessors = this.accessors,
         maxIterations = this.maxIterations,
         templateFactory = this.templateFactory,
         engine = this,
         isStrictVariables = this.isStrictVariables,
-        isUseTruthyChecks = this.isTruthy,
+        isUseTruthyChecks = this.isUseTruthyChecks,
         maxStackSize = this.maxStackSize,
         maxSizeRenderedString = this.maxSizeRenderedString)
   }
@@ -121,7 +122,6 @@ data class TemplateEngine(val accessors: PropertyAccessors = PropertyAccessors.n
     val result = executeTemplate(template, createRenderContext(inputData))
     return result.toNonNullString()
   }
-
 }
 
 

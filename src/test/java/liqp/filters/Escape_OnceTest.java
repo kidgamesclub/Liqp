@@ -1,6 +1,7 @@
 package liqp.filters;
 
 import static java.util.Collections.emptyMap;
+import static liqp.filters.Mocks.mockRenderContext;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -47,13 +48,10 @@ public class Escape_OnceTest {
 
     final Filter filter = Filter.getFilter("escape_once");
 
-    final RenderContext context = new RenderContext(emptyMap(),
-          mock(TemplateFactory.class),
-          mock(TemplateEngine.class));
-    assertThat(filter.apply(context, Filter.getFilter("escape").apply(context, "<strong>")), is((Object) "&lt;" +
+    assertThat(filter.apply(mockRenderContext(), Filter.getFilter("escape").apply(mockRenderContext(), "<strong>")), is((Object) "&lt;" +
           "strong&gt;"));
 
     // the same test:
-    assertThat(filter.apply(context, "&lt;strong&gt;"), is((Object) "&lt;strong&gt;"));
+    assertThat(filter.apply(mockRenderContext(), "&lt;strong&gt;"), is((Object) "&lt;strong&gt;"));
   }
 }
