@@ -7,6 +7,7 @@ import liqp.parser.Flavor
 import liqp.tags.Tag
 import liqp.tags.Tags
 import java.io.File
+import java.io.FileNotFoundException
 
 data class TemplateFactorySettings(var flavor: Flavor = Flavor.LIQUID,
                                    var isStrictVariables: Boolean = false,
@@ -77,6 +78,9 @@ data class TemplateFactorySettings(var flavor: Flavor = Flavor.LIQUID,
   }
 
   fun parseFile(file: File): Template {
+    if (!file.exists()) {
+      throw FileNotFoundException(file.absolutePath)
+    }
     return TemplateFactory(this).parseFile(file)
   }
 }

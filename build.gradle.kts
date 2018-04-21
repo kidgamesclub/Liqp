@@ -16,87 +16,31 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument.DefaultArgu
 plugins {
   id("org.gradle.kotlin.kotlin-dsl").version("0.16.0")
   id("io.mverse.project").version("0.5.23")
-  id("com.github.johnrengelman.shadow").version("2.0.3")
-  id("antlr")
+  id("io.mverse.multi-module").version("0.5.23")
 }
 
-mverse {
-  groupId = "club.kidgames"
-  isDefaultDependencies = false
+allprojects {
+  mverse {
+    groupId = "club.kidgames"
+    isDefaultDependencies = false
+
+    coverageRequirement = 0.60
+  }
+
+  dependencyManagement {
+    dependencies {
+      dependency("org.jsoup:jsoup:1.11.2")
+      dependency("org.antlr:antlr4:4.7.1")
+      dependency("org.antlr:antlr4-runtime:4.7.1")
+    }
+  }
   dependencies {
-    testCompile(junit())
-    testCompile(junitParams())
-    testCompile(mockito())
-    testCompile(assertj())
-    fatJar(guava())
-    fatJar(streamEx())
-    compileOnly(lombok())
+    compileOnly("org.jsoup:jsoup") {
+      isTransitive = false
+    }
 
-    fatJar("jackson-databind")
-    fatJar("jackson-annotations")
-    fatJar("jackson-core")
-    fatJar("kotlin-reflect")
-    fatJar("kotlin-stdlib")
-    fatJar("antlr4-runtime")
-  }
-  dependencies["antlr"]("antlr4")
-  dependencies["testRuntime"]("jsoup")
-
-  coverageRequirement = 0.60
-  java.sourceSets["main"].withConvention(KotlinSourceSet::class) {
-    kotlin.srcDir(file("build/classes/generated-src/antlr/main"))
+    compileOnly("com.google.code.findbugs:findbugs") {
+      isTransitive = false
+    }
   }
 }
-
-dependencyManagement {
-  dependencies {
-    dependency("org.jsoup:jsoup:1.11.2")
-    dependency("org.antlr:antlr4:4.7.1")
-    dependency("org.antlr:antlr4-runtime:4.7.1")
-  }
-}
-
-findbugs {
-  this.isIgnoreFailures = true
-  effort = "min"
-}
-
-dependencies {
-  compileOnly("org.jsoup:jsoup") {
-    isTransitive = false
-  }
-
-  compileOnly("com.google.code.findbugs:findbugs") {
-    isTransitive = false
-  }
-}
-
-configurations.compile.extendsFrom(configurations.fatJar)
-
-//
-// Configure shadow
-//
-val shadowJar: ShadowJar by tasks
-shadowJar.apply {
-  classifier = null
-  configurations = listOf(project.configurations.fatJar)
-  relocate("com.fasterxml", "kg.com.fasterxml")
-  relocate("one", "kg.one")
-}
-
-tasks["assemble"].dependsOn(shadowJar)
-
-//
-// Configure antlr
-//
-java.sourceSets["main"].withConvention(KotlinSourceSet::class) {
-  kotlin.srcDir(file("build/classes/generated-src/antlr/main"))
-}
-
-tasks.withType(AntlrTask::class.java) {
-  arguments = listOf("-visitor", "-package", "liquid.parser.v4", "-Xexact-output-dir")
-  outputDirectory = file("build/generated-src/antlr/main/liquid/parser/v4")
-}
-
-tasks["compileKotlin"].dependsOn("generateGrammarSource")
-

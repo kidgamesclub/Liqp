@@ -20,7 +20,6 @@ fun assertFileTemplate(templateFile: File, data: Any? = null,
   return createTemplateAssert({ parseFile(templateFile) }, data, factory, renderer)
 }
 
-@JvmOverloads
 private fun createTemplateAssert(createTestTemplate: CreateTestTemplate, data: Any? = null,
                                  configureFactory: TemplateFactorySettings.() -> TemplateFactorySettings = { this },
                                  configureRenderSettings: RenderSettings.() -> Any? = { this }): TemplateRenderAssert {

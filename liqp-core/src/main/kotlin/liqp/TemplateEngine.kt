@@ -2,6 +2,7 @@ package liqp
 
 import liqp.lookup.PropertyAccessors
 import liqp.nodes.RenderContext
+import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
@@ -9,15 +10,11 @@ import java.util.concurrent.TimeUnit
 typealias executeTemplate = (Template, RenderContext) -> Any?
 
 data class TemplateEngine
+
 @JvmOverloads constructor(val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
-                          val executor: ExecutorService? = null,
                           val templateFactory: TemplateFactory = TemplateFactory(),
-                          val isStrictVariables: Boolean = false,
-                          val isUseTruthyChecks: Boolean = true,
-                          val maxStackSize: Int = 100,
-                          val maxSizeRenderedString: Int = Integer.MAX_VALUE,
-                          val maxIterations: Int = Integer.MAX_VALUE,
-                          val maxRenderTimeMillis: Long = Long.MAX_VALUE) {
+                          private val settings: RenderSettingsSpec = RenderSettings()): RenderSettingsSpec by settings {
+
 
   init {
     if (maxRenderTimeMillis != Long.MAX_VALUE && executor == null) {
@@ -31,13 +28,7 @@ data class TemplateEngine
 
     @JvmStatic
     fun newInstance(settings: RenderSettings = RenderSettings()): TemplateEngine {
-      return TemplateEngine(isStrictVariables = settings.isStrictVariables,
-          maxStackSize = settings.maxStackSize,
-          maxSizeRenderedString = settings.maxSizeRenderedString,
-          isUseTruthyChecks = settings.isUseTruthyChecks,
-          maxIterations = settings.maxIterations,
-          executor = settings.executor,
-          maxRenderTimeMillis = settings.maxRenderTimeMillis)
+      return TemplateEngine(settings = settings)
     }
 
     fun newInstance(configure: RenderSettings.() -> Any?): TemplateEngine {
@@ -74,6 +65,7 @@ data class TemplateEngine
         maxRenderTimeMillis = settings.maxRenderTimeMillis,
         maxIterations = settings.maxIterations,
         isUseTruthyChecks = settings.isUseTruthyChecks,
+        includesDir = settings.includesDir,
         isStrictVariables = settings.isStrictVariables,
         maxSizeRenderedString = settings.maxSizeRenderedString)
   }
@@ -81,6 +73,8 @@ data class TemplateEngine
   fun withRenderSettings(callback: (RenderSettings) -> RenderSettings): TemplateEngine {
     val builder = RenderSettings(
         isStrictVariables = this.isStrictVariables,
+        isUseTruthyChecks = this.isUseTruthyChecks,
+        includesDir = this.includesDir,
         maxIterations = this.maxIterations,
         maxStackSize = this.maxStackSize,
         maxSizeRenderedString = this.maxSizeRenderedString,
@@ -90,12 +84,15 @@ data class TemplateEngine
     return withRenderSettings(builder)
   }
 
+
+
   fun createRenderContext(inputData: Any?): RenderContext {
     return RenderContext(
         inputData = inputData,
         accessors = this.accessors,
         maxIterations = this.maxIterations,
         templateFactory = this.templateFactory,
+        includesDir = this.includesDir,
         engine = this,
         isStrictVariables = this.isStrictVariables,
         isUseTruthyChecks = this.isUseTruthyChecks,

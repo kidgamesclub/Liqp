@@ -1,13 +1,16 @@
 import org.gradle.kotlin.dsl.maven
 import org.gradle.kotlin.dsl.repositories
 
-rootProject.name = "liqp"
 
 pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        google()
-        maven("https://dl.bintray.com/mverse-io/mverse-public")
-    }
+  repositories {
+    gradlePluginPortal()
+    google()
+    maven("https://dl.bintray.com/mverse-io/mverse-public")
+  }
 }
+
+rootProject.name = "liqp"
+include("liqp-core")
+include("liqp-ext")
 

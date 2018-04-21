@@ -17,6 +17,7 @@ import liqp.lookup.PropertyContainer
 import liqp.lookup.propertyContainer
 import liqp.parseJSON
 import liqp.tags.Tag
+import java.io.File
 import java.util.*
 
 val FORLOOP = "forloop"
@@ -26,6 +27,7 @@ class RenderContext
 @JvmOverloads constructor(inputData: Any?,
                           val templateFactory: TemplateFactory,
                           val engine: TemplateEngine,
+                          val includesDir: File = File("_includes"),
                           val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
                           val maxIterations: Int = Integer.MAX_VALUE,
                           val isStrictVariables: Boolean = false,
