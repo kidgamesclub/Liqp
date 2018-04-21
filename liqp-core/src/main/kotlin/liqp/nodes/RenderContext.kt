@@ -2,9 +2,11 @@ package liqp.nodes
 
 import liqp.LoopState
 import liqp.RenderFrame
+import liqp.RenderSettings
+import liqp.RenderSettingsSpec
 import liqp.Template
-import liqp.TemplateEngine
-import liqp.TemplateFactory
+import liqp.LiquidRenderer
+import liqp.LiquidParser
 import liqp.exceptions.ExceededMaxIterationsException
 import liqp.exceptions.LiquidRenderingException
 import liqp.isFalse
@@ -17,7 +19,6 @@ import liqp.lookup.PropertyContainer
 import liqp.lookup.propertyContainer
 import liqp.parseJSON
 import liqp.tags.Tag
-import java.io.File
 import java.util.*
 
 val FORLOOP = "forloop"
@@ -25,15 +26,10 @@ val FORLOOP = "forloop"
 @Suppress("UNCHECKED_CAST")
 class RenderContext
 @JvmOverloads constructor(inputData: Any?,
-                          val templateFactory: TemplateFactory,
-                          val engine: TemplateEngine,
-                          val includesDir: File = File("_includes"),
+                          val parser: LiquidParser,
+                          val engine: LiquidRenderer,
                           val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
-                          val maxIterations: Int = Integer.MAX_VALUE,
-                          val isStrictVariables: Boolean = false,
-                          val isUseTruthyChecks: Boolean = false,
-                          val maxStackSize: Int = 100,
-                          val maxSizeRenderedString: Int = Integer.MAX_VALUE) : HasProperties {
+                          val settings:RenderSettings = engine.settings) : HasProperties, RenderSettingsSpec by settings {
 
   val inputData: PropertyContainer by lazy {
     when (inputData) {
@@ -104,7 +100,7 @@ class RenderContext
   }
 
   operator fun inc(): RenderContext {
-    addFrame()
+    pushFrame()
     return this
   }
 
@@ -113,7 +109,7 @@ class RenderContext
     return this
   }
 
-  fun addFrame(): RenderFrame {
+  fun pushFrame(): RenderFrame {
     if (stack.size + 1 > maxStackSize) {
       throw LiquidRenderingException("Stack limit exceeded: $maxStackSize")
     }

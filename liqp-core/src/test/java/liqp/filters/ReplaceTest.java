@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ public class ReplaceTest {
 
     for (String[] test : tests) {
 
-      Template template = TemplateFactory.newBuilder().parse(test[0]);
+      Template template = LiquidParser.newInstance().parse(test[0]);
       String rendered = String.valueOf(template.render());
 
       assertThat(rendered, is(test[1]));
@@ -31,12 +31,12 @@ public class ReplaceTest {
 
   @Test(expected = RuntimeException.class)
   public void applyTestInvalidPattern1() throws RecognitionException {
-    TemplateFactory.newBuilder().parse("{{ 'ababab' | replace:nil, 'A' }}").render();
+    LiquidParser.newInstance().parse("{{ 'ababab' | replace:nil, 'A' }}").render();
   }
 
   @Test(expected = RuntimeException.class)
   public void applyTestInvalidPattern2() throws RecognitionException {
-    TemplateFactory.newBuilder().parse("{{ 'ababab' | replace:'a', nil }}").render();
+    LiquidParser.newInstance().parse("{{ 'ababab' | replace:'a', nil }}").render();
   }
 
   /*

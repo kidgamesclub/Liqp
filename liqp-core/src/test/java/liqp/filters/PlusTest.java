@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ public class PlusTest {
 
         for (String[] test : tests) {
 
-            Template template = TemplateFactory.newBuilder().parse(test[0]);
+            Template template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -49,7 +49,7 @@ public class PlusTest {
     @Test
     public void applyOriginalTest() {
 
-        assertThat(TemplateFactory.newBuilder().parse("{{ 1 | plus:1 }}").render(), is((Object)"2"));
-        assertThat(TemplateFactory.newBuilder().parse("{{ '1' | plus:'1.0' }}").render(), is((Object)"2.0"));
+        assertThat(LiquidParser.newInstance().parse("{{ 1 | plus:1 }}").render(), is((Object)"2"));
+        assertThat(LiquidParser.newInstance().parse("{{ '1' | plus:'1.0' }}").render(), is((Object)"2.0"));
     }
 }

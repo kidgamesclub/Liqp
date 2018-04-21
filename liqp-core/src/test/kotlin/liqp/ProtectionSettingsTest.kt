@@ -9,7 +9,7 @@ class ProtectionSettingsTest {
 
   @Test
   fun testWithinMaxRenderTimeMillis() {
-    val template = TemplateFactory()
+    val template = LiquidParser()
         .parse("{% for i in (1..100) %}{{ i }}{% endfor %}")
 
     template.rendering(
@@ -24,7 +24,7 @@ class ProtectionSettingsTest {
 
   @Test
   fun testExceedMaxRenderTimeMillis() {
-    val template = TemplateFactory.newInstance()
+    val template = LiquidParser.newInstance()
         .parse("{% for i in (1..10000) %}{{ i }}{% endfor %}")
         .rendering {
           maxRenderTimeMillis = 1
@@ -35,7 +35,7 @@ class ProtectionSettingsTest {
 
   @Test
   fun testWithinMaxIterationsRange() {
-    val template = TemplateFactory.newBuilder()
+    val template = LiquidParser.newInstance()
         .parse("{% for i in (1..100) %}{{ i }}{% endfor %}")
 
     template.rendering { maxIterations = 1000 }
@@ -45,9 +45,9 @@ class ProtectionSettingsTest {
 
   @Test
   fun testExceedMaxIterationsRange() {
-    TemplateFactory.newInstance()
+    LiquidParser.newInstance()
         .parse("{% for i in (1..100) %}{{ i }}{% endfor %}")
-        .rendering{
+        .rendering {
           maxIterations = 10
         }
         .hasRenderError(ExceededMaxIterationsException::class.java)
@@ -59,7 +59,7 @@ class ProtectionSettingsTest {
     assertTemplateFactory()
         .withTemplateString("{% for i in array %}{{ i }}{% endfor %}")
         .parsedWithoutError()
-        .withEngine { maxIterations(1000) }
+        .withEngine { withMaxIterations(1000) }
         .rendering("{\"array\": [1, 2, 3, 4, 5, 6, 7, 8, 9]}")
         .isNotError()
   }
@@ -70,7 +70,7 @@ class ProtectionSettingsTest {
     assertStringTemplate(
         templateString = "{% for i in array %}{{ i }}{% endfor %}",
         data = "{\"array\": [1, 2, 3, 4, 5, 6, 7, 8, 9]}",
-        renderer = { maxIterations(5) })
+        renderer = { withMaxIterations(5) })
         .hasRenderError(ExceededMaxIterationsException::class.java)
   }
 
@@ -80,7 +80,7 @@ class ProtectionSettingsTest {
     assertStringTemplate(
         templateString = "{% for a in array %}{% for i in a %}{{ i }}{% endfor %}{% endfor %}",
         data = "{\"array\": [[1,2,3,4,5], [11,12,13,14,15], [21,22,23,24,25]]}",
-        renderer = { maxIterations(10) })
+        renderer = { withMaxIterations(10) })
         .hasRenderError(RuntimeException::class.java)
   }
 
@@ -98,45 +98,48 @@ class ProtectionSettingsTest {
 
     assertStringTemplate(
         templateString = "{% tablerow n in collections.frontpage cols:3%} {{n}} {% endtablerow %}",
-        data = "{ \"collections\" : { \"frontpage\" : [1,2,3,4,5,6] } }", renderer = { maxIterations(5) })
+        data = "{ \"collections\" : { \"frontpage\" : [1,2,3,4,5,6] } }", renderer = { withMaxIterations(5) })
         .hasRenderError(RuntimeException::class.java)
   }
 
   @Test
   fun testWithinMaxTemplateSizeBytes() {
-    TemplateFactory.newBuilder()
+    LiquidParser.newBuilder()
         .maxTemplateSize(3000)
+        .toParser()
         .parse("{% tablerow n in collections.frontpage cols:3%} {{n}} {% endtablerow %}")
         .render("{ \"collections\" : { \"frontpage\" : [1,2,3,4,5,6] } }")
   }
 
   @Test(expected = RuntimeException::class)
   fun testExceedMaxTemplateSizeBytes() {
-    TemplateFactory.newBuilder()
+    LiquidParser.newBuilder()
         .maxTemplateSize(30)
+        .toParser()
         .parse("{% tablerow n in collections.frontpage cols:3%} {{n}} {% endtablerow %}")
         .render("{ \"collections\" : { \"frontpage\" : [1,2,3,4,5,6] } }")
   }
 
   @Test
   fun testWithinMaxSizeRenderedString() {
-    TemplateFactory.newBuilder()
+    LiquidParser.newBuilder()
+        .toParser()
         .parse("{% for i in (1..100) %}{{ abc }}{% endfor %}")
         .rendering(
             data = "{\"abc\": \"abcdefghijklmnopqrstuvwxyz\"}",
-            renderer = { maxSizeRenderedString(2700) })
+            renderer = { maxSizeRenderedString = 2700 })
         .isNotError()
   }
 
   @Test
   fun testExceedMaxSizeRenderedString() {
-    TemplateFactory.newBuilder()
-
+    LiquidParser.newBuilder()
+        .toParser()
         .parse("{% for i in (1..1000) %}{{ abc }}{% endfor %}")
         .rendering(
             data = "{\"abc\": \"abcdefghijklmnopqrstuvwxyz\"}",
             renderer = {
-              maxSizeRenderedString(2500)
+              maxSizeRenderedString = 2500
             })
         .hasRenderError()
   }

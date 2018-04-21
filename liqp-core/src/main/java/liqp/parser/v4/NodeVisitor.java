@@ -490,6 +490,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   @Override
   public FilterNode visitFilter(FilterContext ctx) {
 
+
     FilterNode node = new FilterNode(ctx, filters.getFilter(ctx.Id().getText()));
 
     if (ctx.params() != null) {

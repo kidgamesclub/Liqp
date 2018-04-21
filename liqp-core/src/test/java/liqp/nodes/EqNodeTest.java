@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ public class EqNodeTest {
 
         for (String[] test : tests) {
 
-            Template template = TemplateFactory.newBuilder().parse(test[0]);
+            Template template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -40,9 +40,9 @@ public class EqNodeTest {
     @Test
     public void illegal_symbolsTest() throws Exception {
 
-        assertThat(TemplateFactory.newBuilder().parse("{% if true == empty %}?{% endif %}").render(), is(""));
-        assertThat(TemplateFactory.newBuilder().parse("{% if true == null %}?{% endif %}").render(), is(""));
-        assertThat(TemplateFactory.newBuilder().parse("{% if empty == true %}?{% endif %}").render(), is(""));
-        assertThat(TemplateFactory.newBuilder().parse("{% if null == true %}?{% endif %}").render(), is(""));
+        assertThat(LiquidParser.newInstance().parse("{% if true == empty %}?{% endif %}").render(), is(""));
+        assertThat(LiquidParser.newInstance().parse("{% if true == null %}?{% endif %}").render(), is(""));
+        assertThat(LiquidParser.newInstance().parse("{% if empty == true %}?{% endif %}").render(), is(""));
+        assertThat(LiquidParser.newInstance().parse("{% if null == true %}?{% endif %}").render(), is(""));
     }
 }

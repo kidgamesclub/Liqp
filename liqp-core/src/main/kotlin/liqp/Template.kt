@@ -6,20 +6,23 @@ import org.antlr.v4.runtime.tree.ParseTree
 /**
  * This class holds the state of a parsed template
  */
-class Template(val rootNode: LNode, private val parseTree: ParseTree?, private val engine: TemplateEngine = TemplateEngine.newInstance()) {
+class Template(val rootNode: LNode,
+               private val parseTree: ParseTree?,
+               private val parser: LiquidParser,
+               private val engine: LiquidRenderer = LiquidRenderer.newInstance(parser.toRenderSettings())) {
 
   @JvmOverloads
-  fun render(inputData: String, engine: TemplateEngine = this.engine): String {
+  fun render(inputData: String, engine: LiquidRenderer = this.engine): String {
     return engine.render(this, inputData)
   }
 
   @JvmOverloads
-  fun render(inputData: Any? = null, engine: TemplateEngine = this.engine): String {
+  fun render(inputData: Any? = null, engine: LiquidRenderer = this.engine): String {
     return engine.render(this, inputData)
   }
 
   @JvmOverloads
-  fun render(key: String, value: Any?, engine: TemplateEngine = this.engine): String {
+  fun render(key: String, value: Any?, engine: LiquidRenderer = this.engine): String {
     return engine.render(this, key to value)
   }
 

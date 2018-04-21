@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.junit.Test;
 
 public class IncrementTest {
@@ -30,7 +30,7 @@ public class IncrementTest {
 
         for (String[] test : tests) {
 
-            Template template = TemplateFactory.newBuilder().parse(test[0]);
+            Template template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));

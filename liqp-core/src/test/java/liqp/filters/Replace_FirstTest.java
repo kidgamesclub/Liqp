@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ public class Replace_FirstTest {
 
         for (String[] test : tests) {
 
-            Template template = TemplateFactory.newBuilder().parse(test[0]);
+            Template template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -31,12 +31,12 @@ public class Replace_FirstTest {
 
     @Test(expected = RuntimeException.class)
     public void applyTestInvalidPattern1() throws RecognitionException {
-        TemplateFactory.newBuilder().parse("{{ 'ababab' | replace_first:nil, 'A' }}").render();
+        LiquidParser.newInstance().parse("{{ 'ababab' | replace_first:nil, 'A' }}").render();
     }
 
     @Test(expected = RuntimeException.class)
     public void applyTestInvalidPattern2() throws RecognitionException {
-        TemplateFactory.newBuilder().parse("{{ 'ababab' | replace_first:'a', nil }}").render();
+        LiquidParser.newInstance().parse("{{ 'ababab' | replace_first:'a', nil }}").render();
     }
 
     /*
@@ -52,6 +52,6 @@ public class Replace_FirstTest {
         Filter filter = Filter.getFilter("replace_first");
 
         assertThat(filter.apply(Mocks.mockRenderContext(), "a a a a", "a", "b"), is((Object)"b a a a"));
-        assertThat(TemplateFactory.newBuilder().parse("{{ 'a a a a' | replace_first: 'a', 'b' }}").render(), is("b a a a"));
+        assertThat(LiquidParser.newInstance().parse("{{ 'a a a a' | replace_first: 'a', 'b' }}").render(), is("b a a a"));
     }
 }

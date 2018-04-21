@@ -2,15 +2,12 @@ package liqp
 
 import java.io.File
 
-class TemplateFactoryAssert(val factory: TemplateFactory, val engine: TemplateEngine = TemplateEngine.newInstance()) {
-
-  fun withSettings(configurer: TemplateFactorySettings.() -> TemplateFactorySettings): TemplateFactoryAssert {
-    return factory.toBuilder().configurer().build().assertThat()
-  }
+class TemplateFactoryAssert(val parser: LiquidParser,
+                            val engine: LiquidRenderer = LiquidRenderer(parser = parser)) {
 
   fun withTemplateString(template: String): TemplateAssert {
     try {
-      return TemplateAssert(factory.parse(template), engine)
+      return TemplateAssert(parser.parse(template), engine)
     } catch (e: Exception) {
       return TemplateAssert(error = e)
     }
@@ -18,7 +15,7 @@ class TemplateFactoryAssert(val factory: TemplateFactory, val engine: TemplateEn
 
   fun withTemplateFile(template: File): TemplateAssert {
     try {
-      return TemplateAssert(factory.parseFile(template), engine)
+      return TemplateAssert(parser.parseFile(template), engine)
     } catch (e: Exception) {
       return TemplateAssert(error = e)
     }

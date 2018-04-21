@@ -14,13 +14,13 @@ public class TemplateTest {
   public void renderObjectTest() {
 
     // `a` is public
-    assertThat(TemplateFactory.newBuilder().parse("{{foo.a}}").render("foo", new Foo()), is("A"));
+    assertThat(LiquidParser.newInstance().parse("{{foo.a}}").render("foo", new Foo()), is("A"));
 
     // there is a public `getB()` method that exposes `b`
-    assertThat(TemplateFactory.newBuilder().parse("{{foo.b}}").render("foo", new Foo()), is("B"));
+    assertThat(LiquidParser.newInstance().parse("{{foo.b}}").render("foo", new Foo()), is("B"));
 
     // `c` is not accessible
-    assertThat(TemplateFactory.newBuilder().parse("{{foo.c}}").render("foo", new Foo()), is(""));
+    assertThat(LiquidParser.newInstance().parse("{{foo.c}}").render("foo", new Foo()), is(""));
   }
 
   @Test
@@ -28,19 +28,19 @@ public class TemplateTest {
 
     final String expected = "Hey";
 
-    String rendered = TemplateFactory.newBuilder().parse("{{mu}}").render("{\"mu\" : \"" + expected + "\"}");
+    String rendered = LiquidParser.newInstance().parse("{{mu}}").render("{\"mu\" : \"" + expected + "\"}");
     assertThat(rendered, is(expected));
   }
 
   @Test
   public void renderJSONStringTestInvalidJSON_NotAccessed() {
-    assertThatCode(() -> TemplateFactory.newBuilder().parse("mu").render("{\"key : \"value\"}"))
+    assertThatCode(() -> LiquidParser.newInstance().parse("mu").render("{\"key : \"value\"}"))
           .doesNotThrowAnyException();
   }
 
   @Test
   public void renderJSONStringTestInvalidJSON_Accessed() {
-    assertThatCode(() -> TemplateFactory.newBuilder().parse("{{ key }}").render("{\"key : \"value\"}"))
+    assertThatCode(() -> LiquidParser.newInstance().parse("{{ key }}").render("{\"key : \"value\"}"))
           .isInstanceOf(JsonParseException.class);
   }
 
@@ -49,10 +49,10 @@ public class TemplateTest {
 
     final String expected = "Hey";
 
-    String rendered = TemplateFactory.newBuilder().parse("{{mu}}").render("mu", expected);
+    String rendered = LiquidParser.newInstance().parse("{{mu}}").render("mu", expected);
     assertThat(rendered, is(expected));
 
-    rendered = TemplateFactory.newBuilder().parse("{{a}}{{b}}{{c}}").render(ImmutableMap.of(
+    rendered = LiquidParser.newInstance().parse("{{a}}{{b}}{{c}}").render(ImmutableMap.of(
           "a", expected,
           "b", expected,
           "c", ""
@@ -60,14 +60,14 @@ public class TemplateTest {
     );
     assertThat(rendered, is(expected + expected));
 
-    rendered = TemplateFactory.newBuilder().parse("{{a}}{{b}}{{c}}").render(
+    rendered = LiquidParser.newInstance().parse("{{a}}{{b}}{{c}}").render(
           ImmutableMap.of("a", expected,
                 "b", expected,
                 "c", "") /* no value */
     );
     assertThat(rendered, is(expected + expected));
 
-    rendered = TemplateFactory.newBuilder().parse("{{a}}{{b}}{{c}}").render(
+    rendered = LiquidParser.newInstance().parse("{{a}}{{b}}{{c}}").render(
           ImmutableMap.of("a", "A",
                 "b", "B",
                 "c", "C")
@@ -78,7 +78,7 @@ public class TemplateTest {
   @Test
   public void renderVarArgsTestInvalidKey2() {
     assertThatCode(() -> {
-      TemplateFactory.newBuilder().parse("mu").render(null, 456);
+      LiquidParser.newInstance().parse("mu").render(null, 456);
     }).isInstanceOf(IllegalArgumentException.class);
   }
 

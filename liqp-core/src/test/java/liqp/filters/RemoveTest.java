@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ public class RemoveTest {
 
         for (String[] test : tests) {
 
-            Template template = TemplateFactory.newBuilder().parse(test[0]);
+            Template template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -31,7 +31,7 @@ public class RemoveTest {
 
     @Test(expected = RuntimeException.class)
     public void applyTestInvalidPattern() throws RecognitionException {
-        TemplateFactory.newBuilder().parse("{{ 'ababab' | remove:nil }}").render();
+        LiquidParser.newInstance().parse("{{ 'ababab' | remove:nil }}").render();
     }
 
     /*

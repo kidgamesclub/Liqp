@@ -5,7 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ public class Remove_FirstTest {
 
     for (String[] test : tests) {
 
-      Template template = TemplateFactory.newBuilder().parse(test[0]);
+      Template template = LiquidParser.newInstance().parse(test[0]);
       String rendered = String.valueOf(template.render());
 
       assertThat(rendered, is(test[1]));
@@ -32,7 +32,7 @@ public class Remove_FirstTest {
 
   @Test(expected = RuntimeException.class)
   public void applyTestInvalidPattern() throws RecognitionException {
-    TemplateFactory.newBuilder().parse("{{ 'ababab' | remove_first:nil }}").render();
+    LiquidParser.newInstance().parse("{{ 'ababab' | remove_first:nil }}").render();
   }
 
   /*
@@ -48,7 +48,7 @@ public class Remove_FirstTest {
     Filter filter = Filter.getFilter("remove_first");
 
     assertThat(filter.apply(mockRenderContext(), "a a a a", "a "), is((Object) "a a a"));
-    assertThat(TemplateFactory.newBuilder().parse("{{ 'a a a a' | remove_first: 'a ' }}")
+    assertThat(LiquidParser.newInstance().parse("{{ 'a a a a' | remove_first: 'a ' }}")
           .render(), is((Object) "a a " +
           "a"));
   }

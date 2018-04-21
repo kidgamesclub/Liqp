@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -64,7 +64,7 @@ public class CycleTest {
 
         for (String[] test : tests) {
 
-            Template template = TemplateFactory.newBuilder().parse(test[0]);
+            Template template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -86,14 +86,14 @@ public class CycleTest {
     @Test
     public void cycleTest() throws Exception {
 
-        assertThat(TemplateFactory.newBuilder().parse("{%cycle \"one\", \"two\"%}").render(), is("one"));
-        assertThat(TemplateFactory.newBuilder().parse("{%cycle \"one\", \"two\"%} {%cycle \"one\", \"two\"%}").render(), is("one two"));
-        assertThat(TemplateFactory.newBuilder().parse("{%cycle \"\", \"two\"%} {%cycle \"\", \"two\"%}").render(), is(" two"));
+        assertThat(LiquidParser.newInstance().parse("{%cycle \"one\", \"two\"%}").render(), is("one"));
+        assertThat(LiquidParser.newInstance().parse("{%cycle \"one\", \"two\"%} {%cycle \"one\", \"two\"%}").render(), is("one two"));
+        assertThat(LiquidParser.newInstance().parse("{%cycle \"\", \"two\"%} {%cycle \"\", \"two\"%}").render(), is(" two"));
 
-        assertThat(TemplateFactory.newBuilder().parse("{%cycle \"one\", \"two\"%} {%cycle \"one\", \"two\"%} {%cycle \"one\", \"two\"%}").render(),
+        assertThat(LiquidParser.newInstance().parse("{%cycle \"one\", \"two\"%} {%cycle \"one\", \"two\"%} {%cycle \"one\", \"two\"%}").render(),
                 is("one two one"));
 
-        assertThat(TemplateFactory.newBuilder().parse("{%cycle \"text-align: left\", \"text-align: right\" %} {%cycle \"text-align: left\", \"text-align: right\"%}").render(),
+        assertThat(LiquidParser.newInstance().parse("{%cycle \"text-align: left\", \"text-align: right\" %} {%cycle \"text-align: left\", \"text-align: right\"%}").render(),
                 is("text-align: left text-align: right"));
     }
 
@@ -107,7 +107,7 @@ public class CycleTest {
     public void multiple_cyclesTest() throws Exception {
 
         assertThat(
-                TemplateFactory.newBuilder().parse(
+                LiquidParser.newInstance().parse(
                         "{%cycle 1,2%} " +
                         "{%cycle 1,2%} " +
                         "{%cycle 1,2%} " +
@@ -128,7 +128,7 @@ public class CycleTest {
     public void multiple_named_cyclesTest() throws Exception {
 
         assertThat(
-                TemplateFactory.newBuilder().parse(
+                LiquidParser.newInstance().parse(
                         "{%cycle 1: \"one\", \"two\" %} {%cycle 2: \"one\", \"two\" %} " +
                         "{%cycle 1: \"one\", \"two\" %} {%cycle 2: \"one\", \"two\" %} " +
                         "{%cycle 1: \"one\", \"two\" %} {%cycle 2: \"one\", \"two\" %}").render(),
@@ -148,7 +148,7 @@ public class CycleTest {
         String assigns = "{\"var1\" : 1, \"var2\" : 2 }";
 
         assertThat(
-                TemplateFactory.newBuilder().parse(
+                LiquidParser.newInstance().parse(
                         "{%cycle var1: \"one\", \"two\" %} {%cycle var2: \"one\", \"two\" %} " +
                         "{%cycle var1: \"one\", \"two\" %} {%cycle var2: \"one\", \"two\" %} " +
                         "{%cycle var1: \"one\", \"two\" %} {%cycle var2: \"one\", \"two\" %}").render(assigns),

@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ public class MinusTest {
 
         for (String[] test : tests) {
 
-            Template template = TemplateFactory.newBuilder().parse(test[0]);
+            Template template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -49,7 +49,7 @@ public class MinusTest {
     @Test
     public void applyOriginalTest() {
 
-        assertThat(TemplateFactory.newBuilder().parse("{{ input | minus:operand }}").render("{\"input\":5, \"operand\":1}"), is((Object)"4"));
-        assertThat(TemplateFactory.newBuilder().parse("{{ '4.3' | minus:'2' }}").render(), is((Object)"2.3"));
+        assertThat(LiquidParser.newInstance().parse("{{ input | minus:operand }}").render("{\"input\":5, \"operand\":1}"), is((Object)"4"));
+        assertThat(LiquidParser.newInstance().parse("{{ '4.3' | minus:'2' }}").render(), is((Object)"2.3"));
     }
 }

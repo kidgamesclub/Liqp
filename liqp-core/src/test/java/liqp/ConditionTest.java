@@ -10,11 +10,11 @@ import org.junit.Test;
 
 public class ConditionTest {
   private RenderContext context;
-  private TemplateEngine engine;
+  private LiquidRenderer engine;
 
   @Before
   public void setUp() throws Exception {
-    engine = new TemplateEngine();
+    engine = new LiquidRenderer();
     context = createTestContext();
   }
 

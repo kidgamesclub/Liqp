@@ -12,14 +12,14 @@ import liqp.nodes.RenderContext;
  */
 public class Examples {
 
-  private static TemplateEngine engine = TemplateEngine.getDefaultInstance();
+  private static LiquidRenderer engine = LiquidRenderer.getDefaultInstance();
 
   private static void demoGuards() {
 
-    final TemplateFactory templateCtx = TemplateFactory.newBuilder()
+    final LiquidParser templateCtx = LiquidParser.newBuilder()
           .maxTemplateSize(300L)
           .maxTemplateSize(100L)
-          .build();
+          .toParser();
 
     String rendered = templateCtx.parse("{% for i in (1..10) %}{{ text }}{% endfor %}")
           .render(ImmutableMap.of("text", "abcdefghijklmnopqrstuvwxyz"));
@@ -29,19 +29,19 @@ public class Examples {
 
   private static void demoSimple() {
 
-    System.out.println(TemplateFactory.newInstance()
+    System.out.println(LiquidParser.newInstance()
           .parse("hi {{name}}")
           .render(singletonMap("name", "tobi")));
 
-    System.out.println(TemplateFactory.newInstance().parse("hi {{name}}")
+    System.out.println(LiquidParser.newInstance().parse("hi {{name}}")
           .render("name", "tobi"));
   }
 
   private static void demoCustomStrongFilter() {
 
     // first register your custom filter
-    final TemplateFactory ctx = TemplateFactory.newInstance()
-          .withFilter(new Filter("b") {
+    final LiquidParser ctx = LiquidParser.newInstance()
+          .withFilters(new Filter("b") {
             @Override
             public Object apply(RenderContext context, Object value, Object... params) {
               // create a string from the  value
@@ -61,8 +61,8 @@ public class Examples {
   private static void demoCustomRepeatFilter() {
 
     // first register your custom filter
-    final TemplateFactory ctx = TemplateFactory.newInstance()
-          .withFilter(new Filter("repeat") {
+    final LiquidParser ctx = LiquidParser.newInstance()
+          .withFilters(new Filter("repeat") {
             @Override
             public Object apply(RenderContext context, Object value, Object... params) {
 
@@ -90,8 +90,8 @@ public class Examples {
 
   private static void demoCustomSumFilter() {
 
-    final TemplateFactory ctx = TemplateFactory.newInstance()
-          .withFilter(new Filter("sum") {
+    final LiquidParser ctx = LiquidParser.newInstance()
+          .withFilters(new Filter("sum") {
             @Override
             public Object apply(RenderContext context, Object value, Object... params) {
 

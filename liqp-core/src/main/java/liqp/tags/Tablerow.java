@@ -54,7 +54,7 @@ public class Tablerow extends Tag {
 
     tablerowloopContext.put(LENGTH, collection.length);
 
-    context.addFrame();
+    context.pushFrame();
     context.set(TABLEROWLOOP, tablerowloopContext);
 
     context.startLoop(collection.length, null);

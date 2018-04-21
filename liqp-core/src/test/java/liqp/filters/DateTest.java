@@ -9,8 +9,8 @@ import static org.mockito.Mockito.mock;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import liqp.Template;
-import liqp.TemplateEngine;
-import liqp.TemplateFactory;
+import liqp.LiquidRenderer;
+import liqp.LiquidParser;
 import liqp.nodes.RenderContext;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
@@ -63,7 +63,7 @@ public class DateTest {
 
     for (String[] test : tests) {
 
-      Template template = TemplateFactory.newBuilder().parse(test[0]);
+      Template template = LiquidParser.newInstance().parse(test[0]);
       String rendered = String.valueOf(template.render());
 
       assertThat(rendered, is(test[1]));
@@ -98,8 +98,8 @@ public class DateTest {
 
     final Filter filter = Filter.getFilter("date");
     final RenderContext context = new RenderContext(emptyMap(),
-          new TemplateFactory(),
-          new TemplateEngine());
+          new LiquidParser(),
+          new LiquidRenderer());
     assertThat(filter.apply(mockRenderContext(), seconds("2006-05-05 10:00:00"), "%B"), is((Object) "May"));
     assertThat(filter.apply(mockRenderContext(), seconds("2006-06-05 10:00:00"), "%B"), is((Object) "June"));
     assertThat(filter.apply(mockRenderContext(), seconds("2006-07-05 10:00:00"), "%B"), is((Object) "July"));

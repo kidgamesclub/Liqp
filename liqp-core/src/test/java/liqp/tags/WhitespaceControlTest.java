@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ public class WhitespaceControlTest {
   public void noStrip() throws RecognitionException {
 
     String source = "a  \n  {% assign letter = 'b' %}  \n{{ letter }}\n  c";
-    Template template = TemplateFactory.newBuilder().parse(source);
+    Template template = LiquidParser.newInstance().parse(source);
     String rendered = String.valueOf(template.render().replace(' ', '.'));
 
     assertThat(rendered, is("a..\n....\nb\n..c"));
@@ -25,7 +25,7 @@ public class WhitespaceControlTest {
   public void oneLhsStrip() throws RecognitionException {
 
     String source = "a  \n  {%- assign letter = 'b' %}  \n{{ letter }}\n  c";
-    Template template = TemplateFactory.newBuilder().parse(source);
+    Template template = LiquidParser.newInstance().parse(source);
     String rendered = String.valueOf(template.render().replace(' ', '.'));
 
     assertThat(rendered, is("a..\nb\n..c"));
@@ -35,7 +35,7 @@ public class WhitespaceControlTest {
   public void oneRhsStrip() throws RecognitionException {
 
     String source = "a  \n  {% assign letter = 'b' -%}  \n{{ letter }}\n  c";
-    Template template = TemplateFactory.newBuilder().parse(source);
+    Template template = LiquidParser.newInstance().parse(source);
     String rendered = String.valueOf(template.render().replace(' ', '.'));
 
     assertThat(rendered, is("a..\n..b\n..c"));
@@ -45,7 +45,7 @@ public class WhitespaceControlTest {
   public void oneBothStrip() throws RecognitionException {
 
     String source = "a  \n  {%- assign letter = 'b' -%}  \n{{ letter }}\n  c";
-    Template template = TemplateFactory.newBuilder().parse(source);
+    Template template = LiquidParser.newInstance().parse(source);
     String rendered = String.valueOf(template.render().replace(' ', '.'));
 
     assertThat(rendered, is("ab\n..c"));
@@ -55,7 +55,7 @@ public class WhitespaceControlTest {
   public void twoLhsStrip() throws RecognitionException {
 
     String source = "a  \n  {%- assign letter = 'b' %}  \n{{- letter }}\n  c";
-    Template template = TemplateFactory.newBuilder().parse(source);
+    Template template = LiquidParser.newInstance().parse(source);
     String rendered = String.valueOf(template.render().replace(' ', '.'));
 
     assertThat(rendered, is("ab\n..c"));
@@ -65,7 +65,7 @@ public class WhitespaceControlTest {
   public void twoRhsStrip() throws RecognitionException {
 
     String source = "a  \n  {% assign letter = 'b' -%}  \n{{ letter -}}\n  c";
-    Template template = TemplateFactory.newBuilder().parse(source);
+    Template template = LiquidParser.newInstance().parse(source);
     String rendered = String.valueOf(template.render().replace(' ', '.'));
 
     assertThat(rendered, is("a..\n..bc"));
@@ -75,7 +75,7 @@ public class WhitespaceControlTest {
   public void allStrip() throws RecognitionException {
 
     String source = "a  \n  {%- assign letter = 'b' -%}  \n{{- letter -}}\n  c";
-    Template template = TemplateFactory.newBuilder().parse(source);
+    Template template = LiquidParser.newInstance().parse(source);
     String rendered = String.valueOf(template.render().replace(' ', '.'));
 
     assertThat(rendered, is("abc"));
@@ -86,8 +86,10 @@ public class WhitespaceControlTest {
 
     String source = "a  \n  {% assign letter = 'b' %}  \n{{ letter }}\n  c";
 
-    Template template = TemplateFactory.newBuilder()
-          .stripSpacesAroundTags(true).parse(source);
+    Template template = LiquidParser.newBuilder()
+          .stripSpacesAroundTags(true)
+          .toParser()
+          .parse(source);
     String rendered = String.valueOf(template.render().replace(' ', '.'));
 
     assertThat(rendered, is("abc"));

@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ public class AppendTest {
 
         for (String[] test : tests) {
 
-            Template template = TemplateFactory.newBuilder().parse(test[0]);
+            Template template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -42,7 +42,7 @@ public class AppendTest {
 
         final String assigns = "{\"a\":\"bc\", \"b\":\"d\" }";
 
-        assertThat(TemplateFactory.newBuilder().parse("{{ a | append: 'd'}}").render(assigns), is("bcd"));
-        assertThat(TemplateFactory.newBuilder().parse("{{ a | append: b}}").render(assigns), is("bcd"));
+        assertThat(LiquidParser.newInstance().parse("{{ a | append: 'd'}}").render(assigns), is("bcd"));
+        assertThat(LiquidParser.newInstance().parse("{{ a | append: b}}").render(assigns), is("bcd"));
     }
 }

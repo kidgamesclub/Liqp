@@ -11,151 +11,151 @@ public class StatementsTest {
  * def test_true_eql_true
  *   text = %| {% if true == true %} true {% else %} false {% endif %} |
  *   expected = %|  true  |
- *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render
+ *   assert_equal expected, TemplateFactory.newInstance().parse(text).render
  * end
  */
     @Test
     public void true_eql_trueTest() throws Exception {
 
-        assertThat(TemplateFactory.newBuilder().parse(" {% if true == true %} true {% else %} false {% endif %} ").render(), is("  true  "));
+        assertThat(LiquidParser.newInstance().parse(" {% if true == true %} true {% else %} false {% endif %} ").render(), is("  true  "));
     }
 
     /*
      * def test_true_not_eql_true
      *   text = %| {% if true != true %} true {% else %} false {% endif %} |
      *   expected = %|  false  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render
      * end
      */
     @Test
     public void true_not_eql_trueTest() throws Exception {
 
-        assertThat(TemplateFactory.newBuilder().parse(" {% if true != true %} true {% else %} false {% endif %} ").render(), is("  false  "));
+        assertThat(LiquidParser.newInstance().parse(" {% if true != true %} true {% else %} false {% endif %} ").render(), is("  false  "));
     }
 
     /*
      * def test_true_lq_true
      *   text = %| {% if 0 > 0 %} true {% else %} false {% endif %} |
      *   expected = %|  false  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render
      * end
      */
     @Test
     public void true_lq_trueTest() throws Exception {
 
-        assertThat(TemplateFactory.newBuilder().parse(" {% if 0 > 0 %} true {% else %} false {% endif %} ").render(), is("  false  "));
+        assertThat(LiquidParser.newInstance().parse(" {% if 0 > 0 %} true {% else %} false {% endif %} ").render(), is("  false  "));
     }
 
     /*
      * def test_one_lq_zero
      *   text = %| {% if 1 > 0 %} true {% else %} false {% endif %} |
      *   expected = %|  true  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render
      * end
      */
     @Test
     public void one_lq_zeroTest() throws Exception {
 
-        assertThat(TemplateFactory.newBuilder().parse(" {% if 1 > 0 %} true {% else %} false {% endif %} ").render(), is("  true  "));
+        assertThat(LiquidParser.newInstance().parse(" {% if 1 > 0 %} true {% else %} false {% endif %} ").render(), is("  true  "));
     }
 
     /*
      * def test_zero_lq_one
      *   text = %| {% if 0 < 1 %} true {% else %} false {% endif %} |
      *   expected = %|  true  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render
      * end
      */
     @Test
     public void zero_lq_oneTest() throws Exception {
 
-        assertThat(TemplateFactory.newBuilder().parse(" {% if 0 < 1 %} true {% else %} false {% endif %} ").render(), is("  true  "));
+        assertThat(LiquidParser.newInstance().parse(" {% if 0 < 1 %} true {% else %} false {% endif %} ").render(), is("  true  "));
     }
 
     /*
      * def test_zero_lq_or_equal_one
      *   text = %| {% if 0 <= 0 %} true {% else %} false {% endif %} |
      *   expected = %|  true  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render
      * end
      */
     @Test
     public void zero_lq_or_equal_oneTest() throws Exception {
 
-        assertThat(TemplateFactory.newBuilder().parse(" {% if 0 <= 0 %} true {% else %} false {% endif %} ").render(), is("  true  "));
+        assertThat(LiquidParser.newInstance().parse(" {% if 0 <= 0 %} true {% else %} false {% endif %} ").render(), is("  true  "));
     }
 
     /*
      * def test_zero_lq_or_equal_one_involving_nil
      *   text = %| {% if null <= 0 %} true {% else %} false {% endif %} |
      *   expected = %|  false  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render
      *
      *
      *   text = %| {% if 0 <= null %} true {% else %} false {% endif %} |
      *   expected = %|  false  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render
      * end
      */
     @Test
     public void zero_lq_or_equal_one_involving_nilTest() throws Exception {
 
-        assertThat(TemplateFactory.newBuilder().parse(" {% if null <= 0 %} true {% else %} false {% endif %} ").render(), is("  false  "));
+        assertThat(LiquidParser.newInstance().parse(" {% if null <= 0 %} true {% else %} false {% endif %} ").render(), is("  false  "));
 
-        assertThat(TemplateFactory.newBuilder().parse(" {% if 0 <= null %} true {% else %} false {% endif %} ").render(), is("  false  "));
+        assertThat(LiquidParser.newInstance().parse(" {% if 0 <= null %} true {% else %} false {% endif %} ").render(), is("  false  "));
     }
 
     /*
      * def test_zero_lqq_or_equal_one
      *   text = %| {% if 0 >= 0 %} true {% else %} false {% endif %} |
      *   expected = %|  true  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render
      * end
      */
     @Test
     public void zero_lqq_or_equal_oneTest() throws Exception {
 
-        assertThat(TemplateFactory.newBuilder().parse(" {% if 0 >= 0 %} true {% else %} false {% endif %} ").render(), is("  true  "));
+        assertThat(LiquidParser.newInstance().parse(" {% if 0 >= 0 %} true {% else %} false {% endif %} ").render(), is("  true  "));
     }
 
     /*
      * def test_strings
      *   text = %| {% if 'test' == 'test' %} true {% else %} false {% endif %} |
      *   expected = %|  true  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render
      * end
      */
     @Test
     public void stringsTest() throws Exception {
 
-        assertThat(TemplateFactory.newBuilder().parse(" {% if 'test' == 'test' %} true {% else %} false {% endif %} ").render(), is("  true  "));
+        assertThat(LiquidParser.newInstance().parse(" {% if 'test' == 'test' %} true {% else %} false {% endif %} ").render(), is("  true  "));
     }
 
     /*
      * def test_strings_not_equal
      *   text = %| {% if 'test' != 'test' %} true {% else %} false {% endif %} |
      *   expected = %|  false  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render
      * end
      */
     @Test
     public void strings_not_equalTest() throws Exception {
 
-        assertThat(TemplateFactory.newBuilder().parse(" {% if 'test' != 'test' %} true {% else %} false {% endif %} ").render(), is("  false  "));
+        assertThat(LiquidParser.newInstance().parse(" {% if 'test' != 'test' %} true {% else %} false {% endif %} ").render(), is("  false  "));
     }
 
     /*
      * def test_var_strings_equal
      *   text = %| {% if var == "hello there!" %} true {% else %} false {% endif %} |
      *   expected = %|  true  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render('var' => 'hello there!')
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render('var' => 'hello there!')
      * end
      */
     @Test
     public void var_strings_equalTest() throws Exception {
 
         assertThat(
-                TemplateFactory.newBuilder().parse(" {% if var == \"hello there!\" %} true {% else %} false {% endif %} ")
+                LiquidParser.newInstance().parse(" {% if var == \"hello there!\" %} true {% else %} false {% endif %} ")
                         .render("{ \"var\" : \"hello there!\" }"),
                 is("  true  "));
     }
@@ -164,14 +164,14 @@ public class StatementsTest {
      * def test_var_strings_are_not_equal
      *   text = %| {% if "hello there!" == var %} true {% else %} false {% endif %} |
      *   expected = %|  true  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render('var' => 'hello there!')
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render('var' => 'hello there!')
      * end
      */
     @Test
     public void var_strings_are_not_equalTest() throws Exception {
 
         assertThat(
-                TemplateFactory.newBuilder().parse(" {% if \"hello there!\" == var %} true {% else %} false {% endif %} ")
+                LiquidParser.newInstance().parse(" {% if \"hello there!\" == var %} true {% else %} false {% endif %} ")
                         .render("{ \"var\" : \"hello there!\" }"),
                 is("  true  "));
     }
@@ -180,14 +180,14 @@ public class StatementsTest {
      * def test_var_and_long_string_are_equal
      *   text = %| {% if var == 'hello there!' %} true {% else %} false {% endif %} |
      *   expected = %|  true  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render('var' => 'hello there!')
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render('var' => 'hello there!')
      * end
      */
     @Test
     public void var_and_long_string_are_equalTest() throws Exception {
 
         assertThat(
-                TemplateFactory.newBuilder().parse(" {% if var == 'hello there!' %} true {% else %} false {% endif %} ")
+                LiquidParser.newInstance().parse(" {% if var == 'hello there!' %} true {% else %} false {% endif %} ")
                         .render("{ \"var\" : \"hello there!\" }"),
                 is("  true  "));
     }
@@ -196,14 +196,14 @@ public class StatementsTest {
      * def test_var_and_long_string_are_equal_backwards
      *   text = %| {% if 'hello there!' == var %} true {% else %} false {% endif %} |
      *   expected = %|  true  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render('var' => 'hello there!')
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render('var' => 'hello there!')
      * end
      */
     @Test
     public void var_and_long_string_are_equal_backwardsTest() throws Exception {
 
         assertThat(
-                TemplateFactory.newBuilder().parse(" {% if 'hello there!' == var %} true {% else %} false {% endif %} ")
+                LiquidParser.newInstance().parse(" {% if 'hello there!' == var %} true {% else %} false {% endif %} ")
                         .render("{ \"var\" : \"hello there!\" }"),
                 is("  true  "));
     }
@@ -212,14 +212,14 @@ public class StatementsTest {
      * def test_is_collection_empty
      *   text = %| {% if array == empty %} true {% else %} false {% endif %} |
      *   expected = %|  true  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render('array' => [])
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render('array' => [])
      * end
      */
     @Test
     public void is_collection_emptyTest() throws Exception {
 
         assertThat(
-                TemplateFactory.newBuilder().parse(" {% if array == empty %} true {% else %} false {% endif %} ")
+                LiquidParser.newInstance().parse(" {% if array == empty %} true {% else %} false {% endif %} ")
                         .render("{ \"array\" : [] }"),
                 is("  true  "));
     }
@@ -228,14 +228,14 @@ public class StatementsTest {
      * def test_is_not_collection_empty
      *   text = %| {% if array == empty %} true {% else %} false {% endif %} |
      *   expected = %|  false  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render('array' => [1,2,3])
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render('array' => [1,2,3])
      * end
      */
     @Test
     public void is_not_collection_emptyTest() throws Exception {
 
         assertThat(
-                TemplateFactory.newBuilder().parse(" {% if array == empty %} true {% else %} false {% endif %} ")
+                LiquidParser.newInstance().parse(" {% if array == empty %} true {% else %} false {% endif %} ")
                         .render("{ \"array\" : [1,2,3] }"),
                 is("  false  "));
     }
@@ -244,37 +244,37 @@ public class StatementsTest {
      * def test_nil
      *   text = %| {% if var == nil %} true {% else %} false {% endif %} |
      *   expected = %|  true  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render('var' => nil)
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render('var' => nil)
      *
      *   text = %| {% if var == null %} true {% else %} false {% endif %} |
      *   expected = %|  true  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render('var' => nil)
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render('var' => nil)
      * end
      */
     @Test
     public void nilTest() throws Exception {
 
-        assertThat(TemplateFactory.newBuilder().parse(" {% if var == nil %} true {% else %} false {% endif %} ").render("{ \"var\" : null }"), is("  true  "));
+        assertThat(LiquidParser.newInstance().parse(" {% if var == nil %} true {% else %} false {% endif %} ").render("{ \"var\" : null }"), is("  true  "));
 
-        assertThat(TemplateFactory.newBuilder().parse(" {% if var == null %} true {% else %} false {% endif %} ").render("{ \"var\" : null }"), is("  true  "));
+        assertThat(LiquidParser.newInstance().parse(" {% if var == null %} true {% else %} false {% endif %} ").render("{ \"var\" : null }"), is("  true  "));
     }
 
     /*
      * def test_not_nil
      *   text = %| {% if var != nil %} true {% else %} false {% endif %} |
      *   expected = %|  true  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render('var' => 1 )
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render('var' => 1 )
      *
      *   text = %| {% if var != null %} true {% else %} false {% endif %} |
      *   expected = %|  true  |
-     *   assert_equal expected, TemplateFactory.newBuilder().parse(text).render('var' => 1 )
+     *   assert_equal expected, TemplateFactory.newInstance().parse(text).render('var' => 1 )
      * end
      */
     @Test
     public void not_nilTest() throws Exception {
 
-        assertThat(TemplateFactory.newBuilder().parse(" {% if var != nil %} true {% else %} false {% endif %} ").render("{\"var\":1}"), is("  true  "));
+        assertThat(LiquidParser.newInstance().parse(" {% if var != nil %} true {% else %} false {% endif %} ").render("{\"var\":1}"), is("  true  "));
 
-        assertThat(TemplateFactory.newBuilder().parse(" {% if var != null %} true {% else %} false {% endif %} ").render("{\"var\":1}"), is("  true  "));
+        assertThat(LiquidParser.newInstance().parse(" {% if var != null %} true {% else %} false {% endif %} ").render("{\"var\":1}"), is("  true  "));
     }
 }

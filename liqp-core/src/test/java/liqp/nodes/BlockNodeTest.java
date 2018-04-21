@@ -1,7 +1,7 @@
 package liqp.nodes;
 
 
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import liqp.tags.Tag;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
@@ -13,7 +13,7 @@ public class BlockNodeTest {
    *   Liquid::Template.register_tag("testtag", Block)
    *
    *   assert_nothing_thrown do
-   *     template = Liquid::TemplateFactory.newBuilder().parse( "{% testtag %} {% endtesttag %}")
+   *     template = Liquid::TemplateFactory.newInstance().parse( "{% testtag %} {% endtesttag %}")
    *   end
    * end
    */
@@ -27,6 +27,6 @@ public class BlockNodeTest {
       }
     };
 
-    TemplateFactory.newBuilder().withTags(customTag).parse("{% testtag %} {% endtesttag %}").render();
+    LiquidParser.newInstance().withTags(customTag).parse("{% testtag %} {% endtesttag %}").render();
   }
 }

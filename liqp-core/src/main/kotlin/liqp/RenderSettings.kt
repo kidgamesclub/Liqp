@@ -1,124 +1,121 @@
 package liqp
 
+import liqp.parser.Flavor
 import java.io.File
 import java.util.concurrent.ExecutorService
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KFunction1
+import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty0
 
 interface RenderSettingsSpec {
   val isStrictVariables: Boolean
   val maxIterations: Int
   val maxStackSize: Int
   val isUseTruthyChecks: Boolean
-  val includesDir: File
+  val baseDir: File
+  val flavor: Flavor
+  val includesDir:File
   val maxSizeRenderedString: Int
   val maxRenderTimeMillis: Long
   val executor: ExecutorService?
+
+  fun toMutableRenderSettings(): MutableRenderSettings
 }
 
-open class RenderSettingsBase(val isStrictVariables: Boolean = false,
-                              val maxIterations: Int = Integer.MAX_VALUE,
-                              val maxStackSize: Int = 100,
-                              val isUseTruthyChecks: Boolean = false,
-                              val includesDir: File = File("includes"),
-                              val maxSizeRenderedString: Int = Integer.MAX_VALUE,
-                              val maxRenderTimeMillis: Long = Long.MAX_VALUE,
-                              val executor: ExecutorService? = null)
+data class RenderSettings(override val isStrictVariables: Boolean = false,
+                          override val maxIterations: Int = Integer.MAX_VALUE,
+                          override val maxStackSize: Int = 100,
+                          override val isUseTruthyChecks: Boolean = false,
+                          override val baseDir: File,
+                          override val flavor: Flavor,
+                          override val maxSizeRenderedString: Int = Integer.MAX_VALUE,
+                          override val maxRenderTimeMillis: Long = Long.MAX_VALUE,
+                          override val executor: ExecutorService? = null) : RenderSettingsSpec {
 
-data class RenderSettings(override var isStrictVariables: Boolean = false,
-                          override var maxIterations: Int = Integer.MAX_VALUE,
-                          override var maxStackSize: Int = 100,
-                          override var isUseTruthyChecks: Boolean = false,
-                          override var includesDir: File = File("includes"),
-                          override var maxSizeRenderedString: Int = Integer.MAX_VALUE,
-                          override var maxRenderTimeMillis: Long = Long.MAX_VALUE,
-                          override var executor: ExecutorService? = null) : RenderSettingsBase() {
+  override val includesDir: File = baseDir.resolve(flavor.includesDirName)
 
-  fun strictVariables(strictVariables: Boolean): RenderSettings {
+  override fun toMutableRenderSettings(): MutableRenderSettings {
+    return MutableRenderSettings(this)
+  }
+}
+
+data class MutableRenderSettings(internal var settings: RenderSettings = RenderSettings(baseDir=File("./"), flavor = Flavor.LIQUID)) : RenderSettingsSpec {
+
+  override var isStrictVariables by CopyOnWriteDelegate(settings::isStrictVariables, this::withStrictVariables)
+  override var baseDir by CopyOnWriteDelegate(settings::baseDir, this::withBaseDir)
+  override var flavor by CopyOnWriteDelegate(settings::flavor, this::withFlavor)
+  override var maxIterations by CopyOnWriteDelegate(settings::maxIterations, this::withMaxIterations)
+  override var maxStackSize by CopyOnWriteDelegate(settings::maxStackSize, this::withMaxStackSize)
+  override var isUseTruthyChecks by CopyOnWriteDelegate(settings::isUseTruthyChecks, this::withUseTruthyChecks)
+  override var maxSizeRenderedString by CopyOnWriteDelegate(settings::maxSizeRenderedString, this::withMaxSizeRenderedString)
+  override var maxRenderTimeMillis by CopyOnWriteDelegate(settings::maxRenderTimeMillis, this::withMaxRenderTimeMillis)
+  override var executor by CopyOnWriteDelegate(settings::executor, this::withExecutor)
+
+  override val includesDir: File
+    get() = settings.includesDir
+
+  fun withStrictVariables(strictVariables: Boolean): MutableRenderSettings {
     this.isStrictVariables = strictVariables
     return this
   }
 
-  fun maxIterations(maxIterations: Int): RenderSettings {
-    this.maxIterations = maxIterations
+  fun withMaxIterations(maxIterations: Int): MutableRenderSettings {
+    settings = settings.copy(maxIterations = maxIterations)
     return this
   }
 
-  fun maxStackSize(maxStackSize: Int): RenderSettings {
-    this.maxStackSize = maxStackSize
+  fun withMaxStackSize(maxStackSize: Int): MutableRenderSettings {
+    settings = settings.copy(maxStackSize = maxStackSize)
     return this
   }
 
-  fun isTruthy(isTruthy: Boolean): RenderSettings {
-    this.isUseTruthyChecks = isTruthy
+  fun withUseTruthyChecks(isUseTruthyChecks: Boolean): MutableRenderSettings {
+    settings = settings.copy(isUseTruthyChecks = isUseTruthyChecks)
     return this
   }
 
-  fun includesDir(includesDir: File): RenderSettings {
-    this.includesDir = includesDir
+  fun withBaseDir(baseDir: File): MutableRenderSettings {
+    settings = settings.copy(baseDir = baseDir)
     return this
   }
 
-  fun maxSizeRenderedString(maxSizeRenderedString: Int): RenderSettings {
-    this.maxSizeRenderedString = maxSizeRenderedString
+  fun withFlavor(flavor: Flavor): MutableRenderSettings {
+    settings = settings.copy(flavor = flavor)
     return this
   }
 
-  fun maxRenderTimeMillis(maxRenderTimeMillis: Long): RenderSettings {
-    this.maxRenderTimeMillis = maxRenderTimeMillis
+  fun withMaxSizeRenderedString(maxSizeRenderedString: Int): MutableRenderSettings {
+    settings = settings.copy(maxSizeRenderedString = maxSizeRenderedString)
     return this
   }
 
-  fun executor(executor: ExecutorService): RenderSettings {
-    this.executor = executor
+  fun withMaxRenderTimeMillis(maxRenderTimeMillis: Long): MutableRenderSettings {
+    settings = settings.copy(maxRenderTimeMillis = maxRenderTimeMillis)
     return this
+  }
+
+  fun withExecutor(executor: ExecutorService?): MutableRenderSettings {
+    settings = settings.copy(executor = executor)
+    return this
+  }
+
+  override fun toMutableRenderSettings(): MutableRenderSettings {
+    return this
+  }
+
+  fun build(): RenderSettings {
+    return settings
   }
 }
 
-//data class RenderSettings constructor(override var isStrictVariables: Boolean = false,
-//                          override var maxIterations: Int = Integer.MAX_VALUE,
-//                          override var maxStackSize: Int = 100,
-//                          override var isUseTruthyChecks:Boolean = false,
-//                          override var includesDir: File = File("includes"),
-//                          override var maxSizeRenderedString: Int = Integer.MAX_VALUE,
-//                          override var maxRenderTimeMillis: Long = Long.MAX_VALUE,
-//                          override var executor: ExecutorService? = null) : RenderSettingsSpec {
-//
-//  fun strictVariables(strictVariables: Boolean): RenderSettings {
-//    this.isStrictVariables = strictVariables
-//    return this
-//  }
-//
-//  fun maxIterations(maxIterations: Int): RenderSettings {
-//    this.maxIterations = maxIterations
-//    return this
-//  }
-//
-//  fun maxStackSize(maxStackSize: Int): RenderSettings {
-//    this.maxStackSize = maxStackSize
-//    return this
-//  }
-//
-//  fun isTruthy(isTruthy: Boolean): RenderSettings {
-//    this.isUseTruthyChecks = isTruthy
-//    return this
-//  }
-//
-//  fun includesDir(includesDir: File): RenderSettings {
-//    this.includesDir = includesDir
-//    return this
-//  }
-//
-//  fun maxSizeRenderedString(maxSizeRenderedString: Int): RenderSettings {
-//    this.maxSizeRenderedString = maxSizeRenderedString
-//    return this
-//  }
-//
-//  fun maxRenderTimeMillis(maxRenderTimeMillis: Long): RenderSettings {
-//    this.maxRenderTimeMillis = maxRenderTimeMillis
-//    return this
-//  }
-//
-//  fun executor(executor: ExecutorService): RenderSettings {
-//    this.executor = executor
-//    return this
-//  }
-//}
+class CopyOnWriteDelegate<T>(val getter: KProperty0<T>,
+                             val setter: KFunction1<T, MutableRenderSettings>) : ReadWriteProperty<MutableRenderSettings, T> {
+  override fun getValue(thisRef: MutableRenderSettings, property: KProperty<*>): T {
+    return getter.get()
+  }
+
+  override fun setValue(thisRef: MutableRenderSettings, property: KProperty<*>, value: T) {
+    setter(value)
+  }
+}

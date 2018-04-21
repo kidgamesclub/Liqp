@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -25,7 +25,7 @@ public class TimesTest {
 
         for (String[] test : tests) {
 
-            Template template = TemplateFactory.newBuilder().parse(test[0]);
+            Template template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -48,7 +48,7 @@ public class TimesTest {
      *   assert_template_result "0", "{{ 'foo' | times:4 }}"
      *
      *   # Ruby v1.9.2-rc1, or higher, backwards compatible Float test
-     *   assert_match(/(6\.3)|(6\.(0{13})1)/, TemplateFactory.newBuilder().parse("{{ '2.1' | times:3 }}").render)
+     *   assert_match(/(6\.3)|(6\.(0{13})1)/, TemplateFactory.newInstance().parse("{{ '2.1' | times:3 }}").render)
      *
      *   assert_template_result "6", "{{ '2.1' | times:3 | replace: '.','-' | plus:0}}"
      * end

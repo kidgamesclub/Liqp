@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ public class UnlessTest {
 
         for (String[] test : tests) {
 
-            Template template = TemplateFactory.newBuilder().parse(test[0]);
+            Template template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render(json));
 
             assertThat(rendered, is(test[1]));
@@ -41,9 +41,9 @@ public class UnlessTest {
     @Test
     public void unlessTest() throws RecognitionException {
 
-        assertThat(TemplateFactory.newBuilder().parse(" {% unless true %} this text should not go into the output {% endunless %} ").render(), is("  "));
-        assertThat(TemplateFactory.newBuilder().parse(" {% unless false %} this text should go into the output {% endunless %} ").render(), is("  this text should go into the output  "));
-        assertThat(TemplateFactory.newBuilder().parse("{% unless true %} you suck {% endunless %} {% unless false %} you rock {% endunless %}?").render(), is("  you rock ?"));
+        assertThat(LiquidParser.newInstance().parse(" {% unless true %} this text should not go into the output {% endunless %} ").render(), is("  "));
+        assertThat(LiquidParser.newInstance().parse(" {% unless false %} this text should go into the output {% endunless %} ").render(), is("  this text should go into the output  "));
+        assertThat(LiquidParser.newInstance().parse("{% unless true %} you suck {% endunless %} {% unless false %} you rock {% endunless %}?").render(), is("  you rock ?"));
     }
 
     /*
@@ -56,9 +56,9 @@ public class UnlessTest {
     @Test
     public void unless_elseTest() throws RecognitionException {
 
-        assertThat(TemplateFactory.newBuilder().parse("{% unless true %} NO {% else %} YES {% endunless %}").render(), is(" YES "));
-        assertThat(TemplateFactory.newBuilder().parse("{% unless false %} YES {% else %} NO {% endunless %}").render(), is(" YES "));
-        assertThat(TemplateFactory.newBuilder().parse("{% unless \"foo\" %} NO {% else %} YES {% endunless %}").render(), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% unless true %} NO {% else %} YES {% endunless %}").render(), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% unless false %} YES {% else %} NO {% endunless %}").render(), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% unless \"foo\" %} NO {% else %} YES {% endunless %}").render(), is(" YES "));
     }
 
     /*
@@ -70,7 +70,7 @@ public class UnlessTest {
     public void unless_in_loopTest() throws RecognitionException {
 
         assertThat(
-                TemplateFactory.newBuilder().parse("{% for i in choices %}{% unless i %}{{ forloop.index }}{% endunless %}{% endfor %}")
+                LiquidParser.newInstance().parse("{% for i in choices %}{% unless i %}{{ forloop.index }}{% endunless %}{% endfor %}")
                         .render("{ \"choices\" : [1, null, false] }"),
                 is("23"));
     }
@@ -84,7 +84,7 @@ public class UnlessTest {
     public void unless_else_in_loopTest() throws RecognitionException {
 
         assertThat(
-                TemplateFactory.newBuilder().parse("{% for i in choices %}{% unless i %} {{ forloop.index }} {% else %} TRUE {% endunless %}{% endfor %}")
+                LiquidParser.newInstance().parse("{% for i in choices %}{% unless i %} {{ forloop.index }} {% else %} TRUE {% endunless %}{% endfor %}")
                         .render("{ \"choices\" : [1, null, false] }"),
                 is(" TRUE  2  3 "));
     }

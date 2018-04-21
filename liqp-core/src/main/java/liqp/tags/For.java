@@ -40,7 +40,7 @@ public class For extends Tag {
     String id = super.asString(nodes[1].render(context));
 
     // Each for tag has its own context that keeps track of its own variables (scope)
-    context.addFrame();
+    context.pushFrame();
 
     Object rendered = array ? renderArray(id, context, nodes) : renderRange(id, context, nodes);
 

@@ -1,15 +1,12 @@
 package liqp.filters;
 
-import static java.util.Collections.emptyMap;
 import static liqp.filters.Mocks.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 import liqp.Template;
-import liqp.TemplateEngine;
-import liqp.TemplateFactory;
-import liqp.nodes.RenderContext;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -34,7 +31,7 @@ public class TruncatewordsTest {
 
         for (String[] test : tests) {
 
-            Template template = TemplateFactory.newBuilder().parse(test[0]);
+            Template template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render(json));
 
             assertThat(rendered, is(test[1]));

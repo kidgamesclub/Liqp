@@ -5,7 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -14,7 +14,7 @@ public class FirstTest {
   @Test
   public void applyTest() throws RecognitionException {
 
-    Template template = TemplateFactory.newBuilder().parse("{{values | first}}");
+    Template template = LiquidParser.newInstance().parse("{{values | first}}");
 
     String rendered = String.valueOf(template.render("{\"values\" : [\"Mu\", \"foo\", \"bar\"]}"));
 

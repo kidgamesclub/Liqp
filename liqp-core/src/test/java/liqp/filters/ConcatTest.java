@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.junit.Test;
 
 public class ConcatTest {
@@ -28,7 +28,7 @@ public class ConcatTest {
 
         for (String[] test : tests) {
 
-            Template template = TemplateFactory.newBuilder().parse(test[0]);
+            Template template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render(test[2]));
 
             assertThat(rendered, is(test[1]));
@@ -37,13 +37,13 @@ public class ConcatTest {
 
     @Test(expected = RuntimeException.class)
     public void applyTestParamNotArray() {
-        Template template = TemplateFactory.newBuilder().parse("{{ a | concat: c }}");
+        Template template = LiquidParser.newInstance().parse("{{ a | concat: c }}");
         template.render("{ \"a\": [1, 2], \"b\": [3, 4], \"c\": \"FOO\" }");
     }
 
     @Test(expected = RuntimeException.class)
     public void applyTestNoParam() {
-        Template template = TemplateFactory.newBuilder().parse("{{ a | concat }}");
+        Template template = LiquidParser.newInstance().parse("{{ a | concat }}");
         template.render("{ \"a\": [1, 2], \"b\": [3, 4], \"c\": \"FOO\" }");
     }
 }

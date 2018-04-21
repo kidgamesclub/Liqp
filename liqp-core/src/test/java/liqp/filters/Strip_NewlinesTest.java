@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -25,11 +25,11 @@ public class Strip_NewlinesTest {
           {"{{ a | strip_newlines }}", "123"},
     };
 
-    final TemplateFactory ctx = TemplateFactory.newBuilder().build();
+    final LiquidParser ctx = LiquidParser.newBuilder().toParser();
 
     for (String[] test : tests) {
 
-      Template template = TemplateFactory.newBuilder().parse(test[0]);
+      Template template = LiquidParser.newInstance().parse(test[0]);
       String rendered = String.valueOf(template.render(jsonData));
 
       assertThat(rendered, is(test[1]));
@@ -44,7 +44,7 @@ public class Strip_NewlinesTest {
   @Test
   public void applyOriginalTest() {
 
-    assertThat(TemplateFactory.newBuilder().parse("{{ source | strip_newlines }}")
+    assertThat(LiquidParser.newInstance().parse("{{ source | strip_newlines }}")
           .render(Collections.singletonMap("source", "a\nb\nc")), is((Object) "abc"));
   }
 }

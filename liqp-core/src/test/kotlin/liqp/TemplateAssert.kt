@@ -3,7 +3,7 @@ package liqp
 import org.assertj.core.api.Assertions.assertThat
 
 class TemplateAssert(val template: Template? = null,
-                     val engine:TemplateEngine = TemplateEngine.newInstance(),
+                     val engine:LiquidRenderer = LiquidRenderer.newInstance(),
                      val error:Exception? = null) {
 
   fun parsedWithoutError():TemplateAssert {
@@ -17,7 +17,7 @@ class TemplateAssert(val template: Template? = null,
     return this
   }
 
-  fun withEngine(configurer: RenderSettings.() -> RenderSettings): TemplateAssert {
+  fun withEngine(configurer: RenderConfigurer): TemplateAssert {
     return TemplateAssert(template, engine.withRenderSettings(configurer))
   }
 

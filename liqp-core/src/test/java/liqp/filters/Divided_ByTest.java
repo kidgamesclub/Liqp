@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import liqp.Template;
-import liqp.TemplateFactory;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -25,7 +25,7 @@ public class Divided_ByTest {
 
         for (String[] test : tests) {
 
-            Template template = TemplateFactory.newBuilder().parse(test[0]);
+            Template template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -53,7 +53,7 @@ public class Divided_ByTest {
      *   assert_template_result "4", "{{ 14 | divided_by:3 }}"
      *
      *   # Ruby v1.9.2-rc1, or higher, backwards compatible Float test
-     *   assert_match(/4\.(6{13,14})7/, TemplateFactory.newBuilder().parse("{{ 14 | divided_by:'3.0' }}").render)
+     *   assert_match(/4\.(6{13,14})7/, TemplateFactory.newInstance().parse("{{ 14 | divided_by:'3.0' }}").render)
      *
      *   assert_template_result "5", "{{ 15 | divided_by:3 }}"
      *   assert_template_result "Liquid error: divided by 0", "{{ 5 | divided_by:0 }}"

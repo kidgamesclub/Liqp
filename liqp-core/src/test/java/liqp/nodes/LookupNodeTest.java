@@ -8,20 +8,20 @@ import static org.junit.Assert.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 import liqp.Template;
-import liqp.TemplateEngine;
-import liqp.TemplateFactory;
+import liqp.LiquidRenderer;
+import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Before;
 import org.junit.Test;
 
 public class LookupNodeTest {
 
-  private TemplateEngine engine;
+  private LiquidRenderer engine;
   private RenderContext context;
 
   @Before
   public void setUp() throws Exception {
-    engine = new TemplateEngine();
+    engine = new LiquidRenderer();
     context = createTestContext();
   }
 
@@ -37,7 +37,7 @@ public class LookupNodeTest {
 
     for (String[] test : tests) {
 
-      Template template = TemplateFactory.newBuilder().parse(test[0]);
+      Template template = LiquidParser.newInstance().parse(test[0]);
       String rendered = String.valueOf(template.render(json));
 
       assertThat(rendered, is(test[1]));
@@ -282,8 +282,9 @@ public class LookupNodeTest {
 
     String assigns = "{ \"array\" : [1,2,3,4] }";
 
-    assertThat(TemplateFactory.newBuilder()
+    assertThat(LiquidParser.newBuilder()
           .strictVariables(true)
+          .toParser()
           .parse("array has {{ array.size }} elements")
           .render(assigns), is("array has 4 elements"));
   }
@@ -299,7 +300,7 @@ public class LookupNodeTest {
 
     String assigns = "{ \"hash\" : { \"a\" : 1, \"b\" : 2, \"c\" : 3, \"d\" : 4 } }";
 
-    assertThat(TemplateFactory.newBuilder().parse("hash has {{ hash.size }} elements").render(assigns), is("hash has" +
+    assertThat(LiquidParser.newInstance().parse("hash has {{ hash.size }} elements").render(assigns), is("hash has" +
           " 4 elements"));
   }
 

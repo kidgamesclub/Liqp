@@ -1,6 +1,6 @@
 package liqp.traverse
 
-import liqp.TemplateFactory
+import liqp.LiquidParser
 import liqp.isTag
 import liqp.nodes.LookupNode
 import liqp.tags.If
@@ -10,7 +10,8 @@ import org.junit.Test
 class FilteredLNodeVisitorTest {
   @Test
   fun testNodeVisitor_Iterator() {
-    val parsedTemplate = TemplateFactory.newBuilder()
+    val parsedTemplate = LiquidParser.newBuilder()
+        .toParser()
         .parse("Hey, welcome to {{ root.branch.leaf }} of our " +
             "{%if child.parent.grandparent.name == 'Bob'%}" +
             "  {% for person in parents.children %}" +
@@ -31,7 +32,8 @@ class FilteredLNodeVisitorTest {
 
   @Test
   fun testNodeVisitor_Parents() {
-    val parsedTemplate = TemplateFactory.newBuilder()
+    val parsedTemplate = LiquidParser.newBuilder()
+        .toParser()
         .parse("Hey, welcome to {{ root.branch.leaf }} of our " +
             "{%if child.parent.grandparent.name == 'Bob'%}" +
             "  {% for person in parents.children %}" +
