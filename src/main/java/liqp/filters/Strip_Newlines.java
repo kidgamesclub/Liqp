@@ -1,5 +1,7 @@
 package liqp.filters;
 
+import liqp.nodes.RenderContext;
+
 class Strip_Newlines extends Filter {
 
     /*
@@ -8,7 +10,7 @@ class Strip_Newlines extends Filter {
      * Remove all newlines from the string
      */
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         return super.asString(value).replaceAll("[\r\n]++", "");
     }

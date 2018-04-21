@@ -1,9 +1,11 @@
 package liqp.filters;
 
+import liqp.nodes.RenderContext;
+
 public class Lstrip extends Filter {
 
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         if (!super.isString(value)) {
             return value;

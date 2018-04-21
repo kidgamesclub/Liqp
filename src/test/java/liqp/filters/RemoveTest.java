@@ -46,6 +46,6 @@ public class RemoveTest {
 
         Filter filter = Filter.getFilter("remove");
 
-        assertThat(filter.apply("a a a a", "a"), is((Object)"   "));
+        assertThat(filter.apply(Mocks.mockRenderContext(), "a a a a", "a"), is((Object)"   "));
     }
 }

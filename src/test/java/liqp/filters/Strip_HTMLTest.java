@@ -1,10 +1,14 @@
 package liqp.filters;
 
+import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 import liqp.Template;
+import liqp.TemplateEngine;
 import liqp.TemplateFactory;
+import liqp.nodes.RenderContext;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -44,10 +48,12 @@ public class Strip_HTMLTest {
     public void applyOriginalTest() {
 
         Filter filter = Filter.getFilter("strip_html");
-
-        assertThat(filter.apply("<div>test</div>"), is((Object)"test"));
-        assertThat(filter.apply("<div id='test'>test</div>"), is((Object)"test"));
-        assertThat(filter.apply("<script type='text/javascript'>document.write('some stuff');</script>"), is((Object)""));
-        assertThat(filter.apply(null), is((Object)""));
+      final RenderContext context = new RenderContext(emptyMap(),
+            mock(TemplateFactory.class),
+            mock(TemplateEngine.class));
+        assertThat(filter.apply(context, "<div>test</div>"), is((Object)"test"));
+        assertThat(filter.apply(context, "<div id='test'>test</div>"), is((Object)"test"));
+        assertThat(filter.apply(context, "<script type='text/javascript'>document.write('some stuff');</script>"), is((Object)""));
+        assertThat(filter.apply(context, null), is((Object)""));
     }
 }

@@ -1,5 +1,7 @@
 package liqp.filters;
 
+import liqp.nodes.RenderContext;
+
 class Truncatewords extends Filter {
 
     /*
@@ -8,7 +10,7 @@ class Truncatewords extends Filter {
      * Truncate a string down to x words
      */
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         if (value == null) {
             return "";

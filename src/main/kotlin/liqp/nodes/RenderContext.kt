@@ -7,6 +7,10 @@ import liqp.TemplateEngine
 import liqp.TemplateFactory
 import liqp.exceptions.ExceededMaxIterationsException
 import liqp.exceptions.LiquidRenderingException
+import liqp.isFalse
+import liqp.isFalsy
+import liqp.isTrue
+import liqp.isTruthy
 import liqp.lookup.HasProperties
 import liqp.lookup.PropertyAccessors
 import liqp.lookup.PropertyContainer
@@ -18,22 +22,24 @@ import java.util.*
 val FORLOOP = "forloop"
 
 @Suppress("UNCHECKED_CAST")
-class RenderContext(input: Any?,
-                    val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
-                    val maxIterations: Int = Integer.MAX_VALUE,
-                    val templateFactory: TemplateFactory,
-                    val engine: TemplateEngine,
-                    val isStrictVariables: Boolean = false,
-                    val maxStackSize: Int = 100,
-                    val maxSizeRenderedString: Int = Integer.MAX_VALUE) : HasProperties {
+class RenderContext
+@JvmOverloads constructor(inputData: Any?,
+                          val templateFactory: TemplateFactory,
+                          val engine: TemplateEngine,
+                          val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
+                          val maxIterations: Int = Integer.MAX_VALUE,
+                          val isStrictVariables: Boolean = false,
+                          val isUseTruthyChecks: Boolean = true,
+                          val maxStackSize: Int = 100,
+                          val maxSizeRenderedString: Int = Integer.MAX_VALUE) : HasProperties {
 
   val inputData: PropertyContainer by lazy {
-    when (input) {
-      is String -> input.parseJSON()::get
-      is HasProperties -> {prop-> input.getProperty(prop)}
-      is Map<*, *> -> (input as Map<String, Any>)::get
-      is Pair<*, *> -> propertyContainer(input.first, input.second)
-      else -> accessors.propertyContainer(isStrictVariables, input)
+    when (inputData) {
+      is String -> inputData.parseJSON()::get
+      is HasProperties -> { prop -> inputData.getProperty(prop) }
+      is Map<*, *> -> (inputData as Map<String, Any>)::get
+      is Pair<*, *> -> propertyContainer(inputData.first, inputData.second)
+      else -> accessors.propertyContainer(isStrictVariables, inputData)
     }
   }
 
@@ -81,6 +87,30 @@ class RenderContext(input: Any?,
     loopState.increment()
   }
 
+  fun isTrue(value: Any?): Boolean {
+    return when {
+      isUseTruthyChecks -> value.isTruthy()
+      else -> value.isTrue()
+    }
+  }
+
+  fun isFalse(value: Any?): Boolean {
+    return when {
+      isUseTruthyChecks -> value.isFalsy()
+      else -> value.isFalse()
+    }
+  }
+
+  operator fun inc(): RenderContext {
+    addFrame()
+    return this
+  }
+
+  operator fun dec(): RenderContext {
+    popFrame()
+    return this
+  }
+
   fun addFrame(): RenderFrame {
     if (stack.size + 1 > maxStackSize) {
       throw LiquidRenderingException("Stack limit exceeded: $maxStackSize")
@@ -97,21 +127,21 @@ class RenderContext(input: Any?,
     return popped
   }
 
-  fun set(varName: String, value: Any?): Unit {
-    if (current.hasVar(varName)) {
-      current.set(varName, value)
-    } else if (current.hasScopedVar(varName)) {
-      val frames = stack.iterator()
-      frames.next() //Already looked at the head frame
-      while (frames.hasNext()) {
-        val frame = frames.next()
-        if (frame.hasVar(varName)) {
-          frame.set(varName, value)
-          return
+  operator fun set(varName: String, value: Any?): Unit {
+    when {
+      current.hasVar(varName) -> current.set(varName, value)
+      current.hasScopedVar(varName) -> {
+        val frames = stack.iterator()
+        frames.next() //Already looked at the head frame
+        while (frames.hasNext()) {
+          val frame = frames.next()
+          if (frame.hasVar(varName)) {
+            frame.set(varName, value)
+            return
+          }
         }
       }
-    } else {
-      current.set(varName, value)
+      else -> current.set(varName, value)
     }
   }
 
@@ -119,7 +149,7 @@ class RenderContext(input: Any?,
     return this.get(propName)
   }
 
-  fun <T> get(varName: String): T? {
+  operator fun <T> get(varName: String): T? {
     if (FORLOOP == varName) {
       return current.loop as T
     }

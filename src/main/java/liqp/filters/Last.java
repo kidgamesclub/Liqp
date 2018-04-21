@@ -1,5 +1,7 @@
 package liqp.filters;
 
+import liqp.nodes.RenderContext;
+
 class Last extends Filter {
 
     /*
@@ -8,7 +10,7 @@ class Last extends Filter {
      * Get the last element of the passed in array
      */
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         Object[] array = super.asArray(value);
 

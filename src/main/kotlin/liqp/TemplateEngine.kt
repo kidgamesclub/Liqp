@@ -9,16 +9,17 @@ import java.util.concurrent.TimeUnit
 typealias executeTemplate = (Template, RenderContext) -> Any?
 
 data class TemplateEngine(val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
-                          val executor: ExecutorService? = null,
-                          val templateFactory: TemplateFactory = TemplateFactory(),
-                          val isStrictVariables: Boolean = false,
-                          val maxStackSize: Int = 100,
-                          val maxSizeRenderedString: Int = Integer.MAX_VALUE,
-                          val maxIterations: Int = Integer.MAX_VALUE,
-                          val maxRenderTime: Long = Long.MAX_VALUE) {
+                                           val executor: ExecutorService? = null,
+                                           val templateFactory: TemplateFactory = TemplateFactory(),
+                                           val isStrictVariables: Boolean = false,
+                                           val isTruthy: Boolean = true,
+                                           val maxStackSize: Int = 100,
+                                           val maxSizeRenderedString: Int = Integer.MAX_VALUE,
+                                           val maxIterations: Int = Integer.MAX_VALUE,
+                                           val maxRenderTimeMillis: Long = Long.MAX_VALUE) {
 
   init {
-    if (maxRenderTime != Long.MAX_VALUE && executor == null) {
+    if (maxRenderTimeMillis != Long.MAX_VALUE && executor == null) {
       throw Exception("You specified a value for maxRenderTime, but didn't provide an executor")
     }
   }
@@ -29,12 +30,13 @@ data class TemplateEngine(val accessors: PropertyAccessors = PropertyAccessors.n
 
     @JvmStatic
     fun newInstance(settings: RenderSettings = RenderSettings()): TemplateEngine {
-      return TemplateEngine(isStrictVariables = settings.strictVariables,
+      return TemplateEngine(isStrictVariables = settings.isStrictVariables,
           maxStackSize = settings.maxStackSize,
           maxSizeRenderedString = settings.maxSizeRenderedString,
+          isTruthy = settings.isTruthy,
           maxIterations = settings.maxIterations,
           executor = settings.executor,
-          maxRenderTime = settings.maxRenderTimeMillis)
+          maxRenderTimeMillis = settings.maxRenderTimeMillis)
     }
 
     fun newInstance(configure: RenderSettings.() -> Any?): TemplateEngine {
@@ -51,16 +53,14 @@ data class TemplateEngine(val accessors: PropertyAccessors = PropertyAccessors.n
         return@task template.rootNode.render(context)
       })
 
-      return@executor future.get(this.maxRenderTime, TimeUnit.MILLISECONDS)
+      return@executor future.get(this.maxRenderTimeMillis, TimeUnit.MILLISECONDS)
     }
   }
 
   fun withTemplateFactory(factory: TemplateFactory): TemplateEngine {
     return when (factory == this.templateFactory) {
       true -> this
-      false -> TemplateEngine(accessors = this.accessors, executor = this.executor,
-          templateFactory = factory, maxIterations = this.maxIterations,
-          maxRenderTime = this.maxRenderTime)
+      false -> this.copy(templateFactory=factory)
     }
   }
 
@@ -70,21 +70,36 @@ data class TemplateEngine(val accessors: PropertyAccessors = PropertyAccessors.n
 
   fun withRenderSettings(settings: RenderSettings): TemplateEngine {
     return this.copy(maxStackSize = settings.maxIterations,
-        maxRenderTime = settings.maxRenderTimeMillis,
+        maxRenderTimeMillis = settings.maxRenderTimeMillis,
         maxIterations = settings.maxIterations,
+        isTruthy = settings.isTruthy,
+        isStrictVariables = settings.isStrictVariables,
         maxSizeRenderedString = settings.maxSizeRenderedString)
   }
 
   fun withRenderSettings(callback: (RenderSettings) -> RenderSettings): TemplateEngine {
-    val builder = RenderSettings(isStrictVariables, maxIterations, maxStackSize, this.maxSizeRenderedString,
-        this.maxRenderTime, this.executor)
+    val builder = RenderSettings(
+        isStrictVariables = this.isStrictVariables,
+        maxIterations = this.maxIterations,
+        maxStackSize = this.maxStackSize,
+        maxSizeRenderedString = this.maxSizeRenderedString,
+        maxRenderTimeMillis = this.maxRenderTimeMillis,
+        executor = this.executor)
     callback.invoke(builder)
     return withRenderSettings(builder)
   }
 
   fun createRenderContext(inputData: Any?): RenderContext {
-    return RenderContext(inputData, accessors, maxIterations, templateFactory, this,
-        isStrictVariables, maxStackSize, maxSizeRenderedString)
+    return RenderContext(
+        inputData=inputData,
+        accessors = this.accessors,
+        maxIterations = this.maxIterations,
+        templateFactory = this.templateFactory,
+        engine = this,
+        isStrictVariables = this.isStrictVariables,
+        isUseTruthyChecks = this.isTruthy,
+        maxStackSize = this.maxStackSize,
+        maxSizeRenderedString = this.maxSizeRenderedString)
   }
 
   @JvmOverloads
@@ -98,21 +113,15 @@ data class TemplateEngine(val accessors: PropertyAccessors = PropertyAccessors.n
 
   fun render(template: Template, context: RenderContext): String {
     val result = executeTemplate(template, context)
-    return asString(result)
+    return result.toNonNullString()
   }
 
   @JvmOverloads
   fun render(template: Template, inputData: Any? = null): String {
     val result = executeTemplate(template, createRenderContext(inputData))
-    return asString(result)
+    return result.toNonNullString()
   }
 
-  private fun asString(result: Any?): String {
-    return when (result) {
-      null -> return ""
-      else -> result.toString()
-    }
-  }
 }
 
 

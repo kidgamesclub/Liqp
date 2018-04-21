@@ -1,5 +1,7 @@
 package liqp.filters;
 
+import liqp.nodes.RenderContext;
+
 class Append extends Filter {
 
     /*
@@ -8,7 +10,7 @@ class Append extends Filter {
      * add one string to another
      */
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         return super.asString(value) + super.asString(super.get(0, params));
     }

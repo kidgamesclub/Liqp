@@ -16,7 +16,7 @@ public class Unless extends Tag {
             Object exprNodeValue = nodes[i].render(context);
             LNode blockNode = nodes[i + 1];
 
-            if (!super.asBoolean(exprNodeValue)) {
+            if (context.isFalse(exprNodeValue)) {
                 return blockNode.render(context);
             }
         }

@@ -1,5 +1,7 @@
 package liqp.filters;
 
+import liqp.nodes.RenderContext;
+
 class Size extends Filter {
 
     /*
@@ -8,7 +10,7 @@ class Size extends Filter {
      * Return the size of an array or of an string
      */
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         if (super.isArray(value)) {
             return super.asArray(value).length;

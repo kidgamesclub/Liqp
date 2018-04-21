@@ -43,6 +43,6 @@ public class HTest {
 
         Filter filter = Filter.getFilter("h");
 
-        assertThat(filter.apply("<strong>"), is((Object)"&lt;strong&gt;"));
+        assertThat(filter.apply(Mocks.mockRenderContext(), "<strong>"), is((Object)"&lt;strong&gt;"));
     }
 }

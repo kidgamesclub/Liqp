@@ -2,15 +2,16 @@ package liqp
 
 import java.util.concurrent.ExecutorService
 
-data class RenderSettings(var strictVariables: Boolean = false,
+data class RenderSettings(var isStrictVariables: Boolean = false,
                           var maxIterations: Int = Integer.MAX_VALUE,
                           var maxStackSize: Int = 100,
+                          var isTruthy:Boolean = true,
                           var maxSizeRenderedString: Int = Integer.MAX_VALUE,
                           var maxRenderTimeMillis: Long = Long.MAX_VALUE,
                           var executor: ExecutorService? = null) {
 
   fun strictVariables(strictVariables: Boolean): RenderSettings {
-    this.strictVariables = strictVariables
+    this.isStrictVariables = strictVariables
     return this
   }
 
@@ -21,6 +22,11 @@ data class RenderSettings(var strictVariables: Boolean = false,
 
   fun maxStackSize(maxStackSize: Int): RenderSettings {
     this.maxStackSize = maxStackSize
+    return this
+  }
+
+  fun isTruthy(isTruthy: Boolean): RenderSettings {
+    this.isTruthy = isTruthy
     return this
   }
 

@@ -2,6 +2,7 @@ package liqp.filters;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import liqp.nodes.RenderContext;
 
 class Replace_First extends Filter {
 
@@ -11,7 +12,7 @@ class Replace_First extends Filter {
      * Replace the first occurrences of a string with another
      */
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         String original = super.asString(value);
 

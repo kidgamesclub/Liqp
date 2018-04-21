@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import liqp.nodes.RenderContext;
 
 public class Date extends Filter {
 
@@ -52,7 +53,7 @@ public class Date extends Filter {
      * %% - Literal ``%'' character
      */
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         try {
             final Long seconds;

@@ -32,12 +32,12 @@ public class MinusTest {
 
     @Test(expected=RuntimeException.class)
     public void applyTestInvalid1() {
-        Filter.getFilter("minus").apply(1);
+        Filter.getFilter("minus").apply(Mocks.mockRenderContext(), 1);
     }
 
     @Test(expected=RuntimeException.class)
     public void applyTestInvalid2() {
-        Filter.getFilter("minus").apply(1, 2, 3);
+        Filter.getFilter("minus").apply(Mocks.mockRenderContext(), 1, 2, 3);
     }
 
     /*

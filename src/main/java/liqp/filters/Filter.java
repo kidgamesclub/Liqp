@@ -72,28 +72,17 @@ public abstract class Filter extends LValue implements LFilter {
   /**
    * Applies the filter on the 'value'.
    *
+   *
+   * @param context
    * @param value  the string value `AAA` in: `{{ 'AAA' | f:1,2,3 }}`
    * @param params the values [1, 2, 3] in: `{{ 'AAA' | f:1,2,3 }}`
    *
    * @return the result of the filter.
    */
-  protected Object apply(Object value, Object... params) {
+  protected Object apply(RenderContext context, Object value, Object... params) {
 
     // Default "no-op" filter.
     return value;
-  }
-
-  /**
-   * Applies the filter on the 'value', with the given 'context'.
-   *
-   * @param value   the string value `AAA` in: `{{ 'AAA' | f:1,2,3 }}`
-   * @param context the template context.
-   * @param params  the values [1, 2, 3] in: `{{ 'AAA' | f:1,2,3 }}`
-   *
-   * @return the result of the filter.
-   */
-  protected Object apply(Object value, RenderContext context, Object... params) {
-    return apply(value, params);
   }
 
   /**
@@ -130,7 +119,7 @@ public abstract class Filter extends LValue implements LFilter {
                        @NotNull RenderContext context,
                        @NotNull AtomicReference<Object> result) {
     final Object value = chain.continueChain();
-    final Object filterResult = this.apply(value, context, params.resolve(context));
+    final Object filterResult = this.apply(context, value, context, params.resolve(context));
     result.set(filterResult);
   }
 

@@ -1,11 +1,12 @@
 package liqp.filters;
 
 import java.net.URLDecoder;
+import liqp.nodes.RenderContext;
 
 public class Url_Decode extends Filter {
 
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         try {
             return URLDecoder.decode(super.asString(value), "UTF-8");

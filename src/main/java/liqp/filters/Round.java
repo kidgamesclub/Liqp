@@ -1,11 +1,12 @@
 package liqp.filters;
 
 import java.text.DecimalFormat;
+import liqp.nodes.RenderContext;
 
 public class Round extends Filter {
 
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         if (!super.canBeDouble(value)) {
             return 0;

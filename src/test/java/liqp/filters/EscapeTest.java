@@ -43,6 +43,6 @@ public class EscapeTest {
 
         Filter filter = Filter.getFilter("escape");
 
-        assertThat(filter.apply("<strong>"), is((Object)"&lt;strong&gt;"));
+        assertThat(filter.apply(Mocks.mockRenderContext(), "<strong>"), is((Object)"&lt;strong&gt;"));
     }
 }

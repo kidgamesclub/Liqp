@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import liqp.nodes.RenderContext;
 
 class Sort extends Filter {
 
@@ -14,7 +15,7 @@ class Sort extends Filter {
      * which to sort an array of hashes or drops
      */
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         if (value == null) {
             return "";

@@ -3,11 +3,12 @@ package liqp.filters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import liqp.nodes.RenderContext;
 
 public class Concat extends Filter {
 
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         super.checkParams(params, 1);
 

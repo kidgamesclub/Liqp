@@ -34,17 +34,17 @@ public class Divided_ByTest {
 
     @Test(expected=RuntimeException.class)
     public void applyTestInvalid1() {
-        Filter.getFilter("divided_by").apply(1);
+        Filter.getFilter("divided_by").apply(Mocks.mockRenderContext(), 1);
     }
 
     @Test(expected=RuntimeException.class)
     public void applyTestInvalid2() {
-        Filter.getFilter("divided_by").apply(1, 2, 3);
+        Filter.getFilter("divided_by").apply(Mocks.mockRenderContext(), 1, 2, 3);
     }
 
     @Test(expected=RuntimeException.class)
     public void applyTestInvalid3() {
-        Filter.getFilter("divided_by").apply(15L, 0L);
+        Filter.getFilter("divided_by").apply(Mocks.mockRenderContext(), 15L, 0L);
     }
 
     /*
@@ -64,9 +64,9 @@ public class Divided_ByTest {
 
         Filter filter = Filter.getFilter("divided_by");
 
-        assertThat(filter.apply(12L, 3L), is((Object)4L));
-        assertThat(filter.apply(14L, 3L), is((Object)4L));
-        assertTrue(String.valueOf(filter.apply(14L, 3.0)).matches("4[,.]6{10,}7"));
+        assertThat(filter.apply(Mocks.mockRenderContext(), 12L, 3L), is((Object)4L));
+        assertThat(filter.apply(Mocks.mockRenderContext(), 14L, 3L), is((Object)4L));
+        assertTrue(String.valueOf(filter.apply(Mocks.mockRenderContext(), 14L, 3.0)).matches("4[,.]6{10,}7"));
 
         // see: applyTestInvalid3()
         // assert_template_result "Liquid error: divided by 0", "{{ 5 | divided_by:0 }}"

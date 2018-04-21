@@ -1,11 +1,15 @@
 package liqp.filters;
 
+import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 import java.util.HashMap;
 import liqp.Template;
+import liqp.TemplateEngine;
 import liqp.TemplateFactory;
+import liqp.nodes.RenderContext;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -47,8 +51,10 @@ public class SortTest {
     public void applyOriginalTest() {
 
         Filter filter = Filter.getFilter("sort");
-
-        assertThat(filter.apply(new Integer[]{4,3,2,1}), is((Object)new Integer[]{1,2,3,4}));
+      final RenderContext context = new RenderContext(emptyMap(),
+            mock(TemplateFactory.class),
+            mock(TemplateEngine.class));
+        assertThat(filter.apply(context, new Integer[]{4,3,2,1}), is((Object)new Integer[]{1,2,3,4}));
 
         java.util.Map[] unsorted = new java.util.Map[]{
                 new HashMap<String, Integer>(){{ put("a", 4); }},
@@ -57,7 +63,7 @@ public class SortTest {
                 new HashMap<String, Integer>(){{ put("a", 1); }}
         };
 
-        java.util.Map[] sorted = (Sort.SortableMap[])filter.apply(unsorted, "a");
+        java.util.Map[] sorted = (Sort.SortableMap[])filter.apply(context, unsorted, "a");
 
         java.util.Map[] expected = new java.util.Map[]{
                 new HashMap<String, Integer>(){{ put("a", 1); }},

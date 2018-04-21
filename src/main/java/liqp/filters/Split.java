@@ -1,6 +1,7 @@
 package liqp.filters;
 
 import java.util.regex.Pattern;
+import liqp.nodes.RenderContext;
 
 class Split extends Filter {
 
@@ -12,7 +13,7 @@ class Split extends Filter {
      * E.g. {{ "a~b" | split:'~' | first }} #=> 'a'
      */
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         String original = super.asString(value);
 

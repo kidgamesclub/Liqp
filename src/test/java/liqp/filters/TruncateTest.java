@@ -47,9 +47,9 @@ public class TruncateTest {
 
         final Filter filter = Filter.getFilter("truncate");
 
-        assertThat(filter.apply("1234567890", 7), is((Object)"1234..."));
-        assertThat(filter.apply("1234567890", 20), is((Object)"1234567890"));
-        assertThat(filter.apply("1234567890", 0), is((Object)"..."));
-        assertThat(filter.apply("1234567890"), is((Object)"1234567890"));
+        assertThat(filter.apply(Mocks.mockRenderContext(), "1234567890", 7), is((Object)"1234..."));
+        assertThat(filter.apply(Mocks.mockRenderContext(), "1234567890", 20), is((Object)"1234567890"));
+        assertThat(filter.apply(Mocks.mockRenderContext(), "1234567890", 0), is((Object)"..."));
+        assertThat(filter.apply(Mocks.mockRenderContext(), "1234567890"), is((Object)"1234567890"));
     }
 }

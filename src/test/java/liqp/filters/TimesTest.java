@@ -34,12 +34,12 @@ public class TimesTest {
 
     @Test(expected=RuntimeException.class)
     public void applyTestInvalid1() {
-        Filter.getFilter("times").apply(1);
+        Filter.getFilter("times").apply(Mocks.mockRenderContext(), 1);
     }
 
     @Test(expected=RuntimeException.class)
     public void applyTestInvalid2() {
-        Filter.getFilter("times").apply(1, 2, 3);
+        Filter.getFilter("times").apply(Mocks.mockRenderContext(), 1, 2, 3);
     }
 
     /*
@@ -58,8 +58,8 @@ public class TimesTest {
 
         Filter filter = Filter.getFilter("times");
 
-        assertThat(filter.apply(3L, 4L), is((Object)12L));
+        assertThat(filter.apply(Mocks.mockRenderContext(), 3L, 4L), is((Object)12L));
         // assert_template_result "0", "{{ 'foo' | times:4 }}" // see: applyTest()
-        assertTrue(String.valueOf(filter.apply(2.1, 3L)).matches("6[.,]30{10,}1"));
+        assertTrue(String.valueOf(filter.apply(Mocks.mockRenderContext(), 2.1, 3L)).matches("6[.,]30{10,}1"));
     }
 }

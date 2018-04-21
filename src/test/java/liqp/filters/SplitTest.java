@@ -44,9 +44,9 @@ public class SplitTest {
 
         final Filter filter = Filter.getFilter("split");
 
-        assertThat(filter.apply("12~34", "~"), is((Object)new String[]{"12", "34"}));
-        assertThat(filter.apply("A? ~ ~ ~ ,Z", "~ ~ ~"), is((Object)new String[]{"A? ", " ,Z"}));
-        assertThat(filter.apply("A?Z", "~"), is((Object)new String[]{"A?Z"}));
-        assertThat(filter.apply("AxZ", Pattern.compile("x")), is((Object)new String[]{"A", "Z"}));
+        assertThat(filter.apply(Mocks.mockRenderContext(), "12~34", "~"), is((Object)new String[]{"12", "34"}));
+        assertThat(filter.apply(Mocks.mockRenderContext(), "A? ~ ~ ~ ,Z", "~ ~ ~"), is((Object)new String[]{"A? ", " ,Z"}));
+        assertThat(filter.apply(Mocks.mockRenderContext(), "A?Z", "~"), is((Object)new String[]{"A?Z"}));
+        assertThat(filter.apply(Mocks.mockRenderContext(), "AxZ", Pattern.compile("x")), is((Object)new String[]{"A", "Z"}));
     }
 }

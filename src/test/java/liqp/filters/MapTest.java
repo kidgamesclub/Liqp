@@ -49,15 +49,14 @@ public class MapTest {
 
         Filter filter = Filter.getFilter("map");
 
-        Object[] rendered = (Object[]) filter.apply(
-                new HashMap[]{
-                        new HashMap<String, Integer>(){{ put("a", 1); }},
-                        new HashMap<String, Integer>(){{ put("a", 2); }},
-                        new HashMap<String, Integer>(){{ put("a", 3); }},
-                        new HashMap<String, Integer>(){{ put("a", 4); }},
-                },
-                "a"
-        );
+        Object[] rendered = (Object[]) filter.apply(Mocks.mockRenderContext(),
+              new HashMap[]{
+                      new HashMap<String, Integer>(){{ put("a", 1); }},
+                      new HashMap<String, Integer>(){{ put("a", 2); }},
+                      new HashMap<String, Integer>(){{ put("a", 3); }},
+                      new HashMap<String, Integer>(){{ put("a", 4); }},
+              },
+              "a");
 
         Object[] expected = {1, 2, 3, 4};
 

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import liqp.Template;
 import liqp.TemplateFactory;
+import liqp.nodes.RenderContext;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -15,7 +16,7 @@ public class FilterTest {
 
       final Filter custom = new Filter("textilize") {
         @Override
-        public Object apply(Object value, Object... params) {
+        public Object apply(RenderContext context, Object value, Object... params) {
           String s = super.asString(value).trim();
           return "<b>" + s.substring(1, s.length() - 1) + "</b>";
         }

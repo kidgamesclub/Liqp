@@ -1,5 +1,6 @@
 package liqp.filters;
 
+import liqp.nodes.RenderContext;
 import org.jsoup.Jsoup;
 
 class Strip_HTML extends Filter {
@@ -10,7 +11,7 @@ class Strip_HTML extends Filter {
      * Remove all HTML tags from the string
      */
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         String html = super.asString(value);
 

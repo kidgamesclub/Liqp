@@ -42,7 +42,7 @@ public class JoinTest {
 
         Filter filter = Filter.getFilter("join");
 
-        assertThat(filter.apply(new Integer[]{1,2,3,4}), is((Object)"1 2 3 4"));
-        assertThat(filter.apply(new Integer[]{1,2,3,4}, " - "), is((Object)"1 - 2 - 3 - 4"));
+        assertThat(filter.apply(Mocks.mockRenderContext(), new Integer[]{1,2,3,4}), is((Object)"1 2 3 4"));
+        assertThat(filter.apply(Mocks.mockRenderContext(), new Integer[]{1,2,3,4}, " - "), is((Object)"1 - 2 - 3 - 4"));
     }
 }

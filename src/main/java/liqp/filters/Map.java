@@ -2,6 +2,7 @@ package liqp.filters;
 
 import java.util.ArrayList;
 import java.util.List;
+import liqp.nodes.RenderContext;
 
 class Map extends Filter {
 
@@ -11,7 +12,7 @@ class Map extends Filter {
      * map/collect on a given property
      */
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         if (value == null) {
             return "";

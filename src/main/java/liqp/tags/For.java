@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import liqp.LValue;
+import liqp.TruthKt;
 import liqp.exceptions.ExceededMaxIterationsException;
 import liqp.nodes.BlockNode;
 import liqp.nodes.LNode;
@@ -34,7 +35,7 @@ public class For extends Tag {
     // The first node in the array denotes whether this is a for-tag
     // over an array, `for item in array ...`, or a for-tag over a
     // range, `for i in (4..item.length)`.
-    boolean array = super.asBoolean(nodes[0].render(context));
+    boolean array = TruthKt.isTrue(nodes[0].render(context));
 
     String id = super.asString(nodes[1].render(context));
 

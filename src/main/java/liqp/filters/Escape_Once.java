@@ -1,5 +1,7 @@
 package liqp.filters;
 
+import liqp.nodes.RenderContext;
+
 class Escape_Once extends Filter {
 
     /*
@@ -9,7 +11,7 @@ class Escape_Once extends Filter {
      * existing escaped entities
      */
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         String str = super.asString(value);
 

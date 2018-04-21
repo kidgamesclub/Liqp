@@ -1,5 +1,7 @@
 package liqp.filters;
 
+import liqp.nodes.RenderContext;
+
 class Capitalize extends Filter {
 
     /*
@@ -8,7 +10,7 @@ class Capitalize extends Filter {
      * capitalize words in the input sentence
      */
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         String original = super.asString(value);
 

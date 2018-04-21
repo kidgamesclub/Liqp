@@ -1,10 +1,14 @@
 package liqp.filters;
 
+import static java.util.Collections.emptyMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 import liqp.Template;
+import liqp.TemplateEngine;
 import liqp.TemplateFactory;
+import liqp.nodes.RenderContext;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -50,10 +54,14 @@ public class TruncatewordsTest {
 
         final Filter filter = Filter.getFilter("truncatewords");
 
-        assertThat(filter.apply("one two three", 4), is((Object)"one two three"));
-        assertThat(filter.apply("one two three", 2), is((Object)"one two..."));
-        assertThat(filter.apply("one two three", 3), is((Object)"one two three"));
-        assertThat(filter.apply("Two small (13&#8221; x 5.5&#8221; x 10&#8221; high) baskets fit inside one large basket (13&#8221; x 16&#8221; x 10.5&#8221; high) with cover.", 15),
+      final RenderContext context = new RenderContext(emptyMap(),
+            mock(TemplateFactory.class),
+            mock(TemplateEngine.class));
+
+      assertThat(filter.apply(context, "one two three", 4), is((Object)"one two three"));
+        assertThat(filter.apply(context, "one two three", 2), is((Object)"one two..."));
+        assertThat(filter.apply(context, "one two three", 3), is((Object)"one two three"));
+        assertThat(filter.apply(context, "Two small (13&#8221; x 5.5&#8221; x 10&#8221; high) baskets fit inside one large basket (13&#8221; x 16&#8221; x 10.5&#8221; high) with cover.", 15),
                 is((Object)"Two small (13&#8221; x 5.5&#8221; x 10&#8221; high) baskets fit inside one large basket (13&#8221;..."));
     }
 }

@@ -32,12 +32,12 @@ public class PlusTest {
 
     @Test(expected=RuntimeException.class)
     public void applyTestInvalid1() {
-        Filter.getFilter("plus").apply(1);
+        Filter.getFilter("plus").apply(Mocks.mockRenderContext(), 1);
     }
 
     @Test(expected=RuntimeException.class)
     public void applyTestInvalid2() {
-        Filter.getFilter("plus").apply(1, 2, 3);
+        Filter.getFilter("plus").apply(Mocks.mockRenderContext(), 1, 2, 3);
     }
 
     /*

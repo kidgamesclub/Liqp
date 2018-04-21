@@ -36,7 +36,7 @@ public class CapitalizeTest {
 
         Filter filter = Filter.getFilter("capitalize");
 
-        assertThat(filter.apply("testing"), is((Object)"Testing"));
-        assertThat(filter.apply(null), is((Object)""));
+        assertThat(filter.apply(Mocks.mockRenderContext(), "testing"), is((Object)"Testing"));
+        assertThat(filter.apply(Mocks.mockRenderContext(), null), is((Object)""));
     }
 }

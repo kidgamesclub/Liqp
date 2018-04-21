@@ -40,7 +40,7 @@ public class UpcaseTest {
 
         final Filter filter = Filter.getFilter("upcase");
 
-        assertThat(filter.apply("Testing"), is((Object)"TESTING"));
-        assertThat(filter.apply(null), is((Object)""));
+        assertThat(filter.apply(Mocks.mockRenderContext(), "Testing"), is((Object)"TESTING"));
+        assertThat(filter.apply(Mocks.mockRenderContext(), null), is((Object)""));
     }
 }

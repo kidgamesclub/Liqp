@@ -17,13 +17,13 @@ public class ContainsNode extends ExpressionNode {
         Object collection = lhs.render(context);
         Object needle = rhs.render(context);
 
-        if(super.isArray(collection)) {
-            Object[] array = super.asArray(collection);
+        if(isArray(collection)) {
+            Object[] array = asArray(collection);
             return Arrays.asList(array).contains(needle);
         }
 
-        if(super.isString(collection)) {
-            return super.asString(collection).contains(super.asString(needle));
+        if(isString(collection)) {
+            return asString(collection).contains(asString(needle));
         }
 
         return false;

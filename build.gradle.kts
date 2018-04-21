@@ -26,6 +26,7 @@ mverse {
   dependencies {
     testCompile(junit())
     testCompile(junitParams())
+    testCompile(mockito())
     testCompile(assertj())
     fatJar(guava())
     fatJar(streamEx())
@@ -36,7 +37,6 @@ mverse {
     fatJar("jackson-core")
     fatJar("kotlin-reflect")
     fatJar("kotlin-stdlib")
-    fatJar("groothy")
     fatJar("antlr4-runtime")
   }
   dependencies["antlr"]("antlr4")
@@ -83,7 +83,6 @@ shadowJar.apply {
   configurations = listOf(project.configurations.fatJar)
   relocate("kotlin", "kg.kotlin")
   relocate("com.fasterxml", "kg.com.fasterxml")
-  relocate("com.joelws", "kg.com.joelws")
   relocate("one", "kg.one")
 }
 

@@ -1,5 +1,7 @@
 package liqp.filters;
 
+import liqp.nodes.RenderContext;
+
 class Minus extends Filter {
 
     /*
@@ -8,7 +10,7 @@ class Minus extends Filter {
      * subtraction
      */
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         if(value == null) {
             value = 0L;

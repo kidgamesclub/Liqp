@@ -51,7 +51,7 @@ public class Replace_FirstTest {
 
         Filter filter = Filter.getFilter("replace_first");
 
-        assertThat(filter.apply("a a a a", "a", "b"), is((Object)"b a a a"));
+        assertThat(filter.apply(Mocks.mockRenderContext(), "a a a a", "a", "b"), is((Object)"b a a a"));
         assertThat(TemplateFactory.newBuilder().parse("{{ 'a a a a' | replace_first: 'a', 'b' }}").render(), is("b a a a"));
     }
 }

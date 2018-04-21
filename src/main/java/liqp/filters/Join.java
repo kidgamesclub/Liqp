@@ -1,5 +1,7 @@
 package liqp.filters;
 
+import liqp.nodes.RenderContext;
+
 class Join extends Filter {
 
     /*
@@ -8,7 +10,7 @@ class Join extends Filter {
      * Join elements of the array with certain character between them
      */
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
 
         if (value == null) {
             return "";

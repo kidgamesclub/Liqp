@@ -33,7 +33,7 @@ public class LastTest {
 
         Filter filter = Filter.getFilter("last");
 
-        assertThat(filter.apply(new Integer[]{1, 2, 3}), is((Object)"3"));
-        assertThat(filter.apply(new Integer[]{}), is((Object)null));
+        assertThat(filter.apply(Mocks.mockRenderContext(), new Integer[]{1, 2, 3}), is((Object)"3"));
+        assertThat(filter.apply(Mocks.mockRenderContext(), new Integer[]{}), is((Object)null));
     }
 }

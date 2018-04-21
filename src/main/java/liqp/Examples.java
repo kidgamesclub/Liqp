@@ -5,6 +5,7 @@ import static java.util.Collections.singletonMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import liqp.filters.Filter;
+import liqp.nodes.RenderContext;
 
 /**
  * A class holding some examples of how to use Liqp.
@@ -42,7 +43,7 @@ public class Examples {
     final TemplateFactory ctx = TemplateFactory.newInstance()
           .withFilter(new Filter("b") {
             @Override
-            public Object apply(Object value, Object... params) {
+            public Object apply(RenderContext context, Object value, Object... params) {
               // create a string from the  value
               String text = super.asString(value);
 
@@ -63,7 +64,7 @@ public class Examples {
     final TemplateFactory ctx = TemplateFactory.newInstance()
           .withFilter(new Filter("repeat") {
             @Override
-            public Object apply(Object value, Object... params) {
+            public Object apply(RenderContext context, Object value, Object... params) {
 
               // check if an optional parameter is provided
               int times = params.length == 0 ? 1 : super.asNumber(params[0]).intValue();
@@ -92,7 +93,7 @@ public class Examples {
     final TemplateFactory ctx = TemplateFactory.newInstance()
           .withFilter(new Filter("sum") {
             @Override
-            public Object apply(Object value, Object... params) {
+            public Object apply(RenderContext context, Object value, Object... params) {
 
               Object[] numbers = super.asArray(value);
 

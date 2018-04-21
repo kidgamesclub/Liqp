@@ -1,5 +1,7 @@
 package liqp.filters;
 
+import liqp.nodes.RenderContext;
+
 class H extends Filter {
 
     /*
@@ -8,8 +10,8 @@ class H extends Filter {
      * Alias for: escape
      */
     @Override
-    public Object apply(Object value, Object... params) {
+    public Object apply(RenderContext context, Object value, Object... params) {
       final Escape escape = (Escape) getFilter("escape");
-      return escape.apply(value, params);
+      return escape.apply(context, value, params);
     }
 }

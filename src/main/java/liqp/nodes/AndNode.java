@@ -12,6 +12,6 @@ public class AndNode extends ExpressionNode {
 
   @Override
   public Object render(RenderContext context) {
-    return super.asBoolean(lhs.render(context)) && super.asBoolean(rhs.render(context));
+    return context.isTrue(lhs.render(context)) && context.isTrue(rhs.render(context));
   }
 }
