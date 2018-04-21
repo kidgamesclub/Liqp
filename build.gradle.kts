@@ -4,6 +4,7 @@ import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.internal.file.pattern.PatternMatcherFactory.compile
 import org.gradle.internal.impldep.bsh.commands.dir
+import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.include
 import org.gradle.internal.nativeintegration.filesystem.DefaultFileMetadata.file
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.maven
@@ -26,17 +27,33 @@ mverse {
     testCompile(junit())
     testCompile(junitParams())
     testCompile(assertj())
-
-    compileOnly(lombok())
-    fatJar("jackson-databind")
-    fatJar("jackson-core")
-    fatJar("kotlin-stdlib")
     fatJar(guava())
     fatJar(streamEx())
+    compileOnly(lombok())
+
+    fatJar("jackson-databind")
+    fatJar("jackson-annotations")
+    fatJar("jackson-core")
+    fatJar("kotlin-reflect")
+    fatJar("kotlin-stdlib")
+    fatJar("groothy")
+    fatJar("antlr4-runtime")
   }
+  dependencies["antlr"]("antlr4")
+  dependencies["testRuntime"]("jsoup")
+
   coverageRequirement = 0.60
   java.sourceSets["main"].withConvention(KotlinSourceSet::class) {
     kotlin.srcDir(file("build/classes/generated-src/antlr/main"))
+  }
+}
+
+dependencyManagement {
+  dependencies {
+    dependency("com.joelws:groothy:1.1")
+    dependency("org.jsoup:jsoup:1.11.2")
+    dependency("org.antlr:antlr4:4.7.1")
+    dependency("org.antlr:antlr4-runtime:4.7.1")
   }
 }
 
@@ -46,22 +63,16 @@ findbugs {
 }
 
 dependencies {
-  compileOnly("org.jsoup:jsoup:1.11.2") {
+  compileOnly("org.jsoup:jsoup") {
     isTransitive = false
   }
 
-  testRuntime("org.jsoup:jsoup:1.11.2") 
-
-  compileOnly("com.google.code.findbugs:findbugs:3.0.1") {
+  compileOnly("com.google.code.findbugs:findbugs") {
     isTransitive = false
   }
-
-  antlr("org.antlr:antlr4:4.7.1")
-  fatJar("org.antlr:antlr4-runtime:4.7.1")
 }
 
 configurations.compile.extendsFrom(configurations.fatJar)
-
 
 //
 // Configure shadow
@@ -70,13 +81,10 @@ val shadowJar: ShadowJar by tasks
 shadowJar.apply {
   classifier = null
   configurations = listOf(project.configurations.fatJar)
-  dependencies {
-    include(dependency(":kotlin-stdlib"))
-    include(dependency(":kotlin-stdlib-jdk8"))
-    include(dependency(":jackson-core"))
-    include(dependency(":jackson-databind"))
-    include(dependency(":guava"))
-  }
+  relocate("kotlin", "kg.kotlin")
+  relocate("com.fasterxml", "kg.com.fasterxml")
+  relocate("com.joelws", "kg.com.joelws")
+  relocate("one", "kg.one")
 }
 
 tasks["assemble"].dependsOn(shadowJar)

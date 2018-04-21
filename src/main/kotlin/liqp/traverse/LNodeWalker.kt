@@ -41,7 +41,7 @@ inline fun <reified N : LNode> Template.treeIterator(): Iterable<Pair<N, List<LN
   return list.toList()
 }
 
-inline fun Template.walkNodes(vararg visitor: FilteredLNodeVisitor) {
+fun Template.walkNodes(vararg visitor: FilteredLNodeVisitor) {
   LNodeWalker(*visitor).walkTree(this)
 }
 

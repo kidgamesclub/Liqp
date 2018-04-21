@@ -285,6 +285,8 @@ public abstract class LValue {
         if ((value instanceof Map) && ((Map) value).isEmpty())
             return true;
 
+
+
         return false;
     }
 
