@@ -56,7 +56,7 @@ data class MutableRenderSettings(internal var settings: RenderSettings = RenderS
     get() = settings.includesDir
 
   fun withStrictVariables(strictVariables: Boolean): MutableRenderSettings {
-    this.isStrictVariables = strictVariables
+    settings = settings.copy(isStrictVariables = strictVariables)
     return this
   }
 
