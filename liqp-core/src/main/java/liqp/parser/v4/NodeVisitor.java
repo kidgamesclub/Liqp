@@ -1,5 +1,7 @@
 package liqp.parser.v4;
 
+import static liqp.nodes.FilterNode.*;
+import static liqp.nodes.OutputNode.*;
 import static liquid.parser.v4.LiquidParser.And;
 import static liquid.parser.v4.LiquidParser.AssignmentContext;
 import static liquid.parser.v4.LiquidParser.AtomContext;
@@ -63,6 +65,7 @@ import java.util.ArrayList;
 import java.util.List;
 import liqp.exceptions.LiquidException;
 import liqp.filters.Filters;
+import liqp.filters.LFilter;
 import liqp.lookup.Index;
 import liqp.lookup.Property;
 import liqp.nodes.AndNode;
@@ -471,13 +474,14 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   @Override
   public OutputNode visitOutput(OutputContext ctx) {
 
-    OutputNode node = new OutputNode(visit(ctx.expr()));
+    OutputNodeBuilder node = OutputNode.builder()
+          .expression(visit(ctx.expr()));
 
     for (FilterContext child : ctx.filter()) {
-      node.addFilter(visitFilter(child));
+      node.filter(visitFilter(child));
     }
 
-    return node;
+    return node.build();
   }
 
   // filter
@@ -489,17 +493,21 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   //  ;
   @Override
   public FilterNode visitFilter(FilterContext ctx) {
-
-
-    FilterNode node = new FilterNode(ctx, filters.getFilter(ctx.Id().getText()));
-
+    final String filterName = ctx.Id().getText();
+    final LFilter filter = filters.getFilter(filterName);
+    if (filter == null) {
+      throw new IllegalArgumentException("error on line " + ctx.start.getLine() + ", " +
+            "index " + ctx.start.getCharPositionInLine() + ": " +
+            "no filter available named: " + ctx.getText() );
+    }
+    FilterNodeBuilder node = FilterNode.builder().filter(filter);
     if (ctx.params() != null) {
       for (Param_exprContext child : ctx.params().param_expr()) {
-        node.add(visit(child));
+        node.param(visit(child));
       }
     }
 
-    return node;
+    return node.build();
   }
 
   // param_expr

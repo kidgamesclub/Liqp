@@ -6,7 +6,9 @@ import liqp.nodes.LNode;
 import liqp.nodes.RenderContext;
 
 /**
- * Interface for performing filter lifecycle operations.
+ * Interface for performing filter lifecycle operations.  Instead of simply formatting the output, some filters may
+ * want to communicate with other filters in the chain (maybe filters of the same type), and/or hijack the output
+ * completely.
  */
 public interface LFilter {
 

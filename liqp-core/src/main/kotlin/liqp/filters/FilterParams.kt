@@ -7,7 +7,7 @@ import liqp.nodes.RenderContext
  * Contains filter parameters that can be resolved when needed.  The instance ensures that the
  * params are resolved exactly once, and cached thereafter.
  */
-class FilterParams(private val paramNodes: List<LNode?>) {
+data class FilterParams(val paramNodes: List<LNode?>) {
 
   private var resolvedParams: Array<Any?>? = null
 

@@ -7,6 +7,13 @@ plugins {
   id("antlr")
 }
 
+findbugs {
+  isIgnoreFailures = true
+}
+
+dependencies {
+  testCompile(project(":liqp-junit"))
+}
 
 mverse {
   dependencies {
@@ -17,7 +24,6 @@ mverse {
     fatJar(guava())
     fatJar(streamEx())
     compileOnly(lombok())
-
     fatJar("jackson-databind")
     fatJar("jackson-annotations")
     fatJar("jackson-core")

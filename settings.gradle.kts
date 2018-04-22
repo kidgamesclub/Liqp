@@ -13,4 +13,5 @@ pluginManagement {
 rootProject.name = "liqp"
 include("liqp-core")
 include("liqp-ext")
+include("liqp-junit")
 

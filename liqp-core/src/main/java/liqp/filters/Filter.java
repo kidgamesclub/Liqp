@@ -1,5 +1,9 @@
 package liqp.filters;
 
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
+
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Converter;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -16,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
  * -- https://github.com/Shopify/liquid/wiki/Liquid-for-Designers
  */
 public abstract class Filter extends LValue implements LFilter {
+  public static final Converter<String, String> SNAKE_CONVERTER = UPPER_CAMEL.converterTo(CaseFormat.LOWER_UNDERSCORE);
 
   /**
    * A map holding all filters.
@@ -57,7 +62,8 @@ public abstract class Filter extends LValue implements LFilter {
    * Used for all package protected filters in the liqp.filters-package whose name is their class name lower cased.
    */
   protected Filter() {
-    this.name = this.getClass().getSimpleName().toLowerCase();
+    final String truncated = this.getClass().getSimpleName().replaceAll("Filter$", "");
+    this.name = SNAKE_CONVERTER.convert(truncated);
   }
 
   /**
@@ -72,18 +78,12 @@ public abstract class Filter extends LValue implements LFilter {
   /**
    * Applies the filter on the 'value'.
    *
-   *
-   * @param context
    * @param value  the string value `AAA` in: `{{ 'AAA' | f:1,2,3 }}`
    * @param params the values [1, 2, 3] in: `{{ 'AAA' | f:1,2,3 }}`
    *
    * @return the result of the filter.
    */
-  protected Object apply(RenderContext context, Object value, Object... params) {
-
-    // Default "no-op" filter.
-    return value;
-  }
+  protected abstract Object apply(RenderContext context, Object value, Object... params);
 
   /**
    * Check the number of parameters and throws an exception if needed.
@@ -148,18 +148,18 @@ public abstract class Filter extends LValue implements LFilter {
           // Initialize all standard filters.
           (LFilter) new Abs(),
           new Append(),
-          new At_Least(),
-          new At_Most(),
+          new AtLeast(),
+          new AtMost(),
           new Capitalize(),
           new Ceil(),
           new Compact(),
           new Concat(),
           new Date(),
           new Default(),
-          new Divided_By(),
+          new DividedBy(),
           new Downcase(),
           new Escape(),
-          new Escape_Once(),
+          new EscapeOnce(),
           new First(),
           new Floor(),
           new H(),
@@ -169,31 +169,30 @@ public abstract class Filter extends LValue implements LFilter {
           new liqp.filters.Map(),
           new Minus(),
           new Modulo(),
-          new Newline_To_Br(),
+          new NewlineToBr(),
           new Plus(),
           new Prepend(),
           new Remove(),
-          new Remove_First(),
+          new RemoveFirst(),
           new Replace(),
-          new Replace_First(),
+          new ReplaceFirst(),
           new Reverse(),
           new Round(),
           new Rstrip(),
           new Size(),
           new Slice(),
           new Sort(),
-          new Sort_Natural(),
+          new SortNatural(),
           new Split(),
           new Strip(),
-          new Strip_HTML(),
-          new Strip_Newlines(),
+          new StripNewlines(),
           new Times(),
           new Truncate(),
           new Truncatewords(),
           new Uniq(),
           new Upcase(),
-          new Url_Decode(),
-          new Url_Encode())
+          new UrlDecode(),
+          new UrlEncode())
           .mapToEntry(LFilter::getName, f -> f)
           .toImmutableMap();
   }

@@ -20,6 +20,8 @@ import liqp.lookup.propertyContainer
 import liqp.parseJSON
 import liqp.tags.Tag
 import java.util.*
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 val FORLOOP = "forloop"
 
@@ -40,6 +42,8 @@ class RenderContext
       else -> accessors.propertyContainer(isStrictVariables, inputData)
     }
   }
+
+  var locale:Locale by delegated(Locale.US)
 
   fun <I> getTagStack(tag: Tag): Deque<I> {
     val varName = "stack:${tag.name}"
@@ -143,8 +147,24 @@ class RenderContext
     }
   }
 
+  private fun <T>  delegated(default:T? = null):ReadWriteProperty<RenderContext, T> {
+    return object:ReadWriteProperty<RenderContext, T> {
+      override fun getValue(thisRef: RenderContext, property: KProperty<*>): T {
+        return thisRef[property.name] ?: default ?: throw NullPointerException("Value for ${property.name} is null, with no default specified")
+      }
+
+      override fun setValue(thisRef: RenderContext, property: KProperty<*>, value: T) {
+        thisRef[property.name] = value
+      }
+    }
+  }
+
   override fun getProperty(propName: String): Any? {
     return this.get(propName)
+  }
+
+  operator fun <T> getValue(ctx:RenderContext, prop:KProperty<*>): T? {
+    return ctx[prop.name]
   }
 
   operator fun <T> get(varName: String): T? {
@@ -202,6 +222,7 @@ class RenderContext
       return stack.last()
     }
 
+
   fun hasVar(name: String): Boolean {
     return current.hasVar(name) || current.hasScopedVar(name)
   }
@@ -212,3 +233,5 @@ class RenderContext
 
   fun render(template: Template) = engine.render(template, this)
 }
+
+

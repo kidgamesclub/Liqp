@@ -78,8 +78,8 @@ data class MutableParseSettings(var settings: ParseSettings = ParseSettings()) :
     return this
   }
 
-  fun baseFolder(baseFolder: File): MutableParseSettings {
-    settings = settings.copy(baseDir = baseFolder)
+  fun baseDir(baseDir: File): MutableParseSettings {
+    settings = settings.copy(baseDir = baseDir)
     return this
   }
 

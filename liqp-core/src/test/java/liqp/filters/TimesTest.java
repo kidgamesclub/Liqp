@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import liqp.Mocks;
 import liqp.Template;
 import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;

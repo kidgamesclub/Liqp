@@ -21,7 +21,7 @@ public class IncludeTest {
   @Before
   public void setup() {
     final File base = new File("./");
-    final File basePath = base.getAbsolutePath().endsWith(MODULE_PATH)
+    final File basePath = base.getAbsolutePath().contains(MODULE_PATH)
           ? base
           : new File(MODULE_PATH);
 
@@ -40,7 +40,7 @@ public class IncludeTest {
                 "{% include 'color' with 'red' %}";
 
     Template template = LiquidParser.newBuilder()
-          .baseFolder(included)
+          .baseDir(included)
           .parse(source);
 
     String rendered = template.render();
@@ -60,7 +60,7 @@ public class IncludeTest {
   @Test
   public void renderTestWithIncludeDirectorySpecifiedInContextLiquidFlavor() throws Exception {
     File index = new File(included, "index_with_quotes.html");
-    Template template = LiquidParser.newBuilder().baseFolder(included).parseFile(index);
+    Template template = LiquidParser.newBuilder().baseDir(included).parseFile(index);
     String result = template.render();
     assertTrue(result.contains("HEADER"));
   }
@@ -71,7 +71,7 @@ public class IncludeTest {
     File index = new File(included, "index_without_quotes.html");
     Template template = LiquidParser.newBuilder()
           .flavor(Flavor.JEKYLL)
-          .baseFolder(included)
+          .baseDir(included)
           .toParser().parseFile(index);
 
     String result = template.render();
@@ -83,7 +83,7 @@ public class IncludeTest {
     File index = new File(included, "index_without_quotes.html");
     Template template = LiquidParser.newBuilder()
           .flavor(Flavor.JEKYLL)
-          .baseFolder(included)
+          .baseDir(included)
           .toParser().parseFile(index);
     String result = template.render();
     assertTrue(result.contains("HEADER"));
@@ -94,7 +94,7 @@ public class IncludeTest {
     File index = new File(included, "index_with_quotes.html");
     Template template = LiquidParser.newBuilder()
           .flavor(Flavor.LIQUID)
-          .baseFolder(included)
+          .baseDir(included)
           .toParser().parseFile(index);
     String result = template.render();
     assertTrue(result.contains("HEADER"));
@@ -106,7 +106,9 @@ public class IncludeTest {
 
     String source = "{% assign variable = 'header.html' %}{% include {{variable}} %}";
 
-    String rendered = LiquidParser.newBuilder().flavor(Flavor.JEKYLL)
+    String rendered = LiquidParser.newBuilder()
+          .flavor(Flavor.JEKYLL)
+          .baseDir(included)
           .toParser()
           .parse(source).render();
 
@@ -119,7 +121,9 @@ public class IncludeTest {
 
     String source = "{% assign variable = 'header.html' %}{% include {{variable}} %}";
 
-    LiquidParser.newBuilder().flavor(Flavor.LIQUID).toParser().parse(source).render();
+    LiquidParser.newBuilder().flavor(Flavor.LIQUID)
+          .baseDir(included)
+          .toParser().parse(source).render();
   }
 
   // https://github.com/bkiers/Liqp/issues/75

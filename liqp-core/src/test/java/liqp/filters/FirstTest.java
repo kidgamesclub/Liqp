@@ -1,6 +1,6 @@
 package liqp.filters;
 
-import static liqp.filters.Mocks.mockRenderContext;
+import static liqp.Mocks.mockRenderContext;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 

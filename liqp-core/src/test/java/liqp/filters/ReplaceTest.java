@@ -3,6 +3,7 @@ package liqp.filters;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import liqp.Mocks;
 import liqp.Template;
 import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;

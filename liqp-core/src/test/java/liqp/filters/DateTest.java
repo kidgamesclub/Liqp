@@ -1,7 +1,7 @@
 package liqp.filters;
 
 import static java.util.Collections.emptyMap;
-import static liqp.filters.Mocks.*;
+import static liqp.Mocks.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;

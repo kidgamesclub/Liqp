@@ -35,9 +35,6 @@ allprojects {
     }
   }
   dependencies {
-    compileOnly("org.jsoup:jsoup") {
-      isTransitive = false
-    }
 
     compileOnly("com.google.code.findbugs:findbugs") {
       isTransitive = false

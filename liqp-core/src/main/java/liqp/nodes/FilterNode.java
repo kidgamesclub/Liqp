@@ -3,40 +3,33 @@ package liqp.nodes;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
-import liqp.filters.Filter;
+import liqp.filters.FilterInstance;
+import liqp.filters.FilterParams;
 import liqp.filters.LFilter;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Singular;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 public class FilterNode implements LNode {
 
-  private final int line;
-  private final int tokenStartIndex;
-  private final String text;
   private final LFilter filter;
   private final List<LNode> params;
 
-  public FilterNode(ParserRuleContext context, LFilter filter) {
-    this(context.start.getLine(), context.start.getCharPositionInLine(), context.getText(), filter);
-  }
-
-  private FilterNode(int line, int tokenStartIndex, String text, LFilter filter) {
-
-    if (filter == null) {
-      throw new IllegalArgumentException("error on line " + line + ", index " + tokenStartIndex + ": no filter " +
-            "available named: " + text);
-    }
-
-    this.line = line;
-    this.tokenStartIndex = tokenStartIndex;
-    this.text = text;
+  @Builder
+  public FilterNode(@NotNull LFilter filter, @Singular List<LNode> params) {
     this.filter = filter;
-    this.params = new ArrayList<>();
+    this.params = ImmutableList.copyOf(params);
   }
 
-  public void add(LNode param) {
-    params.add(param);
+  /**
+   * Creates an instance of this filter for rendering.  This wrapper class allows for delayed resolution of
+   * filter params, in case this filter is never invoked.
+   */
+  public FilterInstance getInstance() {
+    return new FilterInstance(filter, new FilterParams(params));
   }
 
   @Override
@@ -48,6 +41,6 @@ public class FilterNode implements LNode {
 
   @Override
   public Object render(RenderContext context) {
-    throw new RuntimeException("cannot render a filter");
+    throw new IllegalStateException("cannot render a filter");
   }
 }

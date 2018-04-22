@@ -10,11 +10,11 @@ import java.util.concurrent.atomic.AtomicReference
  * rendered, to support cases where state needs to be managed during rendering.
  */
 class FilterChain(private val context: RenderContext,
-                  private val filters: List<FilterWithParams>,
+                  private val filters: List<FilterInstance>,
                   private val filterAction: (AtomicReference<Any?>) -> Any?) : FilterChainPointer {
 
   private val data = mutableMapOf<String, Any?>()
-  private val pointer: Iterator<FilterWithParams> = filters.reversed().iterator()
+  private val pointer: Iterator<FilterInstance> = filters.reversed().iterator()
   private val result: AtomicReference<Any?> = AtomicReference()
 
   /**
