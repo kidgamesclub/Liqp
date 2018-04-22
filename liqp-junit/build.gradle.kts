@@ -4,6 +4,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 plugins {
   id("org.gradle.kotlin.kotlin-dsl")
 }
+findbugs {
+  isIgnoreFailures = true
+}
 
 mverse {
   groupId = "club.kidgames"
