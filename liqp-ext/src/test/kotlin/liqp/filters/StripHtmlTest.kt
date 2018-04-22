@@ -1,12 +1,10 @@
 package liqp.filters
 
-import liqp.Mocks.mockRenderContext
 
 import liqp.LiquidParser
 import liqp.withAssertions
 import org.antlr.runtime.RecognitionException
-import org.gradle.internal.impldep.org.hamcrest.CoreMatchers
-import org.gradle.internal.impldep.org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class StripHtmlTest {
@@ -21,10 +19,12 @@ class StripHtmlTest {
 
     for (test in tests) {
 
-      val template = LiquidParser.newInstance().parse(test[0])
+      val template = LiquidParser.newBuilder()
+          .addFilters(StripHtml())
+          .parse(test[0])
       val rendered = template.render(json)
 
-      Assert.assertThat(rendered, CoreMatchers.`is`(test[1]))
+      assertThat(rendered).isEqualTo(test[1])
     }
   }
 

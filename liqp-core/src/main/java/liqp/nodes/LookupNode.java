@@ -3,7 +3,7 @@ package liqp.nodes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import liqp.exceptions.VariableNotExistException;
+import liqp.exceptions.MissingVariableException;
 import liqp.lookup.Indexable;
 import lombok.Getter;
 
@@ -40,8 +40,8 @@ public class LookupNode implements LNode {
       for (Indexable index : indexes) {
         value = index.get(value, context);
       }
-    } catch (VariableNotExistException e) {
-      throw new VariableNotExistException(this.getVariableName());
+    } catch (MissingVariableException e) {
+      throw new MissingVariableException(this.getVariableName());
     }
 
     return value;

@@ -8,7 +8,7 @@ public class RecursivePropertyContainer implements HasProperties {
 
   @Nullable
   @Override
-  public Object getProperty(@NotNull String propertyName) {
+  public Object get(@NotNull String propertyName) {
     if (propertyName.equalsIgnoreCase("title")) {
       return "Lord of the Grapes";
     } else {

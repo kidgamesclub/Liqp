@@ -3,7 +3,6 @@ package liqp.filters;
 import static liqp.Mocks.mockRenderContext;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 
 import liqp.Template;
 import liqp.LiquidParser;

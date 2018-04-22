@@ -1,6 +1,6 @@
 package liqp.lookup
 
-import liqp.exceptions.VariableNotExistException
+import liqp.exceptions.MissingVariableException
 import liqp.nodes.LNode
 import liqp.nodes.RenderContext
 
@@ -8,7 +8,8 @@ import liqp.nodes.RenderContext
  * Resolves the expression in brackets first, then resolves the path by using an integer index, or
  * by using a property name
  */
-class Index(val isStrictPropertyNames:Boolean, private val expression: LNode) : Indexable {
+class Index(private val isStrictVariables:Boolean,
+            private val expression: LNode) : Indexable {
 
   /**
    * todo: remove this field
@@ -41,10 +42,10 @@ class Index(val isStrictPropertyNames:Boolean, private val expression: LNode) : 
       // This will cache the accessor for the path, so if the same expression resolves to the
       // same value, it will use the same accessor
       val accessor = context.accessors.getAccessor(value, propertyName.toString())
-      if (isStrictPropertyNames && accessor.isNullAccessor()) {
-        throw VariableNotExistException(propertyName.toString())
+      if (isStrictVariables && accessor.isNullAccessor()) {
+        throw MissingVariableException(propertyName.toString())
       }
-      return accessor.get(value)
+      return accessor.invoke(value)
     }
   }
 

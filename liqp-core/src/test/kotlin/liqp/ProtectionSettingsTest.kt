@@ -24,7 +24,7 @@ class ProtectionSettingsTest {
 
   @Test
   fun testExceedMaxRenderTimeMillis() {
-    val template = LiquidParser.newInstance()
+    LiquidParser.newInstance()
         .parse("{% for i in (1..10000) %}{{ i }}{% endfor %}")
         .rendering {
           maxRenderTimeMillis = 1

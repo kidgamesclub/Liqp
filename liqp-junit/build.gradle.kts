@@ -6,9 +6,12 @@ plugins {
 }
 
 mverse {
+  groupId = "club.kidgames"
+
   dependencies {
     compile(guava())
   }
+  coverageRequirement = 0.00
 }
 
 dependencies {

@@ -17,12 +17,9 @@ mverse {
 
 dependencies {
   compile(project(":liqp-core"))
+  testCompile(project(":liqp-junit"))
 }
 
 findbugs {
   isIgnoreFailures = true
-}
-
-dependencies {
-  testCompile(project(":liqp-junit"))
 }

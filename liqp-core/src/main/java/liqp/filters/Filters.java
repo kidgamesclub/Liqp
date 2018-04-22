@@ -85,7 +85,7 @@ public class Filters {
           .build());
   }
 
-  public FiltersBuilder toBuilder () {
+  public FiltersBuilder toBuilder() {
     return new FiltersBuilder().filters(this.filters.values());
   }
 

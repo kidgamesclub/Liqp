@@ -1,11 +1,12 @@
 package liqp.lookup
 
-import liqp.exceptions.VariableNotExistException
+import liqp.exceptions.MissingVariableException
 import liqp.nodes.RenderContext
 
-class Property(val isStrictPropertyNames:Boolean, private val propertyName: String) : Indexable {
+class Property(private val isStrictVariables:Boolean,
+               private val propertyName: String) : Indexable {
 
-  var getter: PropertyAccessor? = null
+  var getter: Getter<Any>? = null
 
   override fun get(value: Any?, context: RenderContext): Any? {
     if (value == null) {
@@ -21,11 +22,11 @@ class Property(val isStrictPropertyNames:Boolean, private val propertyName: Stri
     }
 
     val getter= getter!!
-    if (isStrictPropertyNames && getter.isNullAccessor()) {
-      throw VariableNotExistException(propertyName)
+    if (isStrictVariables && getter.isNullAccessor()) {
+      throw MissingVariableException(propertyName)
     }
 
-    return getter.get(value)
+    return getter.invoke(value)
   }
 
   override fun toString(): String {

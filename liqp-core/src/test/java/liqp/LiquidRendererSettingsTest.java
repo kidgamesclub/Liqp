@@ -3,7 +3,7 @@ package liqp;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import liqp.exceptions.VariableNotExistException;
+import liqp.exceptions.MissingVariableException;
 import org.junit.Test;
 
 public class LiquidRendererSettingsTest {
@@ -16,7 +16,7 @@ public class LiquidRendererSettingsTest {
 
             .render();
     } catch (RuntimeException ex) {
-      VariableNotExistException e = (VariableNotExistException) TestUtils.getExceptionRootCause(ex);
+      MissingVariableException e = (MissingVariableException) TestUtils.getExceptionRootCause(ex);
       assertThat(e.getVariableName(), is("mu"));
     }
   }
@@ -29,7 +29,7 @@ public class LiquidRendererSettingsTest {
             .parse("{{mu}} {{qwe.asd.zxc}}")
             .render("mu", "muValue");
     } catch (RuntimeException ex) {
-      VariableNotExistException e = (VariableNotExistException) TestUtils.getExceptionRootCause(ex);
+      MissingVariableException e = (MissingVariableException) TestUtils.getExceptionRootCause(ex);
       assertThat(e.getVariableName(), is("qwe.asd.zxc"));
     }
   }
@@ -52,7 +52,7 @@ public class LiquidRendererSettingsTest {
 
             .render("mu", "muValue");
     } catch (RuntimeException ex) {
-      VariableNotExistException e = (VariableNotExistException) TestUtils.getExceptionRootCause(ex);
+      MissingVariableException e = (MissingVariableException) TestUtils.getExceptionRootCause(ex);
       assertThat(e.getVariableName(), is("badVariableName"));
     }
   }
@@ -66,7 +66,7 @@ public class LiquidRendererSettingsTest {
 
             .render("mu", "muValue");
     } catch (RuntimeException ex) {
-      VariableNotExistException e = (VariableNotExistException) TestUtils.getExceptionRootCause(ex);
+      MissingVariableException e = (MissingVariableException) TestUtils.getExceptionRootCause(ex);
       assertThat(e.getVariableName(), is("checkThis"));
     }
   }
@@ -90,7 +90,7 @@ public class LiquidRendererSettingsTest {
 
             .render("mu", "muValue");
     } catch (RuntimeException ex) {
-      VariableNotExistException e = (VariableNotExistException) TestUtils.getExceptionRootCause(ex);
+      MissingVariableException e = (MissingVariableException) TestUtils.getExceptionRootCause(ex);
       assertThat(e.getVariableName(), is("badVariableName"));
     }
   }
@@ -103,7 +103,7 @@ public class LiquidRendererSettingsTest {
             .parse("{% if mu == \"somethingElse\" or checkThis %}{{ badVariableName }}{% endif %}")
             .render("mu", "muValue");
     } catch (RuntimeException ex) {
-      VariableNotExistException e = (VariableNotExistException) TestUtils.getExceptionRootCause(ex);
+      MissingVariableException e = (MissingVariableException) TestUtils.getExceptionRootCause(ex);
       assertThat(e.getVariableName(), is("checkThis"));
     }
   }

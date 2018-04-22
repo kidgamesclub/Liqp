@@ -54,7 +54,6 @@ data class FilterAssert(val filter: LFilter,
     return this
   }
 
-  @JvmOverloads
   fun hadNoErrors(): FilterAssert {
     assertThat(error).describedAs("Should not have had an error but found $error")
         .isNull()

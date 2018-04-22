@@ -1,12 +1,8 @@
 package liqp.lookup
 
+typealias PropertyContainer = (String)-> Any?
 
-/**
- * Simple functional interface for retrieving values from known object.
- */
-typealias PropertyContainer = (propertyName: String)-> Any?
-
-fun propertyContainer(data:Map<String, Any>): PropertyContainer {
+fun propertyContainer(data:Map<String, Any?>): PropertyContainer {
   return data::get
 }
 
@@ -22,9 +18,11 @@ fun composite(vararg delegates: PropertyContainer): PropertyContainer {
   }
 }
 
-@FunctionalInterface
+/**
+ * For java compatibility
+ */
 interface HasProperties {
-  fun getProperty(propName:String):Any?
+  fun <T> get(propName:String):T?
 }
 
 fun propertyContainer(key:Any?, value:Any?): PropertyContainer {
@@ -33,3 +31,5 @@ fun propertyContainer(key:Any?, value:Any?): PropertyContainer {
     else null
   }
 }
+
+

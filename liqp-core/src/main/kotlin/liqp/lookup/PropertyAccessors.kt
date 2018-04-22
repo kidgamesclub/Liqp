@@ -1,40 +1,46 @@
 package liqp.lookup
 
-import liqp.exceptions.VariableNotExistException
+import liqp.exceptions.MissingVariableException
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.function.Function
+import kotlin.reflect.jvm.jvmName
 
 /**
  * Class that assists with looking up properties in a container object.
  */
-class PropertyAccessors
-private constructor(
+data class PropertyAccessors
+constructor(
     val lookups: List<AccessorResolutionStrategy>,
-    val cache: MutableMap<String, PropertyAccessor>) {
+    val cache: MutableMap<String, Getter<Any>>,
+    val typeGetCache: MutableMap<String, Method?>) {
+
+  constructor(vararg vlookups: AccessorResolutionStrategy) : this(
+      listOf(*vlookups),
+      mutableMapOf(),
+      mutableMapOf())
 
   /**
    * Wraps a value as a [PropertyAccessor] so we can resolve the child properties.
    * @param value The value that has children properties
    * @return A valid property container, or null if no property accessor could be created
    */
-  fun getAccessor(instance: Any, propertyName: String): PropertyAccessor {
-    val type = instance::class
+  fun getAccessor(sample: Any, propertyName: String): Getter<Any> {
+    val type = sample::class
     //
     // 1. First, look for cached accessor.  This should be cheap... the cost of the hash lookup
     //
-    val key = "${type.qualifiedName}.$propertyName"
-    return cache.getOrPut(key, {
+    val key = "${type.jvmName}.$propertyName"
+    return cache.getOrPut(key, cache@{
       //
       // 1. Look in the synthetic methods.  These can be overridden at runtime, so we're
       //    looking for the first non-null instance
       //
       for (lookup in lookups) {
-        val lookupFn = lookup.getAccessor(instance, propertyName)
+        val lookupFn = lookup.getAccessor(sample, propertyName)
         if (lookupFn != null) {
-          cache[key] = lookupFn
-          return lookupFn
+          return@cache lookupFn
         }
       }
 
@@ -46,25 +52,30 @@ private constructor(
       // -- Reflection (no-args methods)
       // -- Null
       //
-      return when (instance) {
-        is HasProperties -> propertyAccessor<HasProperties> { i -> i.getProperty(propertyName) }
-        is Map<*, *> -> propertyAccessor<Map<*, *>> { i -> i[propertyName] }
+      val accessor: Getter<Any> = when (sample) {
+        is HasProperties -> { i -> (i as HasProperties).get(propertyName) }
+        is Map<*, *> -> { i -> (i as Map<*, *>)[propertyName] }
+        is Pair<*, *> -> ofPair(propertyName)
+        is Function1<*, *> -> { i -> (i as Function1<String, Any?>)(propertyName) }
         else -> {
-          return findField(type.java, propertyName)
+          findField(type.java, propertyName)
               ?: findGetter(type.java, propertyName)
               ?: findNoArgMethod(type.java, propertyName)
+              ?: findGetMethod(type.java, propertyName)
               ?: nullAccessor
         }
       }
+      return@cache accessor
     })
   }
 
-  constructor(vararg vlookups: AccessorResolutionStrategy) : this(
-      listOf(*vlookups),
-      mutableMapOf())
+  fun <T> findGetMethod(type: Class<T>, prop: String): Getter<Any>? {
+    return typeGetCache.getOrPut(type.name, { findGetMethodForClass(type) })
+        ?.let { method -> { instance -> method.invoke(instance, prop) } }
+  }
 
   fun withAccessorStrategies(vararg strategy: AccessorResolutionStrategy): PropertyAccessors {
-    return PropertyAccessors(listOf(*strategy, *lookups.toTypedArray()), cache)
+    return this.copy(lookups = listOf(*strategy, *lookups.toTypedArray()))
   }
 
   companion object {
@@ -78,18 +89,17 @@ private constructor(
     }
 
     @JvmStatic
-    fun <T> findField(type: Class<T>, name: String): PropertyAccessor? {
+    fun <T> findField(type: Class<T>, name: String): Getter<Any>? {
       return type.declaredFields
           .filter { it.name == name && Modifier.isPublic(it.modifiers) }
           .map { field ->
             field.isAccessible = true
-            PropertyAccessors.of(field) }
+            PropertyAccessors.ofField(field)
+          }
           .firstOrNull()
     }
 
-    @JvmStatic
-    fun <T> findGetter(type: Class<T>, name: String): PropertyAccessor? {
-
+    fun <T> findGetter(type: Class<T>, name: String): Getter<Any>? {
       return type.declaredMethods
           .filter {
             (it.name == "get${name.capitalize()}"
@@ -101,13 +111,25 @@ private constructor(
           }
           .map { getter ->
             getter.isAccessible = true
-            propertyAccessor<Any> { getter.invoke(it) }
+            { t: Any -> getter.invoke(t) }
           }
           .firstOrNull()
     }
 
     @JvmStatic
-    fun <T> findNoArgMethod(type: Class<T>, name: String): PropertyAccessor? {
+    fun <T> findGetMethodForClass(type: Class<T>): Method? {
+      return type.declaredMethods.firstOrNull {
+        (it.name == "get"
+            && it.returnType != Unit::class
+            && it.returnType != Void::class
+            && Modifier.isPublic(it.modifiers)
+            && it.parameterCount == 1
+            && it.parameterTypes[0] == String::class.java)
+      }
+    }
+
+    @JvmStatic
+    fun <T> findNoArgMethod(type: Class<T>, name: String): Getter<Any>? {
       return type.declaredMethods
           .filter {
             it.name == name
@@ -117,60 +139,51 @@ private constructor(
           }
           .map { method ->
             method.isAccessible = true
-            PropertyAccessors.of(method)
+            { t: Any -> method.invoke(t) }
           }
           .firstOrNull()
     }
 
     @JvmStatic
-    fun of(function: Function<Any, Any?>): PropertyAccessor {
-      return object : PropertyAccessor {
-        override fun get(instance: Any): Any? {
-          return function.apply(instance)
-        }
-      }
+    fun <P, R> ofFunction(function: Function<P, R?>): Getter<P> {
+      return { p: P -> function.apply(p) }
     }
 
     @JvmStatic
-    fun of(field: Field): PropertyAccessor {
+    fun ofField(field: Field): Getter<Any> {
       field.isAccessible = true
-      return object : PropertyAccessor {
-        override fun get(instance: Any): Any? {
-          return field.get(instance)
+      return { instance -> field.get(instance) }
+    }
+
+    @JvmStatic
+    fun ofMethod(method: Method): Getter<Any> {
+      method.isAccessible = true
+      return { instance -> method.invoke(instance) }
+    }
+
+    fun ofPair(prop: String): Getter<Any> {
+      return { instance ->
+        instance as Pair<String, Any?>
+        when (instance.first) {
+          prop -> instance.second
+          else -> null
         }
       }
     }
 
     @JvmStatic
-    fun of(method: Method): PropertyAccessor {
-      return object : PropertyAccessor {
-        override fun get(instance: Any): Any? {
-          return method.invoke(instance)
-        }
-      }
-    }
-
-    inline fun <reified T> propertyAccessor(crossinline lambda: Getter<T>): PropertyAccessor {
-      return object : PropertyAccessor {
-        override fun get(instance: Any): Any? {
-          return lambda.invoke(instance as T)
-        }
-      }
-    }
-
-    @JvmStatic
-    val nullAccessor = PropertyAccessors.propertyAccessor<Any>({ null })
+    val nullAccessor: Getter<Any> = { _: Any -> null }
   }
 
-  fun propertyContainer(isStrictVariables:Boolean, instance:Any?):PropertyContainer {
+  fun propertyContainer(isStrictVariables: Boolean, instance: Any?): PropertyContainer {
     return when (instance) {
-      null-> { _-> null}
-      else-> { propertyName: String ->
+      null -> { _ -> null }
+      else -> { propertyName: String ->
         {
           val getter = getAccessor(instance, propertyName)
           when {
-            isStrictVariables && getter.isNullAccessor() -> throw VariableNotExistException(propertyName)
-            else -> getter.get(instance)
+            isStrictVariables && getter.isNullAccessor() -> throw MissingVariableException(propertyName)
+            else -> getter.invoke(instance)
           }
         }
       }

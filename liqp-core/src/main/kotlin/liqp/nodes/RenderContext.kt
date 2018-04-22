@@ -31,12 +31,13 @@ class RenderContext
                           val parser: LiquidParser,
                           val engine: LiquidRenderer,
                           val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
-                          val settings:RenderSettings = engine.settings) : HasProperties, RenderSettingsSpec by settings {
+                          val settings:RenderSettings = engine.settings)
+  : HasProperties, RenderSettingsSpec by settings {
 
   val inputData: PropertyContainer by lazy {
     when (inputData) {
       is String -> inputData.parseJSON()::get
-      is HasProperties -> { prop -> inputData.getProperty(prop) }
+      is HasProperties -> { prop -> inputData.get(prop) }
       is Map<*, *> -> (inputData as Map<String, Any>)::get
       is Pair<*, *> -> propertyContainer(inputData.first, inputData.second)
       else -> accessors.propertyContainer(isStrictVariables, inputData)
@@ -103,16 +104,6 @@ class RenderContext
     }
   }
 
-  operator fun inc(): RenderContext {
-    pushFrame()
-    return this
-  }
-
-  operator fun dec(): RenderContext {
-    popFrame()
-    return this
-  }
-
   fun pushFrame(): RenderFrame {
     if (stack.size + 1 > maxStackSize) {
       throw LiquidRenderingException("Stack limit exceeded: $maxStackSize")
@@ -129,7 +120,7 @@ class RenderContext
     return popped
   }
 
-  operator fun set(varName: String, value: Any?): Unit {
+  operator fun set(varName: String, value: Any?) {
     when {
       current.hasVar(varName) -> current.set(varName, value)
       current.hasScopedVar(varName) -> {
@@ -159,36 +150,32 @@ class RenderContext
     }
   }
 
-  override fun getProperty(propName: String): Any? {
-    return this.get(propName)
-  }
-
   operator fun <T> getValue(ctx:RenderContext, prop:KProperty<*>): T? {
     return ctx[prop.name]
   }
 
-  operator fun <T> get(varName: String): T? {
-    if (FORLOOP == varName) {
+  override operator fun <T> get(propName: String): T? {
+    if (FORLOOP == propName) {
       return current.loop as T
     }
 
-    val frameVal = current.get(varName)
+    val frameVal = current.get(propName)
     if (frameVal != null) {
       return frameVal as T
     }
 
-    if (current.hasScopedVar(varName)) {
+    if (current.hasScopedVar(propName)) {
       val frames = stack.iterator()
       frames.next() //Already looked at the head frame
       while (frames.hasNext()) {
         val frame = frames.next()
-        if (frame.hasVar(varName)) {
-          return frame.get(varName) as T
+        if (frame.hasVar(propName)) {
+          return frame.get(propName) as T
         }
       }
     }
 
-    val inputVal = inputData.invoke(varName)
+    val inputVal = inputData.invoke(propName)
     if (inputVal != null) {
       return inputVal as T
     }
