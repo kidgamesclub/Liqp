@@ -56,7 +56,7 @@ class ProtectionSettingsTest {
   @Test
   fun testWithinMaxIterationsArray() {
 
-    assertTemplateFactory()
+    assertParser()
         .withTemplateString("{% for i in array %}{{ i }}{% endfor %}")
         .parsedWithoutError()
         .withEngine { withMaxIterations(1000) }

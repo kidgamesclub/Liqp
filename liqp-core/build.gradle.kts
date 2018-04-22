@@ -44,7 +44,6 @@ configurations.compile.extendsFrom(configurations.fatJar)
 //##### Configure shadow jar ##### //
 val shadowJar: ShadowJar by tasks
 shadowJar.apply {
-  classifier = null
   configurations = listOf(project.configurations.fatJar)
   relocate("com.fasterxml", "kg.com.fasterxml")
   relocate("one", "kg.one")

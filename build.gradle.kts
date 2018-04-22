@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument.DefaultArgument.arguments
 
 plugins {
-  id("org.gradle.kotlin.kotlin-dsl").version("0.16.0")
+  id("org.gradle.kotlin.kotlin-dsl").version("0.17.0")
   id("io.mverse.project").version("0.5.23")
   id("io.mverse.multi-module").version("0.5.23")
 }

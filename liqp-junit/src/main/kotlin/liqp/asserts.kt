@@ -3,42 +3,44 @@ package liqp
 import liqp.filters.LFilter
 import java.io.File
 
-fun LiquidParser.assertThat(): TemplateFactoryAssert = TemplateFactoryAssert(this)
+typealias ParseConfigurer = MutableParseSettings.() -> MutableParseSettings
+typealias RenderConfigurer = MutableRenderSettings.() -> MutableRenderSettings
+typealias CreateTestTemplate = LiquidParser.() -> Template
 
-fun assertTemplateFactory(): TemplateFactoryAssert = LiquidParser.newInstance().assertThat()
+fun LiquidParser.assertThat(): LiquidParserAssert = LiquidParserAssert(this)
+fun assertParser(): LiquidParserAssert = LiquidParser.newInstance().assertThat()
 
+/**
+ * Creates a {@link TemplateRenderAssert} instance for a string template, and allows overloaded
+ * configurers for the renderer and/or parser
+ */
 @JvmOverloads
 fun assertStringTemplate(templateString: String, data: Any? = null,
                          renderer: RenderConfigurer = { this },
-                         factory: ParseConfigurer = { this }): TemplateRenderAssert {
-  return createTemplateAssert({ parse(templateString) }, data, factory, renderer)
+                         parser: ParseConfigurer = { this }): TemplateRenderAssert {
+  return createTemplateAssert({ parse(templateString) }, data, parser, renderer)
 }
 
 fun assertFileTemplate(templateFile: File, data: Any? = null,
                        renderer: RenderConfigurer = { this },
-                       factory: ParseConfigurer = { this }): TemplateRenderAssert {
+                       parser: ParseConfigurer = { this }): TemplateRenderAssert {
 
-  return createTemplateAssert({ parseFile(templateFile) }, data, factory, renderer)
+  return createTemplateAssert({ parseFile(templateFile) }, data, parser, renderer)
 }
 
 private fun createTemplateAssert(createTestTemplate: CreateTestTemplate, data: Any? = null,
-                                 configureFactory: ParseConfigurer = { this },
-                                 configureRenderSettings: RenderConfigurer = { this }): TemplateRenderAssert {
+                                 configureParser: ParseConfigurer = { this },
+                                 configureRenderer: RenderConfigurer = { this }): TemplateRenderAssert {
   val template: Template
   try {
-    val factory = MutableParseSettings().configureFactory().toParser()
+    val factory = MutableParseSettings().configureParser().toParser()
     template = factory.createTestTemplate()
   } catch (e: Exception) {
     return TemplateRenderAssert(error = e)
   }
 
-  return renderAssert(template, LiquidRenderer.newInstance(configureRenderSettings), data)
+  return renderAssert(template, LiquidRenderer.newInstance(configureRenderer), data)
 }
-
-typealias ParseConfigurer = MutableParseSettings.() -> MutableParseSettings
-typealias RenderConfigurer = MutableRenderSettings.() -> MutableRenderSettings
-typealias CreateTestTemplate = LiquidParser.() -> Template
-
 
 fun renderAssert(template: Template, engine: LiquidRenderer, data:Any? = null) :TemplateRenderAssert{
   return try {
