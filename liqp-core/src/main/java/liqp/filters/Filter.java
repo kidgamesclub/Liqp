@@ -168,6 +168,7 @@ public abstract class Filter extends LValue implements LFilter {
           new Lstrip(),
           new liqp.filters.Map(),
           new Minus(),
+          new Num(),
           new Modulo(),
           new NewlineToBr(),
           new Plus(),
