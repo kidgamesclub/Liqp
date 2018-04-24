@@ -3,9 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
   id("org.gradle.kotlin.kotlin-dsl")
-}
-findbugs {
-  isIgnoreFailures = true
+  id("findbugs")
 }
 
 mverse {
@@ -15,6 +13,10 @@ mverse {
     compile(guava())
   }
   coverageRequirement = 0.00
+}
+
+findbugs {
+  isIgnoreFailures = true
 }
 
 dependencies {
