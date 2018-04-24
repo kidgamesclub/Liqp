@@ -36,8 +36,7 @@ public final class TestUtils {
         LiquidParser parser =  new LiquidParser(new CommonTokenStream(lexer));
 
         LiquidParser.OutputContext root = parser.output();
-        NodeVisitor visitor = new NodeVisitor(Tags.getDefaultTags(), Filters.getDefaultFilters(), flavor,
-              strictVariables);
+        NodeVisitor visitor = new NodeVisitor(Tags.getDefaultTags(), Filters.getDefaultFilters(), flavor);
 
         return visitor.visitOutput(root);
     }

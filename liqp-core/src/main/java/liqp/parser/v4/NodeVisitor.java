@@ -131,11 +131,10 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   @Override
   public BlockNode visitBlock(BlockContext ctx) {
 
-    BlockNode node = new BlockNode();
-    isRootBlock = false;
+    BlockNode node = new BlockNode(new ArrayList<>());
 
     for (AtomContext child : ctx.atom()) {
-      node.withChildNode(visit(child));
+      node = node.withChildNode(visit(child));
     }
 
     return node;
@@ -183,10 +182,10 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   @Override
   public BlockNode visitOther_tag_block(Other_tag_blockContext ctx) {
 
-    BlockNode node = new BlockNode();
+    BlockNode node = new BlockNode(new ArrayList<>());
 
     for (AtomContext child : ctx.atom()) {
-      node.withChildNode(visit(child));
+      node = node.withChildNode(visit(child));
     }
 
     return node;

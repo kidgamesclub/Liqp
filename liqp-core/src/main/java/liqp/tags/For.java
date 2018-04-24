@@ -81,7 +81,7 @@ public class For extends Tag {
       continueIndex = i;
       context.set(id, array[i]);
 
-      List<LNode> children = ((BlockNode) block).getChildren();
+      List<LNode> children = ((BlockNode) block).children();
       boolean isBreak = false;
 
       for (LNode node : children) {
@@ -149,7 +149,7 @@ public class For extends Tag {
         continueIndex = i;
         context.set(id, i);
 
-        List<LNode> children = ((BlockNode) block).getChildren();
+        List<LNode> children = ((BlockNode) block).children();
         boolean isBreak = false;
 
         for (LNode node : children) {
