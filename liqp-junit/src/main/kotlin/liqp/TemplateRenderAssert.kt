@@ -21,6 +21,26 @@ class TemplateRenderAssert(val template: Template? = null, val renderResult: Any
     return this
   }
 
+  fun isString(): TemplateRenderAssert {
+    isNotNullResult()
+    renderResult!!
+    assertThat(renderResult)
+        .describedAs("Result should have been a string, but was ${renderResult::class.java}")
+        .isInstanceOf(String::class.java)
+    return this
+  }
+
+  fun isTruncated(limit:Int=-1):TemplateRenderAssert {
+    isNotError().isNotNullResult().isString()
+
+    assertThat(renderResult as String).describedAs("Should have been truncated").endsWith("...")
+    if (limit > -1) {
+      assertThat(renderResult).describedAs("Should be truncated to $limit chars").hasSize(limit)
+    }
+
+    return this
+  }
+
   fun hasRenderError(type: Class<out Throwable> = Throwable::class.java): TemplateRenderAssert {
     if (template == null && error != null) {
       fail("There was a failure, but it happened during parsing $error")

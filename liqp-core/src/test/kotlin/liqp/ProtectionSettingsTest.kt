@@ -1,6 +1,7 @@
 package liqp
 
 import liqp.exceptions.ExceededMaxIterationsException
+import liqp.exceptions.LiquidRenderingException
 import org.junit.Test
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeoutException
@@ -141,6 +142,6 @@ class ProtectionSettingsTest {
             renderer = {
               maxSizeRenderedString = 2500
             })
-        .hasRenderError()
+        .hasRenderError(LiquidRenderingException::class.java)
   }
 }

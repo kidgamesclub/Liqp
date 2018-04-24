@@ -2,9 +2,8 @@ package liqp.nodes
 
 import liqp.LValue.BREAK
 import liqp.LValue.CONTINUE
-
-import java.util.ArrayList
-import lombok.Getter
+import liqp.exceptions.LiquidRenderingException
+import liqp.hasContent
 
 data class BlockNode(private val children: List<LNode>) : LNode {
 
@@ -13,46 +12,32 @@ data class BlockNode(private val children: List<LNode>) : LNode {
   }
 
   override fun render(context: RenderContext): Any? {
+    val maxSize = context.maxSizeRenderedString
+    fun CharSequence.checkSize() {
+      if (this.length > maxSize) throw LiquidRenderingException("rendered content too large: $maxSize")
+    }
 
     val outputs = mutableListOf<Any>()
     for (node in children) {
       val value: Any? = node.render(context)
-
       when (value) {
-        null -> {
-        }
+        null -> null
         BREAK -> return value
         CONTINUE -> return value
-        is Iterable<*> -> {
-          outputs.addAll(value.filterNotNull())
-        }
+        is Iterable<*> -> outputs.addAll(value.filterNotNull())
+        is Array<*> -> outputs.addAll(value.filterNotNull())
         else -> outputs.add(value)
       }
     }
 
-    var count = 0
-    for (output in outputs) {
-      if (output is String && output.trim().isNotEmpty()) {
-        count++
-      } else if (output !is String) {
-        count++
-      }
-      if(count > 1) {
-        break
-      }
-    }
+    val nonString = outputs.count { it !is String }
 
-    return when(count < 2) {
-      true-> outputs.firstOrNull()
-      else-> {
-        val builder = StringBuilder()
-        outputs.forEach {
-          builder.append(it.toString())
-          if (builder.length > context.maxSizeRenderedString) {
-            throw RuntimeException("rendered string exceeds " + context.maxSizeRenderedString)
-          }
-        }
-        builder.toString()
+    return when {
+      nonString == 1 && outputs.size == 1 -> outputs[0]
+      else -> {
+        val output = StringBuilder()
+        outputs.forEach { output.append(it).checkSize() }
+        return output.toString()
       }
     }
   }
