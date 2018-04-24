@@ -8,8 +8,7 @@ import liqp.nodes.RenderContext
  * Resolves the expression in brackets first, then resolves the path by using an integer index, or
  * by using a property name
  */
-class Index(private val isStrictVariables:Boolean,
-            private val expression: LNode) : Indexable {
+class Index(private val expression: LNode) : Indexable {
 
   /**
    * todo: remove this field
@@ -42,7 +41,7 @@ class Index(private val isStrictVariables:Boolean,
       // This will cache the accessor for the path, so if the same expression resolves to the
       // same value, it will use the same accessor
       val accessor = context.accessors.getAccessor(value, propertyName.toString())
-      if (isStrictVariables && accessor.isNullAccessor()) {
+      if (context.isStrictVariables && accessor.isNullAccessor()) {
         throw MissingVariableException(propertyName.toString())
       }
       return accessor.invoke(value)

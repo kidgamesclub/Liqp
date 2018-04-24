@@ -1,12 +1,13 @@
 package liqp.nodes
 
+import liqp.LiquidParser
+import liqp.LiquidRenderer
 import liqp.LoopState
+import liqp.MutableRenderSettings
 import liqp.RenderFrame
 import liqp.RenderSettings
 import liqp.RenderSettingsSpec
 import liqp.Template
-import liqp.LiquidRenderer
-import liqp.LiquidParser
 import liqp.exceptions.ExceededMaxIterationsException
 import liqp.exceptions.LiquidRenderingException
 import liqp.isFalse
@@ -26,27 +27,27 @@ import kotlin.reflect.KProperty
 val FORLOOP = "forloop"
 
 @Suppress("UNCHECKED_CAST")
-class RenderContext
-@JvmOverloads constructor(inputData: Any?,
+data class RenderContext
+@JvmOverloads constructor(private val rawInputData: Any?,
                           val parser: LiquidParser,
-                          val engine: LiquidRenderer,
+                          val renderer: LiquidRenderer,
                           val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
-                          val settings:RenderSettings = engine.settings)
+                          val settings: RenderSettings = renderer.settings)
   : HasProperties, RenderSettingsSpec by settings {
 
   val inputData: PropertyContainer by lazy {
-    when (inputData) {
-      is String -> inputData.parseJSON()::get
-      is HasProperties -> { prop -> inputData.get(prop) }
-      is Map<*, *> -> (inputData as Map<String, Any>)::get
-      is Pair<*, *> -> propertyContainer(inputData.first, inputData.second)
-      else -> accessors.propertyContainer(isStrictVariables, inputData)
+    when (rawInputData) {
+      is String -> rawInputData.parseJSON()::get
+      is HasProperties -> { prop -> rawInputData.get(prop) }
+      is Map<*, *> -> (rawInputData as Map<String, Any>)::get
+      is Pair<*, *> -> propertyContainer(rawInputData.first, rawInputData.second)
+      else -> accessors.propertyContainer(isStrictVariables, rawInputData)
     }
   }
 
   val logs = mutableListOf<Any>()
 
-  var locale:Locale by delegated(Locale.US)
+  var locale: Locale by delegated(Locale.US)
 
   fun <I> getTagStack(tag: Tag): Deque<I> {
     val varName = "stack:${tag.name}"
@@ -106,6 +107,18 @@ class RenderContext
     }
   }
 
+  fun applyRenderSettings(configure: MutableRenderSettings.() -> Unit): RenderContext {
+    val renderSettings = settings.toMutableRenderSettings().apply(configure).build()
+    return this.copy(renderer = renderer.withRenderSettings(renderSettings),
+        settings = renderSettings)
+  }
+
+  fun withRenderSettings(configurer: (MutableRenderSettings) -> MutableRenderSettings): RenderContext {
+    val renderSettings = configurer(settings.toMutableRenderSettings()).build()
+    return this.copy(renderer = renderer.withRenderSettings(renderSettings),
+        settings = renderSettings)
+  }
+
   fun pushFrame(): RenderFrame {
     if (stack.size + 1 > maxStackSize) {
       throw LiquidRenderingException("Stack limit exceeded: $maxStackSize")
@@ -140,10 +153,11 @@ class RenderContext
     }
   }
 
-  private fun <T>  delegated(default:T? = null):ReadWriteProperty<RenderContext, T> {
-    return object:ReadWriteProperty<RenderContext, T> {
+  private fun <T> delegated(default: T? = null): ReadWriteProperty<RenderContext, T> {
+    return object : ReadWriteProperty<RenderContext, T> {
       override fun getValue(thisRef: RenderContext, property: KProperty<*>): T {
-        return thisRef[property.name] ?: default ?: throw NullPointerException("Value for ${property.name} is null, with no default specified")
+        return thisRef[property.name] ?: default
+        ?: throw NullPointerException("Value for ${property.name} is null, with no default specified")
       }
 
       override fun setValue(thisRef: RenderContext, property: KProperty<*>, value: T) {
@@ -152,7 +166,7 @@ class RenderContext
     }
   }
 
-  operator fun <T> getValue(ctx:RenderContext, prop:KProperty<*>): T? {
+  operator fun <T> getValue(ctx: RenderContext, prop: KProperty<*>): T? {
     return ctx[prop.name]
   }
 
@@ -211,7 +225,6 @@ class RenderContext
       return stack.last()
     }
 
-
   fun hasVar(name: String): Boolean {
     return current.hasVar(name) || current.hasScopedVar(name)
   }
@@ -220,7 +233,7 @@ class RenderContext
     return current.remove(varName)
   }
 
-  fun render(template: Template) = engine.render(template, this)
+  fun render(template: Template) = renderer.render(template, this)
 }
 
 

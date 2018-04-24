@@ -41,7 +41,7 @@ public class LookupNode implements LNode {
         value = index.get(value, context);
       }
     } catch (MissingVariableException e) {
-      throw new MissingVariableException(this.getVariableName());
+      throw new MissingVariableException(this.getVariableName(), e.getVariableName());
     }
 
     return value;

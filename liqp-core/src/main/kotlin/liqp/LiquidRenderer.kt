@@ -72,10 +72,10 @@ data class LiquidRenderer
 
   fun createRenderContext(inputData: Any?): RenderContext {
     return RenderContext(
-        inputData = inputData,
+        rawInputData = inputData,
         accessors = this.accessors,
         parser = this.parser,
-        engine = this)
+        renderer = this)
   }
 
   @JvmOverloads

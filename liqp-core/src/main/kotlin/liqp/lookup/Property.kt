@@ -3,8 +3,7 @@ package liqp.lookup
 import liqp.exceptions.MissingVariableException
 import liqp.nodes.RenderContext
 
-class Property(private val isStrictVariables:Boolean,
-               private val propertyName: String) : Indexable {
+class Property(private val propertyName: String) : Indexable {
 
   var getter: Getter<Any>? = null
 
@@ -22,7 +21,7 @@ class Property(private val isStrictVariables:Boolean,
     }
 
     val getter= getter!!
-    if (isStrictVariables && getter.isNullAccessor()) {
+    if (context.isStrictVariables && getter.isNullAccessor()) {
       throw MissingVariableException(propertyName)
     }
 

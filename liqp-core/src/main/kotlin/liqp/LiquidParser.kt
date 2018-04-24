@@ -75,7 +75,7 @@ data class LiquidParser
     val parser = createParser(lexer)
 
     val tree = parser.parse()
-    val visitor = NodeVisitor(tags, filters, flavor, isStrictVariables)
+    val visitor = NodeVisitor(tags, filters, flavor)
     val rootNode = visitor.visit(tree)
     val parseTree: ParseTree? = when (this.isKeepParseTree) {
       false -> null

@@ -100,11 +100,10 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 @ToString(callSuper = true)
 public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
 
-  public NodeVisitor(Tags tags, Filters filters, Flavor flavor, boolean isStrictVariables) {
+  public NodeVisitor(Tags tags, Filters filters, Flavor flavor) {
     this.tags = tags;
     this.filters = filters;
     this.flavor = flavor;
-    this.isStrictVariables = isStrictVariables;
   }
 
   @NonNull
@@ -115,8 +114,6 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
 
   @NonNull
   private final Flavor flavor;
-
-  private final boolean isStrictVariables;
 
   private boolean isRootBlock = true;
 
@@ -134,11 +131,11 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   @Override
   public BlockNode visitBlock(BlockContext ctx) {
 
-    BlockNode node = new BlockNode(isRootBlock);
+    BlockNode node = new BlockNode();
     isRootBlock = false;
 
     for (AtomContext child : ctx.atom()) {
-      node.add(visit(child));
+      node.withChildNode(visit(child));
     }
 
     return node;
@@ -186,10 +183,10 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   @Override
   public BlockNode visitOther_tag_block(Other_tag_blockContext ctx) {
 
-    BlockNode node = new BlockNode(isRootBlock);
+    BlockNode node = new BlockNode();
 
     for (AtomContext child : ctx.atom()) {
-      node.add(visit(child));
+      node.withChildNode(visit(child));
     }
 
     return node;
@@ -726,10 +723,10 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
     for (IndexContext index : ctx.index()) {
 
       if (index.Dot() != null) {
-        node.add(new Property(isStrictVariables, index.id2().getText()));
+        node.add(new Property(index.id2().getText()));
       }
       else {
-        node.add(new Index(isStrictVariables, visit(index.expr())));
+        node.add(new Index(visit(index.expr())));
       }
     }
 
