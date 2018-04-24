@@ -39,6 +39,7 @@ class Include : Tag() {
 
       return context.render(template)
     } catch (e: Exception) {
+      context.logs += e.toString()
       return ""
     } finally {
       if (entered) {

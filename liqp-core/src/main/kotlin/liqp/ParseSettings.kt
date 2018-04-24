@@ -123,6 +123,11 @@ data class MutableParseSettings(var settings: ParseSettings = ParseSettings()) :
     return this
   }
 
+  fun keepParseTree(isKeepParseTree: Boolean): MutableParseSettings {
+    settings = settings.copy(isKeepParseTree = isKeepParseTree)
+    return this
+  }
+
   fun cacheSettings(cacheSettings: CacheSetup): MutableParseSettings {
     settings = settings.copy(cacheSettings = cacheSettings)
     return this

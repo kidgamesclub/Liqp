@@ -44,6 +44,8 @@ class RenderContext
     }
   }
 
+  val logs = mutableListOf<Any>()
+
   var locale:Locale by delegated(Locale.US)
 
   fun <I> getTagStack(tag: Tag): Deque<I> {

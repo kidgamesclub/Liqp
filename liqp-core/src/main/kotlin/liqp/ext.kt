@@ -2,7 +2,7 @@ package liqp
 
 import com.fasterxml.jackson.databind.ObjectMapper
 
-val mapper = ObjectMapper()
+val mapper by lazy { ObjectMapper() }
 
 @Suppress("UNCHECKED_CAST")
 fun String.parseJSON(): Map<String, Any?> {
