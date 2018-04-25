@@ -1,12 +1,15 @@
 package liqp.nodes
 
+import liqp.LLogic
+import liqp.context.LContext
 import liqp.LiquidParser
 import liqp.LiquidRenderer
-import liqp.LoopState
-import liqp.MutableRenderSettings
+import liqp.PropertyContainer
+import liqp.context.LoopState
+import liqp.config.MutableRenderSettings
 import liqp.RenderFrame
-import liqp.RenderSettings
-import liqp.RenderSettingsSpec
+import liqp.config.RenderSettings
+import liqp.config.RenderSettingsSpec
 import liqp.Template
 import liqp.exceptions.ExceededMaxIterationsException
 import liqp.exceptions.LiquidRenderingException
@@ -18,8 +21,9 @@ import liqp.lookup.HasProperties
 import liqp.lookup.PropertyAccessors
 import liqp.lookup.PropertyContainer
 import liqp.lookup.propertyContainer
+import liqp.node.LTemplate
 import liqp.parseJSON
-import liqp.tags.Tag
+import liqp.tag.LTag
 import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -29,11 +33,13 @@ val FORLOOP = "forloop"
 @Suppress("UNCHECKED_CAST")
 data class RenderContext
 @JvmOverloads constructor(private val rawInputData: Any?,
+                          override var result:Any? = null,
+                          val logic:LLogic,
                           val parser: LiquidParser,
                           val renderer: LiquidRenderer,
                           val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
                           val settings: RenderSettings = renderer.settings)
-  : HasProperties, RenderSettingsSpec by settings {
+  : RenderSettingsSpec by settings, LContext, LLogic by logic {
 
   val inputData: PropertyContainer by lazy {
     when (rawInputData) {
@@ -45,33 +51,16 @@ data class RenderContext
     }
   }
 
-  val logs = mutableListOf<Any>()
+  override val logs = mutableListOf<Any>()
 
-  var locale: Locale by delegated(Locale.US)
-
-  fun <I> getTagStack(tag: Tag): Deque<I> {
-    val varName = "stack:${tag.name}"
-    val stack = rootFrame.get(varName) as Deque<I>?
-    return when {
-      stack != null -> stack
-      else -> ArrayDeque<I>().apply { rootFrame.set(varName, this) }
-    }
-  }
-
-  fun <I> pushTagStack(tag: Tag, i: I): Deque<I> {
-    return getTagStack<I>(tag).also { it.addLast(i) }
-  }
-
-  fun <I> popTagStack(tag: Tag): Deque<I> {
-    return getTagStack<I>(tag).also { it.removeLast() }
-  }
+  override var locale: Locale by delegated(Locale.US)
 
   private val stack: Deque<RenderFrame> by lazy {
     ArrayDeque<RenderFrame>()
   }
 
   private var _current: RenderFrame? = null
-  var current: RenderFrame
+  override var current: RenderFrame
     get() {
       if (this._current == null) {
         this._current = RenderFrame(mutableSetOf())
@@ -83,9 +72,9 @@ data class RenderContext
       _current = value
     }
 
-  private var iterationCount: Int = 0
+  override var iterationCount: Int = 0
 
-  fun incrementIterations() {
+  override fun incrementIterations() {
     if (++iterationCount > maxIterations) {
       throw ExceededMaxIterationsException(maxIterations)
     }
@@ -93,33 +82,33 @@ data class RenderContext
     loopState.increment()
   }
 
-  fun isTrue(value: Any?): Boolean {
+  override fun isTrue(value: Any?): Boolean {
     return when {
       isUseTruthyChecks -> value.isTruthy()
       else -> value.isTrue()
     }
   }
 
-  fun isFalse(value: Any?): Boolean {
+  override fun isFalse(value: Any?): Boolean {
     return when {
       isUseTruthyChecks -> value.isFalsy()
       else -> value.isFalse()
     }
   }
 
-  fun applyRenderSettings(configure: MutableRenderSettings.() -> Unit): RenderContext {
+  override fun applyRenderSettings(configure: MutableRenderSettings.() -> Unit): RenderContext {
     val renderSettings = settings.toMutableRenderSettings().apply(configure).build()
     return this.copy(renderer = renderer.withRenderSettings(renderSettings),
         settings = renderSettings)
   }
 
-  fun withRenderSettings(configurer: (MutableRenderSettings) -> MutableRenderSettings): RenderContext {
+  override fun withRenderSettings(configurer: (MutableRenderSettings) -> MutableRenderSettings): RenderContext {
     val renderSettings = configurer(settings.toMutableRenderSettings()).build()
     return this.copy(renderer = renderer.withRenderSettings(renderSettings),
         settings = renderSettings)
   }
 
-  fun pushFrame(): RenderFrame {
+  override fun pushFrame(): RenderFrame {
     if (stack.size + 1 > maxStackSize) {
       throw LiquidRenderingException("Stack limit exceeded: $maxStackSize")
     }
@@ -129,13 +118,13 @@ data class RenderContext
     return frame
   }
 
-  fun popFrame(): RenderFrame {
+  override fun popFrame(): RenderFrame {
     val popped = stack.pop()
     this.current = stack.peek()
     return popped
   }
 
-  operator fun set(varName: String, value: Any?) {
+  override operator fun set(varName: String, value: Any?) {
     when {
       current.hasVar(varName) -> current.set(varName, value)
       current.hasScopedVar(varName) -> {
@@ -153,7 +142,7 @@ data class RenderContext
     }
   }
 
-  private fun <T> delegated(default: T? = null): ReadWriteProperty<RenderContext, T> {
+  fun <T> delegated(default: T?): ReadWriteProperty<RenderContext, T> {
     return object : ReadWriteProperty<RenderContext, T> {
       override fun getValue(thisRef: RenderContext, property: KProperty<*>): T {
         return thisRef[property.name] ?: default
@@ -166,7 +155,7 @@ data class RenderContext
     }
   }
 
-  operator fun <T> getValue(ctx: RenderContext, prop: KProperty<*>): T? {
+  override fun <T> getValue(ctx: LContext, prop: KProperty<*>): T? {
     return ctx[prop.name]
   }
 
@@ -199,16 +188,16 @@ data class RenderContext
     return null
   }
 
-  val loopState: LoopState
+  override val loopState: LoopState
     get() = current.loop
 
-  fun startLoop(length: Int, name: String? = null) {
+  override fun startLoop(length: Int, name: String?) {
     current.loop = LoopState(length, name)
   }
 
-  fun endLoop() = current.endLoop()
+  override fun endLoop() = current.endLoop()
 
-  fun setRoot(varName: String, value: Any) {
+  override fun setRoot(varName: String, value: Any) {
     val frames = stack.iterator()
     var frame = current
     while (frames.hasNext()) {
@@ -220,20 +209,23 @@ data class RenderContext
     frame.set(varName, value)
   }
 
-  val rootFrame: RenderFrame
-    get() {
-      return stack.last()
+  override val root: RenderFrame
+    get() = stack.last()
+
+  override fun hasVar(name: String): Boolean = current.hasVar(name) || current.hasScopedVar(name)
+
+  override fun remove(varName: String): Any? = current.remove(varName)
+
+  override fun render(template: LTemplate): String = renderer.render(template, this)
+
+  override fun withFrame(block: () -> Unit) {
+    pushFrame()
+    try {
+      block()
+    } finally {
+      popFrame()
     }
-
-  fun hasVar(name: String): Boolean {
-    return current.hasVar(name) || current.hasScopedVar(name)
   }
-
-  fun remove(varName: String): Any? {
-    return current.remove(varName)
-  }
-
-  fun render(template: Template) = renderer.render(template, this)
 }
 
 

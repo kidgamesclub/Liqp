@@ -1,6 +1,8 @@
 package liqp
 
-import liqp.filters.LFilter
+import liqp.config.MutableParseSettings
+import liqp.config.MutableRenderSettings
+import liqp.filter.LFilter
 import java.io.File
 
 typealias ParseConfigurer = MutableParseSettings.() -> MutableParseSettings

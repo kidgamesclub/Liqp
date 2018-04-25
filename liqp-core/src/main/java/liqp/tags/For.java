@@ -3,14 +3,15 @@ package liqp.tags;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import liqp.LValue;
+import liqp.tag.LTag;
+import liqp.node.LValue;
 import liqp.TruthKt;
 import liqp.exceptions.ExceededMaxIterationsException;
 import liqp.nodes.BlockNode;
-import liqp.nodes.LNode;
-import liqp.nodes.RenderContext;
+import liqp.node.LNode;
+import liqp.context.LContext;
 
-public class For extends Tag {
+public class For extends LTag {
 
     private static final String OFFSET = "offset";
     private static final String LIMIT = "limit";
@@ -30,7 +31,7 @@ public class For extends Tag {
    * For loop
    */
   @Override
-  public Object render(RenderContext context, LNode... nodes) {
+  public Object render(LContext context, LNode... nodes) {
 
     // The first node in the array denotes whether this is a for-tag
     // over an array, `for item in array ...`, or a for-tag over a
@@ -48,7 +49,7 @@ public class For extends Tag {
     return rendered;
   }
 
-  private Object renderArray(String id, RenderContext context, LNode... tokens) {
+  private Object renderArray(String id, LContext context, LNode... tokens) {
 
     StringBuilder builder = new StringBuilder();
 
@@ -88,12 +89,12 @@ public class For extends Tag {
 
         Object value = node.render(context);
 
-        if (value == LValue.CONTINUE) {
+        if (value == LValue.Companion.getCONTINUE()) {
           // break from this inner loop: equals continue outer loop!
           break;
         }
 
-        if (value == LValue.BREAK) {
+        if (value == LValue.Companion.getBREAK()) {
           // break from inner loop
           isBreak = true;
           break;
@@ -122,7 +123,7 @@ public class For extends Tag {
     return builder.toString();
   }
 
-  private Object renderRange(String id, RenderContext context, LNode... tokens) {
+  private Object renderRange(String id, LContext context, LNode... tokens) {
 
     StringBuilder builder = new StringBuilder();
 
@@ -160,12 +161,12 @@ public class For extends Tag {
             continue;
           }
 
-          if (value == LValue.CONTINUE) {
+          if (value == LValue.Companion.getCONTINUE()) {
             // break from this inner loop: equals continue outer loop!
             break;
           }
 
-          if (value == LValue.BREAK) {
+          if (value == LValue.Companion.getBREAK()) {
             // break from inner loop
             isBreak = true;
             break;
@@ -199,7 +200,7 @@ public class For extends Tag {
     return builder.toString();
   }
 
-  private Map<String, Integer> getAttributes(int fromIndex, RenderContext context, LNode... tokens) {
+  private Map<String, Integer> getAttributes(int fromIndex, LContext context, LNode... tokens) {
 
     Map<String, Integer> attributes = new HashMap<String, Integer>();
 

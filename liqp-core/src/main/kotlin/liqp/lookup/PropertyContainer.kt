@@ -1,6 +1,6 @@
 package liqp.lookup
 
-typealias PropertyContainer = (String)-> Any?
+import liqp.PropertyContainer
 
 fun propertyContainer(data:Map<String, Any?>): PropertyContainer {
   return data::get

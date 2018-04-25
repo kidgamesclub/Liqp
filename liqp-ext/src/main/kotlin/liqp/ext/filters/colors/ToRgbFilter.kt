@@ -3,7 +3,6 @@ import liqp.nodes.RenderContext
 
 
 import java.awt.Color
-import liqp.filters.Filter
 
 class ToRgbFilter :Filter() {
 

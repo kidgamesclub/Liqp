@@ -3,6 +3,7 @@ package liqp.nodes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import liqp.node.LNode;
 import liqp.exceptions.MissingVariableException;
 import liqp.lookup.Indexable;
 import lombok.Getter;
@@ -23,7 +24,7 @@ public class LookupNode implements LNode {
   }
 
   @Override
-  public Object render(RenderContext context) {
+  public Object render(LContext context) {
 
     Object value;
 

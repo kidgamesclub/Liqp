@@ -1,6 +1,6 @@
 package liqp.traverse
 
-import liqp.nodes.LNode
+import liqp.node.LNode
 
 class FilteredLNodeVisitor(private val nodeVisitor: (LNode, List<LNode>) -> Unit,
                            private val nodeFilter: (LNode, List<LNode>) -> Boolean = { _, _ -> true }) : LNodeVisitor {

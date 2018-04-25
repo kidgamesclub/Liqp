@@ -1,21 +1,22 @@
 package liqp.tags;
 
 import java.util.List;
-import liqp.filters.FilterChain;
-import liqp.filters.FilterParams;
-import liqp.filters.FilterInstance;
+import liqp.tag.LTag;
+import liqp.filter.FilterChain;
+import liqp.filter.FilterParams;
+import liqp.filter.FilterInstance;
 import liqp.nodes.FilterNode;
-import liqp.nodes.LNode;
-import liqp.nodes.RenderContext;
+import liqp.node.LNode;
+import liqp.context.LContext;
 import one.util.streamex.StreamEx;
 
-public class Assign extends Tag {
+public class Assign extends LTag {
 
   /*
    * Assigns some value to a variable
    */
   @Override
-  public Object render(RenderContext context, LNode... nodes) {
+  public Object render(LContext context, LNode... nodes) {
     final List<FilterInstance> filters = StreamEx.of(nodes)
           .filter(node -> node instanceof FilterNode)
           .map(node -> (FilterNode) node)

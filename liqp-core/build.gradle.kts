@@ -12,7 +12,9 @@ findbugs {
 }
 
 dependencies {
+  compile(project(":liqp-api"))
   testCompile(project(":liqp-junit"))
+  compile("com.github.alexheretic:dynamics:4.0")
 }
 
 mverse {

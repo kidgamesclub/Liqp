@@ -1,15 +1,16 @@
 package liqp.tags;
 
-import liqp.nodes.LNode;
-import liqp.nodes.RenderContext;
+import liqp.tag.LTag;
+import liqp.node.LNode;
+import liqp.context.LContext;
 
-public class Capture extends Tag {
+public class Capture extends LTag {
 
     /*
      * Block tag that captures text into a variable
      */
     @Override
-    public Object render(RenderContext context, LNode... nodes) {
+    public Object render(LContext context, LNode... nodes) {
 
         String id = super.asString(nodes[0].render(context));
 

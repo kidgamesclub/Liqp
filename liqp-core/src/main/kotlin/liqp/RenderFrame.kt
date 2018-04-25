@@ -1,6 +1,9 @@
 package liqp
 
-class RenderFrame(private val scopedVars: MutableSet<String>) {
+import liqp.context.LFrame
+import liqp.context.LoopState
+
+class RenderFrame(private val scopedVars: MutableSet<String>) : LFrame {
 
   private var _loop: LoopState? = null
   var loop: LoopState
@@ -12,34 +15,34 @@ class RenderFrame(private val scopedVars: MutableSet<String>) {
       _loop = value
     }
 
-  fun endLoop() {
+  override fun endLoop() {
     this._loop = null
   }
 
-  fun set(varName: String, value: Any?) {
+  override fun set(varName: String, value: Any?) {
     when (value) {
       null -> variables.remove(varName)
       else -> variables[varName] = value
     }
   }
 
-  fun addScopedVar(name: String) {
+  override fun addScopedVar(name: String) {
     scopedVars.add(name)
   }
 
-  fun get(varName: String): Any? {
+  override fun get(varName: String): Any? {
     return variables[varName]
   }
 
-  fun hasVar(varName: String): Boolean {
+  override fun hasVar(varName: String): Boolean {
     return variables.containsKey(varName)
   }
 
-  fun remove(varName: String): Any? {
+  override fun remove(varName: String): Any? {
     return variables.remove(varName)
   }
 
-  fun hasScopedVar(varName: String): Boolean {
+  override fun hasScopedVar(varName: String): Boolean {
     return scopedVars.contains(varName)
   }
 

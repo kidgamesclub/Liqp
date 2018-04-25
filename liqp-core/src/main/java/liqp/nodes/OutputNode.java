@@ -1,12 +1,10 @@
 package liqp.nodes;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import java.util.List;
-import liqp.filters.FilterChain;
-import liqp.filters.FilterInstance;
-import liqp.filters.LFilter;
-import liqp.nodes.FilterNode.FilterNodeBuilder;
+import liqp.node.LNode;
+import liqp.filter.FilterChain;
+import liqp.filter.FilterInstance;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
@@ -25,7 +23,7 @@ public class OutputNode implements LNode {
   }
 
   @Override
-  public Object render(RenderContext context) {
+  public Object render(LContext context) {
 
     if (filters.isEmpty()) {
       return expression.render(context);

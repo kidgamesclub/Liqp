@@ -1,7 +1,7 @@
 package liqp.lookup
 
 /**
- * Locates a {@link PropertyAccessor} given a model instance and a property name.  For nested
+ * Locates a {@link PropertyAccessor} given a node instance and a property name.  For nested
  * properties, this method would be called for each nested property that was accessed.
  *
  * The {@link PropertyAccessor}

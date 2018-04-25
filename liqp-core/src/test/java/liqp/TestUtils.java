@@ -1,7 +1,7 @@
 package liqp;
 
-import liqp.filters.Filters;
-import liqp.nodes.LNode;
+import liqp.filter.Filters;
+import liqp.node.LNode;
 import liqp.parser.Flavor;
 import liqp.parser.v4.NodeVisitor;
 import liqp.tags.Tags;

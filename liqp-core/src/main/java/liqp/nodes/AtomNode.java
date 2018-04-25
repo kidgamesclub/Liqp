@@ -2,10 +2,10 @@ package liqp.nodes;
 
 import java.util.Collections;
 import java.util.List;
+import liqp.context.LContext;
+import liqp.node.LNode;
 
 public class AtomNode implements LNode {
-
-    public static final AtomNode EMPTY = new AtomNode(new Object());
 
     private Object value;
 
@@ -13,12 +13,9 @@ public class AtomNode implements LNode {
         this.value = value;
     }
 
-    public static boolean isEmpty(Object o) {
-        return o == EMPTY.value;
-    }
 
     @Override
-    public Object render(RenderContext context) {
+    public Object render(LContext context) {
 
         return value;
     }

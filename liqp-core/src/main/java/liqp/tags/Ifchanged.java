@@ -2,11 +2,12 @@ package liqp.tags;
 
 import java.util.HashSet;
 import java.util.Set;
-import liqp.LoopState;
-import liqp.nodes.LNode;
-import liqp.nodes.RenderContext;
+import liqp.tag.LTag;
+import liqp.context.LoopState;
+import liqp.node.LNode;
+import liqp.context.LContext;
 
-public class Ifchanged extends Tag {
+public class Ifchanged extends LTag {
 
   private static final String TEMP_SET_KEY = "@ifchanged";
 
@@ -22,7 +23,7 @@ public class Ifchanged extends Tag {
       {% endfor %}
   */
   @Override
-  public Object render(RenderContext context, LNode... nodes) {
+  public Object render(LContext context, LNode... nodes) {
 
     if (nodes == null || nodes.length == 0) {
       return null;

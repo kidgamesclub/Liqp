@@ -2,6 +2,7 @@ package liqp.nodes;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import liqp.node.LNode;
 import lombok.Getter;
 
 @Getter
@@ -16,7 +17,7 @@ public class AttributeNode implements LNode {
     }
 
     @Override
-    public Object render(RenderContext context) {
+    public Object render(LContext context) {
         return new Object[]{
                 key.render(context),
                 value.render(context)

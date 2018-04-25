@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import liqp.node.LNode;
 import lombok.Getter;
 
 @Getter
@@ -18,7 +19,7 @@ public class KeyValueNode implements LNode {
     }
 
     @Override
-    public Object render(RenderContext context) {
+    public Object render(LContext context) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put(key, value.render(context));
         return map;

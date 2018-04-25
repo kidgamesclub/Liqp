@@ -1,7 +1,8 @@
 package liqp.tags;
 
-import liqp.nodes.LNode;
-import liqp.nodes.RenderContext;
+import liqp.tag.LTag;
+import liqp.node.LNode;
+import liqp.context.LContext;
 
 /*
     decrement
@@ -22,12 +23,12 @@ import liqp.nodes.RenderContext;
     Like increment, variables declared using decrement are independent from variables
     created using assign or capture.
 */
-public class Decrement extends Tag {
+public class Decrement extends LTag {
 
     private static final Long INITIAL = -1L;
 
     @Override
-    public Object render(RenderContext context, LNode... nodes) {
+    public Object render(LContext context, LNode... nodes) {
 
         Long value = INITIAL;
         String variable = super.asString(nodes[0].render(context));

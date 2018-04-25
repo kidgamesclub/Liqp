@@ -1,5 +1,7 @@
 package liqp.lookup
 
+import liqp.PropertyContainer
+import liqp.context.LAccessors
 import liqp.exceptions.MissingVariableException
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -14,7 +16,7 @@ data class PropertyAccessors
 constructor(
     val lookups: List<AccessorResolutionStrategy>,
     val cache: MutableMap<String, Getter<Any>>,
-    val typeGetCache: MutableMap<String, Method?>) {
+    val typeGetCache: MutableMap<String, Method?>) : LAccessors {
 
   constructor(vararg vlookups: AccessorResolutionStrategy) : this(
       listOf(*vlookups),
@@ -26,7 +28,7 @@ constructor(
    * @param value The value that has children properties
    * @return A valid property container, or null if no property accessor could be created
    */
-  fun getAccessor(sample: Any, propertyName: String): Getter<Any> {
+  override fun getAccessor(sample: Any, propertyName: String): Getter<Any> {
     val type = sample::class
     //
     // 1. First, look for cached accessor.  This should be cheap... the cost of the hash lookup

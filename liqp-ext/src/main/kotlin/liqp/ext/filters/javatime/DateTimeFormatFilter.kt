@@ -13,8 +13,6 @@ import java.time.format.FormatStyle
 import java.time.temporal.TemporalAccessor
 import java.util.Date
 import java.util.Locale
-import liqp.filters.Filter
-
 
 abstract class DateTimeFormatFilter(name: String, private val style: FormatStyle, private val locale: Locale) : Filter(name) {
 

@@ -1,6 +1,5 @@
 package liqp.ext.filters.javatime
 
-import liqp.filters.Filter
 import liqp.nodes.RenderContext
 import java.time.LocalTime
 import java.time.ZonedDateTime

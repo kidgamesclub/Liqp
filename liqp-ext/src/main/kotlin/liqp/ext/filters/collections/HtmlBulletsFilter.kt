@@ -1,6 +1,5 @@
 package liqp.ext.filters.collections
 
-import liqp.filters.Filter
 import liqp.nodes.RenderContext
 
 class HtmlBulletsFilter : Filter() {

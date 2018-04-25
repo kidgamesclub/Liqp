@@ -1,7 +1,8 @@
 package liqp.tags;
 
-import liqp.nodes.LNode;
-import liqp.nodes.RenderContext;
+import liqp.tag.LTag;
+import liqp.node.LNode;
+import liqp.context.LContext;
 
 /*
     increment
@@ -31,12 +32,12 @@ import liqp.nodes.RenderContext;
     Variables created using increment are separate from variables created using assign
     or capture.
 */
-public class Increment extends Tag {
+public class Increment extends LTag {
 
   private static final Long INITIAL = 0L;
 
   @Override
-  public Object render(RenderContext context, LNode... nodes) {
+  public Object render(LContext context, LNode... nodes) {
 
     String variable = super.asString(nodes[0].render(context));
     String incrementVariable = String.format("@increment_%s", variable);

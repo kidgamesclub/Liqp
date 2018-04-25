@@ -1,17 +1,20 @@
 package liqp.nodes
 
-import liqp.LValue.BREAK
-import liqp.LValue.CONTINUE
+import liqp.ControlResult
+import liqp.ControlResult.*
+import liqp.context.LContext
+import liqp.node.LNode
+import liqp.node.LValue.BREAK
+import liqp.node.LValue.CONTINUE
 import liqp.exceptions.LiquidRenderingException
-import liqp.hasContent
 
-data class BlockNode(private val children: List<LNode>) : LNode {
+data class BlockNode(override val children: List<LNode>) : LNode {
 
   fun withChildNode(node: LNode): BlockNode {
     return this.copy(children = this.children + node)
   }
 
-  override fun render(context: RenderContext): Any? {
+  override fun render(context: LContext): Any? {
     val maxSize = context.maxSizeRenderedString
     fun CharSequence.checkSize() {
       if (this.length > maxSize) throw LiquidRenderingException("rendered content too large: $maxSize")
@@ -22,6 +25,7 @@ data class BlockNode(private val children: List<LNode>) : LNode {
       val value: Any? = node.render(context)
       when (value) {
         null -> null
+        NOOP-> return value
         BREAK -> return value
         CONTINUE -> return value
         is Iterable<*> -> outputs.addAll(value.filterNotNull())

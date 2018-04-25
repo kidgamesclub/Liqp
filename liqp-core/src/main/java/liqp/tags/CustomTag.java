@@ -1,8 +1,9 @@
 package liqp.tags;
 
-import liqp.nodes.LNode;
+import liqp.tag.LTag;
+import liqp.node.LNode;
 
-public abstract class CustomTag extends Tag {
+public abstract class CustomTag extends LTag {
 
   protected CustomTag(String name) {
     super(name);
@@ -12,5 +13,5 @@ public abstract class CustomTag extends Tag {
    * This method creates an instance tag based on the nodes in the tree (typically, tags are singletons at the template
    * level).  This allows for any optimizations or parsing to be done up-front, instead of on each render iteration.
    */
-  public abstract Tag createTagForNode(LNode... tokens);
+  public abstract LTag createTagForNode(LNode... tokens);
 }

@@ -1,15 +1,14 @@
 package liqp.nodes;
 
 import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
 import java.util.List;
-import liqp.filters.FilterInstance;
-import liqp.filters.FilterParams;
-import liqp.filters.LFilter;
+import liqp.node.LNode;
+import liqp.filter.FilterInstance;
+import liqp.filter.FilterParams;
+import liqp.filter.LFilter;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
@@ -40,7 +39,7 @@ public class FilterNode implements LNode {
   }
 
   @Override
-  public Object render(RenderContext context) {
+  public Object render(LContext context) {
     throw new IllegalStateException("cannot render a filter");
   }
 }

@@ -2,7 +2,8 @@ package liqp.nodes;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
-import liqp.LValue;
+import liqp.node.LNode;
+import liqp.node.LValue;
 import lombok.Getter;
 
 @Getter

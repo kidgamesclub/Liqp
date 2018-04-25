@@ -1,27 +1,27 @@
 package liqp.nodes;
 
-import com.google.common.collect.ImmutableList;
 import java.util.List;
+import liqp.node.LNode;
 import liqp.tags.CustomTag;
-import liqp.tags.Tag;
+import liqp.tag.LTag;
 import lombok.Getter;
 import one.util.streamex.StreamEx;
 
 @Getter
 public class TagNode implements LNode {
 
-  private Tag tag;
+  private LTag tag;
   private LNode[] tokens;
 
-    public TagNode(Tag tag, List<LNode> tokens) {
-        this(tag.name, tag, tokens.toArray(new LNode[tokens.size()]));
+    public TagNode(LTag tag, List<LNode> tokens) {
+        this(tag.getName(), tag, tokens.toArray(new LNode[tokens.size()]));
     }
 
-    public TagNode(Tag tag, LNode... tokens) {
-        this(tag.name, tag, tokens);
+    public TagNode(LTag tag, LNode... tokens) {
+        this(tag.getName(), tag, tokens);
     }
 
-  public TagNode(String tagName, Tag tag, LNode... tokens) {
+  public TagNode(String tagName, LTag tag, LNode... tokens) {
     if (tagName == null) {
       throw new IllegalArgumentException("tagName == null");
     }
@@ -38,12 +38,12 @@ public class TagNode implements LNode {
     this.tokens = tokens;
   }
 
-  public Tag getTag() {
+  public LTag getTag() {
     return tag;
   }
 
   @Override
-  public Object render(RenderContext context) {
+  public Object render(LContext context) {
     return tag.render(context, tokens);
   }
 

@@ -1,11 +1,12 @@
 package liqp.tags;
 
-import liqp.nodes.LNode;
-import liqp.nodes.RenderContext;
+import liqp.tag.LTag;
+import liqp.node.LNode;
+import liqp.context.LContext;
 
-public class Break extends Tag {
+public class Break extends LTag {
   @Override
-  public Object render(RenderContext context, LNode... nodes) {
+  public Object render(LContext context, LNode... nodes) {
     return BREAK;
   }
 }

@@ -1,6 +1,6 @@
 package liqp.nodes;
 
-import liqp.LValue;
+import liqp.node.LNode;
 import lombok.Getter;
 
 @Getter
@@ -11,12 +11,12 @@ public class GtEqNode extends ExpressionNode{
   }
 
   @Override
-    public Object render(RenderContext context) {
+    public Object render(LContext context) {
 
         Object a = lhs.render(context);
         Object b = rhs.render(context);
 
         return (a instanceof Number) && (b instanceof Number) &&
-                super.asNumber(a).doubleValue() >= super.asNumber(b).doubleValue();
+                super.Companion.asNumber(a).doubleValue() >= super.Companion.asNumber(b).doubleValue();
     }
 }

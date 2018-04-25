@@ -1,6 +1,5 @@
 package liqp.ext.filters.numbers
 
-import liqp.filters.Filter
 import liqp.nodes.RenderContext
 import java.math.BigDecimal
 import java.math.RoundingMode

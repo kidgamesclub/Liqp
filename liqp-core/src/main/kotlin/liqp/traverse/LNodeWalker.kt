@@ -1,7 +1,7 @@
 package liqp.traverse
 
 import liqp.Template
-import liqp.nodes.LNode
+import liqp.node.LNode
 
 typealias LNodeVisitor = (LNode, List<LNode>) -> Boolean
 
@@ -15,8 +15,7 @@ class LNodeWalker(vararg visitors: LNodeVisitor) {
   private fun walkNode(node: LNode, parents: List<LNode>, visitors: List<LNodeVisitor>) {
     visitors.forEach { nodeVisitor -> nodeVisitor(node, parents) }
 
-    node.children()
-        .filterNotNull()
+    node.children
         .forEach { walkNode(it, parents + node, visitors) }
   }
 }

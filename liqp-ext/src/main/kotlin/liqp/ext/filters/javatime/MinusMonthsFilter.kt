@@ -4,7 +4,6 @@ import liqp.nodes.RenderContext
 
 import java.time.LocalDate
 import java.time.ZonedDateTime
-import liqp.filters.Filter
 
 class MinusMonthsFilter :Filter() {
 

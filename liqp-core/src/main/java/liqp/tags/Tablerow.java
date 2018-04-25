@@ -2,10 +2,11 @@ package liqp.tags;
 
 import java.util.HashMap;
 import java.util.Map;
-import liqp.nodes.LNode;
-import liqp.nodes.RenderContext;
+import liqp.tag.LTag;
+import liqp.node.LNode;
+import liqp.context.LContext;
 
-public class Tablerow extends Tag {
+public class Tablerow extends LTag {
 
   private static final String COLS = "cols";
   private static final String LIMIT = "limit";
@@ -40,7 +41,7 @@ public class Tablerow extends Tag {
    * Tables
    */
   @Override
-  public Object render(RenderContext context, LNode... nodes) {
+  public Object render(LContext context, LNode... nodes) {
 
     String valueName = super.asString(nodes[0].render(context));
     Object[] collection = super.asArray(nodes[1].render(context));
@@ -107,7 +108,7 @@ public class Tablerow extends Tag {
 
   private Map<String, Integer> getAttributes(Object[] collection,
                                              int fromIndex,
-                                             RenderContext context,
+                                             LContext context,
                                              LNode... tokens) {
 
     Map<String, Integer> attributes = new HashMap<String, Integer>();

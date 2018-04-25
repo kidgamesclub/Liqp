@@ -1,6 +1,5 @@
 package liqp.ext.filters.colors
 
-import liqp.filters.Filter
 import liqp.nodes.RenderContext
 import java.awt.Color
 

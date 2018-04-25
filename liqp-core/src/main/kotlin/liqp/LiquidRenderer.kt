@@ -1,6 +1,10 @@
 package liqp
 
+import liqp.config.MutableRenderSettings
+import liqp.config.RenderSettings
+import liqp.config.RenderSettingsSpec
 import liqp.lookup.PropertyAccessors
+import liqp.node.LTemplate
 import liqp.nodes.RenderContext
 import liqp.parser.Flavor
 import java.io.File
@@ -8,13 +12,14 @@ import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
 
-typealias executeTemplate = (Template, RenderContext) -> Any?
+typealias executeTemplate = (LTemplate, RenderContext) -> Any?
+
+val defaultRenderSettings = RenderSettings(defaultParseSettings.baseDir, defaultParseSettings.includesDir)
 
 data class LiquidRenderer
-
 @JvmOverloads constructor(val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
                           val parser: LiquidParser = LiquidParser(),
-                          val settings: RenderSettings = parser.toRenderSettings()): RenderSettingsSpec by settings {
+                          val settings: RenderSettings = defaultRenderSettings): RenderSettingsSpec by settings {
 
   init {
     if (maxRenderTimeMillis != Long.MAX_VALUE && executor == null) {
@@ -27,7 +32,7 @@ data class LiquidRenderer
     val defaultInstance = newInstance()
 
     @JvmStatic
-    fun newInstance(settings: RenderSettings = RenderSettings(baseDir = File("./"), flavor = Flavor.LIQUID)): LiquidRenderer {
+    fun newInstance(settings: RenderSettings = defaultRenderSettings): LiquidRenderer {
       return LiquidRenderer(settings = settings)
     }
 
@@ -75,8 +80,11 @@ data class LiquidRenderer
         rawInputData = inputData,
         accessors = this.accessors,
         parser = this.parser,
-        renderer = this)
+        renderer = this,
+        logic = logic)
   }
+
+  lateinit var logic:LLogic
 
   @JvmOverloads
   fun execute(template: Template, inputData: Any? = null): Any? {
@@ -87,7 +95,7 @@ data class LiquidRenderer
     return executeTemplate(template, context)
   }
 
-  fun render(template: Template, context: RenderContext): String {
+  fun render(template: LTemplate, context: RenderContext): String {
     val result = executeTemplate(template, context)
     return result.toNonNullString()
   }

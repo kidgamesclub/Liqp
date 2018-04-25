@@ -1,9 +1,9 @@
 package liqp
 
-import liqp.filters.LFilter
+import liqp.filter.LFilter
 import liqp.nodes.AtomNode
 import liqp.nodes.FilterNode
-import liqp.nodes.LNode
+import liqp.node.LNode
 import liqp.nodes.OutputNode
 import liqp.nodes.RenderContext
 import org.assertj.core.api.Assertions.assertThat

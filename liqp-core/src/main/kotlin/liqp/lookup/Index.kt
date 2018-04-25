@@ -1,7 +1,7 @@
 package liqp.lookup
 
 import liqp.exceptions.MissingVariableException
-import liqp.nodes.LNode
+import liqp.node.LNode
 import liqp.nodes.RenderContext
 
 /**

@@ -6,7 +6,6 @@ import com.google.common.base.Preconditions
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAccessor
 import java.util.Locale
-import liqp.filters.Filter
 
 class CustomDateTimeFormatFilter(private val locale: Locale) :Filter() {
 

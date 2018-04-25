@@ -4,8 +4,8 @@ import static java.util.Collections.singletonMap;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import liqp.filters.Filter;
-import liqp.nodes.RenderContext;
+import liqp.filter.PostFilter;
+import liqp.context.LContext;
 
 /**
  * A class holding some examples of how to use Liqp.
@@ -41,9 +41,9 @@ public class Examples {
 
     // first register your custom filter
     final LiquidParser ctx = LiquidParser.newInstance()
-          .withFilters(new Filter("b") {
+          .withFilters(new PostFilter("b") {
             @Override
-            public Object apply(RenderContext context, Object value, Object... params) {
+            public Object apply(LContext context, Object value, Object... params) {
               // create a string from the  value
               String text = super.asString(value);
 
@@ -62,9 +62,9 @@ public class Examples {
 
     // first register your custom filter
     final LiquidParser ctx = LiquidParser.newInstance()
-          .withFilters(new Filter("repeat") {
+          .withFilters(new PostFilter("repeat") {
             @Override
-            public Object apply(RenderContext context, Object value, Object... params) {
+            public Object apply(LContext context, Object value, Object... params) {
 
               // check if an optional parameter is provided
               int times = params.length == 0 ? 1 : super.asNumber(params[0]).intValue();
@@ -91,9 +91,9 @@ public class Examples {
   private static void demoCustomSumFilter() {
 
     final LiquidParser ctx = LiquidParser.newInstance()
-          .withFilters(new Filter("sum") {
+          .withFilters(new PostFilter("sum") {
             @Override
-            public Object apply(RenderContext context, Object value, Object... params) {
+            public Object apply(LContext context, Object value, Object... params) {
 
               Object[] numbers = super.asArray(value);
 

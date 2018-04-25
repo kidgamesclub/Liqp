@@ -1,7 +1,7 @@
 package liqp.parser.v4;
 
-import static liqp.nodes.FilterNode.*;
-import static liqp.nodes.OutputNode.*;
+import static liqp.nodes.FilterNode.FilterNodeBuilder;
+import static liqp.nodes.OutputNode.OutputNodeBuilder;
 import static liquid.parser.v4.LiquidParser.And;
 import static liquid.parser.v4.LiquidParser.AssignmentContext;
 import static liquid.parser.v4.LiquidParser.AtomContext;
@@ -64,10 +64,11 @@ import static liquid.parser.v4.LiquidParser.When_tagContext;
 import java.util.ArrayList;
 import java.util.List;
 import liqp.exceptions.LiquidException;
-import liqp.filters.Filters;
-import liqp.filters.LFilter;
+import liqp.filter.Filters;
+import liqp.filter.LFilter;
 import liqp.lookup.Index;
 import liqp.lookup.Property;
+import liqp.node.LNode;
 import liqp.nodes.AndNode;
 import liqp.nodes.AtomNode;
 import liqp.nodes.AttributeNode;
@@ -78,7 +79,6 @@ import liqp.nodes.FilterNode;
 import liqp.nodes.GtEqNode;
 import liqp.nodes.GtNode;
 import liqp.nodes.KeyValueNode;
-import liqp.nodes.LNode;
 import liqp.nodes.LookupNode;
 import liqp.nodes.LtEqNode;
 import liqp.nodes.LtNode;
@@ -87,7 +87,7 @@ import liqp.nodes.OrNode;
 import liqp.nodes.OutputNode;
 import liqp.nodes.TagNode;
 import liqp.parser.Flavor;
-import liqp.tags.Tags;
+import liqp.tag.Tags;
 import liquid.parser.v4.LiquidParserBaseVisitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -100,10 +100,9 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 @ToString(callSuper = true)
 public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
 
-  public NodeVisitor(Tags tags, Filters filters, Flavor flavor) {
+  public NodeVisitor(Tags tags, Filters filters) {
     this.tags = tags;
     this.filters = filters;
-    this.flavor = flavor;
   }
 
   @NonNull
@@ -111,9 +110,6 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
 
   @NonNull
   private final Filters filters;
-
-  @NonNull
-  private final Flavor flavor;
 
   private boolean isRootBlock = true;
 
@@ -173,7 +169,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       expressions.add(visitOther_tag_block(ctx.other_tag_block()));
     }
 
-    return new TagNode(tags.getTag(ctx.Id().getText()), expressions.toArray(new LNode[expressions.size()]));
+    return new TagNode(tags.get(ctx.Id().getText()), expressions.toArray(new LNode[expressions.size()]));
   }
 
   // custom_tag_block
@@ -196,7 +192,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   //  ;
   @Override
   public LNode visitRaw_tag(Raw_tagContext ctx) {
-    return new TagNode(tags.getTag("raw"), new AtomNode(ctx.raw_body().getText()));
+    return new TagNode(tags.get("raw"), new AtomNode(ctx.raw_body().getText()));
   }
 
   // comment_tag
@@ -204,7 +200,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   //  ;
   @Override
   public LNode visitComment_tag(Comment_tagContext ctx) {
-    return new TagNode(tags.getTag("comment"), new AtomNode(ctx.comment_body().getText()));
+    return new TagNode(tags.get("comment"), new AtomNode(ctx.comment_body().getText()));
   }
 
   // if_tag
@@ -239,7 +235,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       nodes.add(visitBlock(ctx.else_tag().block()));
     }
 
-    return new TagNode(tags.getTag("if"), nodes.toArray(new LNode[nodes.size()]));
+    return new TagNode(tags.get("if"), nodes.toArray(new LNode[nodes.size()]));
   }
 
   // unless_tag
@@ -260,7 +256,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       nodes.add(visitBlock(ctx.else_tag().block()));
     }
 
-    return new TagNode(tags.getTag("unless"), nodes.toArray(new LNode[nodes.size()]));
+    return new TagNode(tags.get("unless"), nodes.toArray(new LNode[nodes.size()]));
   }
 
   // case_tag
@@ -292,7 +288,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       nodes.add(visitBlock(ctx.else_tag().block()));
     }
 
-    return new TagNode(tags.getTag("case"), nodes.toArray(new LNode[nodes.size()]));
+    return new TagNode(tags.get("case"), nodes.toArray(new LNode[nodes.size()]));
   }
 
   // cycle_tag
@@ -313,7 +309,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       nodes.add(visit(child));
     }
 
-    return new TagNode(tags.getTag("cycle"), nodes.toArray(new LNode[nodes.size()]));
+    return new TagNode(tags.get("cycle"), nodes.toArray(new LNode[nodes.size()]));
   }
 
   // for_array
@@ -341,7 +337,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       expressions.add(visit(attribute));
     }
 
-    return new TagNode(tags.getTag("for"), expressions.toArray(new LNode[expressions.size()]));
+    return new TagNode(tags.get("for"), expressions.toArray(new LNode[expressions.size()]));
   }
 
   // for_range
@@ -365,7 +361,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       expressions.add(visit(attribute));
     }
 
-    return new TagNode(tags.getTag("for"), expressions.toArray(new LNode[expressions.size()]));
+    return new TagNode(tags.get("for"), expressions.toArray(new LNode[expressions.size()]));
   }
 
   // attribute
@@ -392,7 +388,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       expressions.add(visit(attribute));
     }
 
-    return new TagNode(tags.getTag("tablerow"), expressions.toArray(new LNode[expressions.size()]));
+    return new TagNode(tags.get("tablerow"), expressions.toArray(new LNode[expressions.size()]));
   }
 
   // capture_tag
@@ -401,7 +397,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   //  ;
   @Override
   public LNode visitCapture_tag_Id(Capture_tag_IdContext ctx) {
-    return new TagNode(tags.getTag("capture"), new AtomNode(ctx.Id().getText()), visitBlock(ctx.block()));
+    return new TagNode(tags.get("capture"), new AtomNode(ctx.Id().getText()), visitBlock(ctx.block()));
   }
 
   // capture_tag
@@ -410,7 +406,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   //  ;
   @Override
   public LNode visitCapture_tag_Str(Capture_tag_StrContext ctx) {
-    return new TagNode(tags.getTag("capture"), fromString(ctx.Str()), visitBlock(ctx.block()));
+    return new TagNode(tags.get("capture"), fromString(ctx.Str()), visitBlock(ctx.block()));
   }
 
   // include_tag
@@ -419,9 +415,9 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   @Override
   public LNode visitInclude_tag(Include_tagContext ctx) {
     if (ctx.Str() != null)  {
-      return new TagNode(tags.getTag("include"), visit(ctx.file_name_or_output()), fromString(ctx.Str()));
+      return new TagNode(tags.get("include"), visit(ctx.file_name_or_output()), fromString(ctx.Str()));
     }
-    return new TagNode(tags.getTag("include"), visit(ctx.file_name_or_output()));
+    return new TagNode(tags.get("include"), visit(ctx.file_name_or_output()));
   }
 
   // file_name_or_output
@@ -441,8 +437,9 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   @Override
   public LNode visitFile_name_or_output_output(File_name_or_output_outputContext ctx) {
 
-    if (flavor != Flavor.JEKYLL)
-      throw new LiquidException("`{% include ouput %}` can only be used for Flavor.JEKYLL", ctx);
+    //todo:ericm Resolve
+//    if (flavor != Flavor.JEKYLL)
+//      throw new LiquidException("`{% include ouput %}` can only be used for Flavor.JEKYLL", ctx);
 
     return visitOutput(ctx.output());
   }
@@ -458,8 +455,9 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   @Override
   public LNode visitFile_name_or_output_other_than_tag_end_out_start(File_name_or_output_other_than_tag_end_out_startContext ctx) {
 
-    if (flavor != Flavor.JEKYLL)
-      throw new LiquidException("`{% include other_than_tag_end_out_start %}` can only be used for Flavor.JEKYLL", ctx);
+    //todo:ericm Resolve
+//    if (flavor != Flavor.JEKYLL)
+//      throw new LiquidException("`{% include other_than_tag_end_out_start %}` can only be used for Flavor.JEKYLL", ctx);
 
     return new AtomNode(ctx.other_than_tag_end_out_start().getText());
   }
@@ -490,7 +488,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
   @Override
   public FilterNode visitFilter(FilterContext ctx) {
     final String filterName = ctx.Id().getText();
-    final LFilter filter = filters.getFilter(filterName);
+    final LFilter filter = filters.get(filterName);
     if (filter == null) {
       throw new IllegalArgumentException("error on line " + ctx.start.getLine() + ", " +
             "index " + ctx.start.getCharPositionInLine() + ": " +
@@ -541,7 +539,7 @@ public class NodeVisitor extends LiquidParserBaseVisitor<LNode> {
       allNodes.add(visit(filterContext));
     }
 
-    return new TagNode(tags.getTag("assign"), allNodes);
+    return new TagNode(tags.get("assign"), allNodes);
   }
 
   // expr
