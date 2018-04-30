@@ -1,21 +1,24 @@
 package liqp.ext.filters.strings
-import liqp.nodes.RenderContext
 
-
+import liqp.context.LContext
+import liqp.filter.FilterChainPointer
+import liqp.filter.FilterParams
+import liqp.filter.LFilter
 import javax.swing.text.MaskFormatter
 
 /**
  *
  */
-class USPhoneNumberFormatFilter :Filter() {
+class USPhoneNumberFormatFilter : LFilter() {
 
-  override fun apply(context: RenderContext, o: Any?, vararg objects: Any): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+
     var rtn: String?
-    if (o != null) {
+    if (value != null) {
 
       try {
         val phoneMask = "###-###-####"
-        var phoneNumber = o.toString().replace("+", "")
+        var phoneNumber = value.toString().replace("+", "")
         val extraLength = phoneNumber.length - 10
         phoneNumber = phoneNumber.substring(extraLength)
 
@@ -23,7 +26,7 @@ class USPhoneNumberFormatFilter :Filter() {
         maskFormatter.valueContainsLiteralCharacters = false
         rtn = maskFormatter.valueToString(phoneNumber)
       } catch (e: Exception) {
-        rtn = o.toString()
+        rtn = value.toString()
       }
     } else {
       rtn = null

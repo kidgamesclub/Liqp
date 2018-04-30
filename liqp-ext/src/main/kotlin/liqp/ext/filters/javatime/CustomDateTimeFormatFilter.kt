@@ -1,23 +1,21 @@
 package liqp.ext.filters.javatime
-import liqp.nodes.RenderContext
-
 
 import com.google.common.base.Preconditions
+import liqp.context.LContext
+import liqp.filter.FilterChainPointer
+import liqp.filter.FilterParams
+import liqp.filter.LFilter
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAccessor
-import java.util.Locale
+import java.util.*
 
-class CustomDateTimeFormatFilter(private val locale: Locale) :Filter() {
+class CustomDateTimeFormatFilter : LFilter() {
 
-  init {
-    Preconditions.checkNotNull(locale, "locale must not be null")
-  }
-
-  override fun apply(context: RenderContext, value: Any, vararg params: Any): Any {
+  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
     var ret = value
 
     if (value is TemporalAccessor && params.size == 1) {
-      val formatter = DateTimeFormatter.ofPattern(params[0] as String, this.locale)
+      val formatter = DateTimeFormatter.ofPattern(params[0], context.locale)
 
       ret = formatter.format(value)
     }

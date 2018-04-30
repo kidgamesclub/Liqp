@@ -1,65 +1,55 @@
 package liqp.filter
 
-import java.util.ArrayList
-import java.util.Collections
-import java.util.HashMap
 import liqp.context.LContext
+import kotlin.collections.Map
 
 class Sort : LFilter() {
 
-  /*
-     * sort(input, property = nil)
-     *
-     * Sort elements of the array provide optional property with
-     * which to sort an array of hashes or drops
-     */
+  /**
+   * sort(input, property = nil)
+   *
+   * Sort elements of the array provide optional property with
+   * which to sort an array of hashes or drops
+   */
   override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
 
-    if (value == null) {
-      return ""
+    val v = value ?: return null
+
+    context.run {
+      val asList: MutableList<Any> = asIterable(value).toMutableList()
+      val property = asString(params[0])
+
+      val list:MutableList<Comparable<Any>> = asComparableList(asList, property)
+      list.sort()
+      return list
     }
-
-    if (!super.isArray(value)) {
-      throw RuntimeException("cannot sort: $value")
-    }
-
-    val array = context.asIterable(value)
-    val property = if (params.size == 0) null else super.asString(params[0])
-
-    val list = asComparableList(array!!, property)
-
-    Collections.sort<Comparable>(list)
-
-    return if (property == null)
-      list.toTypedArray()
-    else
-      list.toTypedArray<SortableMap>()
   }
 
-  private fun asComparableList(array: Array<Any>, property: String?): List<Comparable<*>> {
-
-    val list = ArrayList<Comparable<*>>()
+  private fun asComparableList(array: MutableList<Any>, property: String?): MutableList<Comparable<Any>> {
+    val list = mutableListOf<Comparable<Any>>()
 
     for (obj in array) {
 
-      if (obj is Map<*, *> && property != null) {
-        list.add(SortableMap(obj as Map<String, Comparable<*>>, property))
+      if (obj is kotlin.collections.Map<*, *> && property != null) {
+        val asMap = obj as kotlin.collections.Map<String, Comparable<Any>>
+        list.add(SortableMap(asMap.toMutableMap(), property) as Comparable<Any>)
       } else {
-        list.add(obj as Comparable<*>)
+        list.add(obj as Comparable<Any>)
       }
     }
 
     return list
   }
 
-  internal class SortableMap(map: Map<String, Comparable<*>>, val property: String) : HashMap<String, Comparable<*>>(), Comparable<SortableMap> {
+  internal class SortableMap(val map: MutableMap<String, Comparable<Any>>, val property: String) :
+      MutableMap<String, Comparable<Any>> by map,
+      Comparable<SortableMap> {
 
     init {
-      super.putAll(map)
+      putAll(map)
     }
 
     override fun compareTo(that: SortableMap): Int {
-
       val thisValue = this[property]
       val thatValue = that[property]
 
@@ -73,7 +63,7 @@ class Sort : LFilter() {
     override fun toString(): String {
       val builder = StringBuilder()
 
-      for ((key, value) in super) {
+      for ((key, value) in this) {
         builder.append(key).append(value)
       }
 

@@ -1,16 +1,18 @@
 package liqp.ext.filters.colors
-import liqp.nodes.RenderContext
 
-
+import liqp.context.LContext
+import liqp.filter.FilterChainPointer
+import liqp.filter.FilterParams
+import liqp.filter.LFilter
 import java.awt.Color
 
-class ToRgbFilter :Filter() {
+class ToRgbFilter : LFilter() {
 
-  override fun apply(context: RenderContext, value: Any, vararg params: Any): Any {
+  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
     return try {
-      val decoded = when(value) {
-        is Color-> value
-        else-> Color.decode(value.toString())
+      val decoded = when (value) {
+        is Color -> value
+        else -> Color.decode(value.toString())
       }
       "${decoded.red},${decoded.green},${decoded.blue}"
     } catch (e: Exception) {

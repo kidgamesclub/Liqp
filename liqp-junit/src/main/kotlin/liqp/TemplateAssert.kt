@@ -1,9 +1,10 @@
 package liqp
 
+import liqp.node.LTemplate
 import org.assertj.core.api.Assertions.assertThat
 
-class TemplateAssert(val template: Template? = null,
-                     val engine:LiquidRenderer = LiquidRenderer.newInstance(),
+class TemplateAssert(val template: LTemplate? = null,
+                     private val engine:LiquidRenderer = LiquidRenderer.newInstance(),
                      val error:Exception? = null) {
 
   fun parsedWithoutError():TemplateAssert {

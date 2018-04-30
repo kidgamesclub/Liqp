@@ -1,14 +1,14 @@
 package liqp
 
-import kotlin.math.absoluteValue
-
 interface InstanceFacts {
   fun isIterable(t: Any?): Boolean
   fun isEmpty(t: Any?): Boolean
-  fun asIntegral(t: Any?): Long?
+  fun asLong(t: Any?): Long?
+  fun asInteger(t: Any?): Int? = asLong(t)?.toInt()
+  fun isIntegral(t: Any?): Boolean = asLong(t) != null
   fun asDouble(t: Any?): Double?
   fun asIterable(t: Any?): Iterable<Any>
-  fun asString(t: Any?): String
+  fun asString(t: Any?): String?
   fun asNumber(t: Any?): Number?
   fun size(t:Any?):Int
 }
@@ -24,8 +24,8 @@ interface Comparisons {
 }
 
 interface Combiners {
-  fun add(t1: Any?, t2: Any?): Any?
-  fun subtract(t1: Any?, t2: Any?): Any?
+  fun add(a: Any?, b: Any?): Any?
+  fun subtract(a: Any?, b: Any?): Any?
   fun range(from:Any?, to:Any?): Any?
   fun contains(t:Any?):LogicResult
 }
@@ -55,7 +55,10 @@ enum class ComparisonResult {
 enum class LogicResult {
   NOOP,
   TRUE,
-  FALSE
+  FALSE;
+
+  val str = name.toLowerCase()
+  override fun toString() = str
 }
 
 enum class DynamicType {

@@ -1,10 +1,10 @@
 package liqp;
 
-import liqp.filter.Filters;
+import static liqp.LiquidDefaults.*;
+
 import liqp.node.LNode;
 import liqp.parser.Flavor;
 import liqp.parser.v4.NodeVisitor;
-import liqp.tags.Tags;
 import liquid.parser.v4.LiquidLexer;
 import liquid.parser.v4.LiquidParser;
 import org.antlr.v4.runtime.CharStreams;
@@ -36,7 +36,7 @@ public final class TestUtils {
         LiquidParser parser =  new LiquidParser(new CommonTokenStream(lexer));
 
         LiquidParser.OutputContext root = parser.output();
-        NodeVisitor visitor = new NodeVisitor(Tags.getDefaultTags(), Filters.getDefaultFilters(), flavor);
+        NodeVisitor visitor = new NodeVisitor(getDefaultTags(), getDefaultFilters());
 
         return visitor.visitOutput(root);
     }

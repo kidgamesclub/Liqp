@@ -2,6 +2,7 @@ package liqp.nodes
 
 import liqp.node.LNode
 import liqp.LiquidParser
+import liqp.context.LContext
 import liqp.rendering
 import liqp.tag.LTag
 import org.antlr.runtime.RecognitionException
@@ -23,7 +24,8 @@ class BlockNodeTest {
   fun customTagTest() {
 
     val customTag = object : LTag("testtag") {
-      override fun render(context: RenderContext, vararg nodes: LNode): Any? {
+
+      override fun render(context: LContext, vararg nodes: LNode): Any? {
         return null
       }
     }

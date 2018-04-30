@@ -4,43 +4,27 @@ import liqp.context.LContext
 
 class Truncatewords : LFilter() {
 
-  /*
-     * truncatewords(input, words = 15, truncate_string = "...")
-     *
-     * Truncate a string down to x words
-     */
+  /**
+   * truncatewords(input, words = 15, truncate_string = "...")
+   *
+   * Truncate a string down to x words
+   */
   override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
 
-    if (value == null) {
-      return ""
+    val v = value ?: return null
+    context.run {
+
+      val text = asString(value) ?: return null
+      val words = text.split(' ').filter { it.isNotBlank() }
+      val length = asInteger(params[0]) ?: return value
+      val truncateString = params[1] ?: "..."
+
+      return {
+        if (length >= words.size) text
+        else words.joinToString(separator = " ",
+            limit = length,
+            truncated = truncateString)
+      }
     }
-
-    val text = super.asString(value)
-    val words = text.split("\\s++".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-    var length = 15
-    var truncateString = "..."
-
-    if (params.size >= 1) {
-      length = super.asNumber(super.get(0, params)).toInt()
-    }
-
-    if (params.size >= 2) {
-      truncateString = super.asString(super.get(1, params))
-    }
-
-    return if (length >= words.size) {
-      text
-    } else join(words, length) + truncateString
-  }
-
-  private fun join(words: Array<String>, length: Int): String {
-
-    val builder = StringBuilder()
-
-    for (i in 0 until length) {
-      builder.append(words[i]).append(" ")
-    }
-
-    return builder.toString().trim { it <= ' ' }
   }
 }

@@ -1,7 +1,6 @@
 package liqp.filter
 
 import liqp.context.LContext
-import liqp.nodes.RenderContext
 
 class Num : LFilter() {
 
@@ -10,12 +9,8 @@ class Num : LFilter() {
    * set the current rendered value context, then [noActionInstance], or [PostFilter.NO_ACTION] should be
    * returned instead.
    */
+  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+    return context.asNumber(value)
 
-  override fun onFilterAction(params: FilterParams, input: Any?, chain: FilterChainPointer, context: LContext): Any? {
-    return when(input) {
-      null-> 0
-      is Number-> input
-      else-> input.toString().toDoubleOrNull() ?: 0
-    }
   }
 }

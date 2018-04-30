@@ -1,18 +1,11 @@
 package liqp.ext.filters.javatime
 
-import liqp.nodes.RenderContext
+import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 
-class PlusMinutesFilter :Filter() {
-
-  override fun apply(context: RenderContext, value: Any, vararg params: Any): Any {
-    val num = if (params.size == 1) params[0] as Long else 0
-
-    return when (value) {
-      is ZonedDateTime-> value.plusMinutes(num)
-      is LocalTime-> value.plusMinutes(num)
-      else-> value
-    }
-  }
+class PlusMinutesFilter : DateAdjustmentFilter() {
+  override val offsetAdjust: OffsetAdjustment = OffsetDateTime::plusMinutes
+  override val localDateTimeAdjust = LocalDateTime::plusMinutes
+  override val localTimeAdjust = LocalTime::plusMinutes
 }

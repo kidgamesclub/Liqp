@@ -3,11 +3,12 @@ package liqp
 import liqp.config.MutableParseSettings
 import liqp.config.MutableRenderSettings
 import liqp.filter.LFilter
+import liqp.node.LTemplate
 import java.io.File
 
 typealias ParseConfigurer = MutableParseSettings.() -> MutableParseSettings
 typealias RenderConfigurer = MutableRenderSettings.() -> MutableRenderSettings
-typealias CreateTestTemplate = LiquidParser.() -> Template
+typealias CreateTestTemplate = LParser.() -> LTemplate
 
 fun LiquidParser.assertThat(): LiquidParserAssert = LiquidParserAssert(this)
 fun assertParser(): LiquidParserAssert = LiquidParser.newInstance().assertThat()
@@ -33,9 +34,9 @@ fun assertFileTemplate(templateFile: File, data: Any? = null,
 private fun createTemplateAssert(createTestTemplate: CreateTestTemplate, data: Any? = null,
                                  configureParser: ParseConfigurer = { this },
                                  configureRenderer: RenderConfigurer = { this }): TemplateRenderAssert {
-  val template: Template
+  val template: LTemplate
   try {
-    val factory = MutableParseSettings().configureParser().toParser()
+    val factory = MutableParseSettings(defaultParseSettings).configureParser().toParser()
     template = factory.createTestTemplate()
   } catch (e: Exception) {
     return TemplateRenderAssert(error = e)
@@ -44,7 +45,7 @@ private fun createTemplateAssert(createTestTemplate: CreateTestTemplate, data: A
   return renderAssert(template, LiquidRenderer.newInstance(configureRenderer), data)
 }
 
-fun renderAssert(template: Template, engine: LiquidRenderer, data:Any? = null) :TemplateRenderAssert{
+fun renderAssert(template: LTemplate, engine: LiquidRenderer, data: Any? = null): TemplateRenderAssert {
   return try {
     val results = engine.execute(template, data)
     TemplateRenderAssert(template, results)
@@ -53,7 +54,7 @@ fun renderAssert(template: Template, engine: LiquidRenderer, data:Any? = null) :
   }
 }
 
-fun Template.rendering(data: Any? = null, renderer: MutableRenderSettings.()->Unit = {}): TemplateRenderAssert {
+fun LTemplate.rendering(data: Any? = null, renderer: MutableRenderSettings.() -> Unit = {}): TemplateRenderAssert {
   return renderAssert(this, LiquidRenderer.newInstance(renderer), data)
 }
 

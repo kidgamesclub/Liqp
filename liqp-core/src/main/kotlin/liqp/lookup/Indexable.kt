@@ -1,6 +1,6 @@
 package liqp.lookup
 
-import liqp.nodes.RenderContext
+import liqp.context.LContext
 
 /**
  * Represents a navigatable property or index on an object.
@@ -11,7 +11,7 @@ interface Indexable {
   /**
    * Retrieve the appropriate child object based on the parsed template.
    */
-  operator fun get(value: Any?, context: RenderContext): Any?
+  operator fun get(value: Any?, context: LContext): Any?
 }
 
 

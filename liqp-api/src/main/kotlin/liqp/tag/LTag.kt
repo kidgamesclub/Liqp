@@ -24,4 +24,7 @@ abstract class LTag(name:String? = null) {
    * @return an Object denoting the rendered AST.
    */
   abstract fun render(context: LContext, vararg nodes: LNode): Any?
+  open fun render(context: LContext, nodes: List<LNode>): Any? {
+    return render(context, *nodes.toTypedArray())
+  }
 }

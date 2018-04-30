@@ -1,26 +1,28 @@
 package liqp.lookup
 
+import liqp.context.LContext
 import liqp.exceptions.MissingVariableException
-import liqp.nodes.RenderContext
 
 class Property(private val propertyName: String) : Indexable {
 
   var getter: Getter<Any>? = null
 
-  override fun get(value: Any?, context: RenderContext): Any? {
-    if (value == null) {
+  override fun get(value: Any?, context: LContext): Any? {
+    if (value == null && context.isStrictVariables) {
+      throw MissingVariableException(propertyName)
+    } else if (value == null) {
       return null
     }
 
     if (getter == null) {
       synchronized(this) {
         if (getter == null) {
-          getter = context.accessors.getAccessor(value, propertyName)
+          getter = context.getAccessor(value, propertyName)
         }
       }
     }
 
-    val getter= getter!!
+    val getter = getter!!
     if (context.isStrictVariables && getter.isNullAccessor()) {
       throw MissingVariableException(propertyName)
     }

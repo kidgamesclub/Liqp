@@ -1,25 +1,19 @@
 package liqp.ext.filters.javatime
+import liqp.context.LContext
+import liqp.filter.FilterChainPointer
+import liqp.filter.FilterParams
+import liqp.filter.LFilter
 import liqp.nodes.RenderContext
 
 
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.OffsetDateTime
 import java.time.ZonedDateTime
 
-class MinusYearsFilter :Filter() {
+class MinusYearsFilter : DateAdjustmentFilter() {
+  override val offsetAdjust: OffsetAdjustment = OffsetDateTime::minusYears
+  override val localDateTimeAdjust = LocalDateTime::minusYears
 
-  override fun apply(context: RenderContext, value: Any, vararg params: Any): Any {
-    val num = if (params.size == 1) params[0] as Long else 0
-
-    val ret: Any
-
-    if (value is ZonedDateTime) {
-      ret = value.minusYears(num)
-    } else if (value is LocalDate) {
-      ret = value.minusYears(num)
-    } else {
-      ret = value
-    }
-
-    return ret
-  }
 }

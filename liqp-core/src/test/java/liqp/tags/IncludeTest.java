@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import liqp.LiquidParser;
 import liqp.Template;
+import liqp.node.LTemplate;
 import liqp.parser.Flavor;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Before;
@@ -39,8 +40,9 @@ public class IncludeTest {
                 "{% assign shape = 'square' %}\n" +
                 "{% include 'color' with 'red' %}";
 
-    Template template = LiquidParser.newBuilder()
+    LTemplate template = LiquidParser.newBuilder()
           .baseDir(included)
+          .toParser()
           .parse(source);
 
     String rendered = template.render();
@@ -60,7 +62,10 @@ public class IncludeTest {
   @Test
   public void renderTestWithIncludeDirectorySpecifiedInContextLiquidFlavor() throws Exception {
     File index = new File(included, "index_with_quotes.html");
-    Template template = LiquidParser.newBuilder().baseDir(included).parseFile(index);
+    LTemplate template = LiquidParser.newBuilder()
+          .baseDir(included)
+          .toParser()
+          .parseFile(index);
     String result = template.render();
     assertTrue(result.contains("HEADER"));
   }
@@ -69,10 +74,10 @@ public class IncludeTest {
   public void renderTestWithIncludeDirectorySpecifiedInContextJekyllFlavor() throws Exception {
 
     File index = new File(included, "index_without_quotes.html");
-    Template template = LiquidParser.newBuilder()
-          .flavor(Flavor.JEKYLL)
+    LTemplate template = LiquidParser.newBuilder()
           .baseDir(included)
-          .toParser().parseFile(index);
+          .toParser()
+          .parseFile(index);
 
     String result = template.render();
     assertTrue(result.contains("HEADER"));
@@ -81,10 +86,10 @@ public class IncludeTest {
   @Test
   public void renderTestWithIncludeDirectorySpecifiedInJekyllFlavor() throws Exception {
     File index = new File(included, "index_without_quotes.html");
-    Template template = LiquidParser.newBuilder()
-          .flavor(Flavor.JEKYLL)
+    LTemplate template = LiquidParser.newBuilder()
           .baseDir(included)
-          .toParser().parseFile(index);
+          .toParser()
+          .parseFile(index);
     String result = template.render();
     assertTrue(result.contains("HEADER"));
   }
@@ -92,8 +97,8 @@ public class IncludeTest {
   @Test
   public void renderTestWithIncludeDirectorySpecifiedInLiquidFlavor() throws Exception {
     File index = new File(included, "index_with_quotes.html");
-    Template template = LiquidParser.newBuilder()
-          .flavor(Flavor.LIQUID)
+    LTemplate template = LiquidParser.newBuilder()
+          .forLiquid()
           .baseDir(included)
           .toParser().parseFile(index);
     String result = template.render();
@@ -107,7 +112,8 @@ public class IncludeTest {
     String source = "{% assign variable = 'header.html' %}{% include {{variable}} %}";
 
     String rendered = LiquidParser.newBuilder()
-          .flavor(Flavor.JEKYLL)
+//          .flavor(Flavor.JEKYLL)
+
           .baseDir(included)
           .toParser()
           .parse(source).render();
@@ -121,7 +127,7 @@ public class IncludeTest {
 
     String source = "{% assign variable = 'header.html' %}{% include {{variable}} %}";
 
-    LiquidParser.newBuilder().flavor(Flavor.LIQUID)
+    LiquidParser.newBuilder()
           .baseDir(included)
           .toParser().parse(source).render();
   }
@@ -132,6 +138,6 @@ public class IncludeTest {
 
     String source = "{% assign variable = 'header.html' %}{% include {{variable}} %}";
 
-    LiquidParser.newBuilder().flavor(Flavor.LIQUID).toParser().parse(source).render();
+    LiquidParser.newBuilder().toParser().parse(source).render();
   }
 }

@@ -1,8 +1,6 @@
 package liqp.ext.filters.javatime
-import liqp.nodes.RenderContext
-
 
 import java.time.format.FormatStyle
-import java.util.Locale
+import java.util.*
 
-class ShortDateTimeFormatFilter(locale: Locale) : DateTimeFormatFilter("short", FormatStyle.SHORT, locale)
+class ShortDateTimeFormatFilter() : DateTimeFormatFilter("short", FormatStyle.SHORT)

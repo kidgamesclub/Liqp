@@ -3,96 +3,100 @@ package liqp.nodes;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import liqp.Template;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import liqp.LiquidParser;
+import liqp.Template;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnitParamsRunner.class)
 public class OutputNodeTest {
 
-    @Test
-    public void applyTest() throws RecognitionException {
+  public static String[] keywordParams() {
+    return new String[]{
+          "capture",
+          "endcapture",
+          "comment",
+          "endcomment",
+          "raw",
+          "endraw",
+          "if",
+          "elsif",
+          "endif",
+          "unless",
+          "endunless",
+          "else",
+          "contains",
+          "case",
+          "endcase",
+          "when",
+          "cycle",
+          "for",
+          "endfor",
+          "in",
+          "and",
+          "or",
+          "tablerow",
+          "endtablerow",
+          "assign",
+          "include",
+          "with",
+          "end",
+          "break",
+          "continue",
+    };
+  }
 
-        String[][] tests = {
-                {"{{ X }}", "mu"},
-                {"{{ 'a.b.c' | split:'.' | first | upcase }}", "A"},
-        };
+  public static String[][] badKeywordVariables() {
+    return new String[][]{
+          {"true", "true"},
+          {"false", "false"},
+          {"nil", ""},
+          {"null", ""},
+          // {"empty", "Object"},
+    };
+  }
 
-        for (String[] test : tests) {
+  @Test
+  public void applyTest() throws RecognitionException {
 
-            Template template = LiquidParser.newInstance().parse(test[0]);
-            String rendered = String.valueOf(template.render("{\"X\" : \"mu\"}"));
+    String[][] tests = {
+          {"{{ X }}", "mu"},
+          {"{{ 'a.b.c' | split:'.' | first | upcase }}", "A"},
+    };
 
-            assertThat(rendered, is(test[1]));
-        }
+    for (String[] test : tests) {
+
+      Template template = LiquidParser.newInstance().parse(test[0]);
+      String rendered = String.valueOf(template.render("{\"X\" : \"mu\"}"));
+
+      assertThat(rendered, is(test[1]));
     }
+  }
 
-    @Test
-    public void allowedKeywordAsVariableTest() {
-        String[] keywords = {
-                "capture",
-                "endcapture",
-                "comment",
-                "endcomment",
-                "raw",
-                "endraw",
-                "if",
-                "elsif",
-                "endif",
-                "unless",
-                "endunless",
-                "else",
-                "contains",
-                "case",
-                "endcase",
-                "when",
-                "cycle",
-                "for",
-                "endfor",
-                "in",
-                "and",
-                "or",
-                "tablerow",
-                "endtablerow",
-                "assign",
-                "include",
-                "with",
-                "end",
-                "break",
-                "continue",
-        };
+  @Test
+  @Parameters(method = "keywordParams")
+  public void testKeywordsAsVariables(String keyword) {
 
-        for (String keyword : keywords) {
+    String test = "{{" + keyword + "}}";
+    String expected = keyword + "_" + Integer.toString(keyword.length());
+    String json = "{\"" + keyword + "\" : \"" + expected + "\" }";
+    Template template = LiquidParser.newInstance().parse(test);
+    String rendered = template.render(json);
 
-            String test = "{{" + keyword + "}}";
-            String expected = keyword + "_" + Integer.toString(keyword.length());
-            String json = "{\"" + keyword + "\" : \"" + expected + "\" }";
-            Template template = LiquidParser.newInstance().parse(test);
-            String rendered = template.render(json);
+    assertThat(rendered, is(expected));
+  }
 
-            assertThat(rendered, is(expected));
-        }
-    }
+  @Test
+  @Parameters(method = "badKeywordVariables")
+  public void badKeywordAsVariableTest(String keyword, String expected) {
+    String test = "{{" + keyword + "}}";
+    String json = "{\"" + keyword + "\" : \"bad\" }";
+    Template template = LiquidParser.newInstance().parse(test);
+    String rendered = template.render(json);
 
-    @Test
-    public void badKeywordAsVariableTest() {
-        String[][] keywords = {
-                {"true", "true"},
-                {"false", "false"},
-                {"nil", ""},
-                {"null", ""},
-                // {"empty", "Object"},
-        };
-
-        for (String[] keyword : keywords) {
-
-            String test = "{{" + keyword[0] + "}}";
-            String expected = keyword[1];
-            String json = "{\"" + keyword[0] + "\" : \"bad\" }";
-            Template template = LiquidParser.newInstance().parse(test);
-            String rendered = template.render(json);
-
-            assertThat(rendered, is(expected));
-        }
-    }
+    assertThat(rendered, is(expected));
+  }
 }

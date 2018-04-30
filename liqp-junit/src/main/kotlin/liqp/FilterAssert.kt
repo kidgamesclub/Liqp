@@ -15,6 +15,8 @@ data class FilterAssert(val filter: LFilter,
                         val error: Exception? = null,
                         val engine: LiquidRenderer = LiquidRenderer(parser = parser),
                         val context: RenderContext = RenderContext(inputData, parser,
+                            engine.logic,
+                            engine.parser,
                             engine,
                             engine.accessors,
                             engine.settings)) {
@@ -24,24 +26,19 @@ data class FilterAssert(val filter: LFilter,
   }
 
   fun filtering(value:Any?, vararg params:Any): FilterAssert {
-    val filterNode = FilterNode.builder()
-        .filter(filter)
-        .params(params.map {
+    val filterNode = FilterNode(filter, params = params.map {
           when (it) {
             is LNode -> it
             else -> AtomNode(it)
           }
-        }).build()
+        })
     val result: Any?
-    try {
-      val outputNode = OutputNode.builder()
-             .value(value)
-             .filter(filterNode)
-             .build()
+    return try {
+      val outputNode = OutputNode(expr=value, filters= listOf(filterNode))
       result = outputNode.render(context)
-      return this.copy(result=result)
+      this.copy(result=result)
     } catch (e: Exception) {
-      return copy(error=e)
+      copy(error=e)
     }
   }
 

@@ -30,8 +30,12 @@ class RenderFrame(private val scopedVars: MutableSet<String>) : LFrame {
     scopedVars.add(name)
   }
 
-  override fun get(varName: String): Any? {
+  override operator fun get(varName: String): Any? {
     return variables[varName]
+  }
+
+  operator fun get(varName: String, supplier:()->Any): Any? {
+    return variables.getOrPut(varName, supplier)
   }
 
   override fun hasVar(varName: String): Boolean {

@@ -59,10 +59,12 @@ data class LiquidParser
   }
 
   override fun toRenderSettings(): RenderSettings {
-    return RenderSettings(baseDir = baseDir, includesDir = includesDir)
+    return RenderSettings(baseDir = baseDir,
+        includesDir = includesDir,
+        isStrictVariables = this.isStrictVariables)
   }
 
-  override fun parse(template: String): LTemplate {
+  override fun parse(template: String): Template {
     return cache.get(template)!!
   }
 
@@ -73,13 +75,13 @@ data class LiquidParser
     return parse(file.readText(UTF_8))
   }
 
-  private val cache: LoadingCache<String?, LTemplate> = CacheBuilder.newBuilder()
+  private val cache: LoadingCache<String?, Template> = CacheBuilder.newBuilder()
       .withSettings(cacheSettings)
       .build(CacheLoader.from { template: String? ->
         internalCreateTemplate(template!!)
       })
 
-  private fun internalCreateTemplate(template: String): LTemplate {
+  private fun internalCreateTemplate(template: String): Template {
     if (maxTemplateSize != null && template.length.toLong() > maxTemplateSize) {
       throw InvalidTemplateException("template exceeds $maxTemplateSize")
     }
@@ -94,7 +96,8 @@ data class LiquidParser
       false -> null
       true -> tree
     }
-    return Template(rootNode, parseTree, this)
+    val renderer = LiquidRenderer(parser = this, settings = this.toRenderSettings())
+    return Template(rootNode, parseTree, this, renderer)
   }
 
   fun createLexer(template: String): LiquidLexer {

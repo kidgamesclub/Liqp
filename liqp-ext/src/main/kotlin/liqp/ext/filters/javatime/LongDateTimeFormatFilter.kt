@@ -1,8 +1,6 @@
 package liqp.ext.filters.javatime
-import liqp.nodes.RenderContext
-
 
 import java.time.format.FormatStyle
-import java.util.Locale
+import java.util.*
 
-class LongDateTimeFormatFilter(locale: Locale) : DateTimeFormatFilter("long", FormatStyle.LONG, locale)
+class LongDateTimeFormatFilter : DateTimeFormatFilter("long", FormatStyle.LONG)

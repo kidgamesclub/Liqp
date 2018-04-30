@@ -11,8 +11,9 @@ class Mocks {
     @JvmStatic
     fun mockRenderContext(): RenderContext {
       return RenderContext(emptyMap<Any, Any>(),
-          LiquidParser(),
-          LiquidRenderer())
+          logic = strictLogic,
+          parser = LiquidParser(),
+          renderer = LiquidRenderer())
     }
   }
 

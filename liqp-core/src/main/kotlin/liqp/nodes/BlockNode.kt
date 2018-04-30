@@ -1,14 +1,14 @@
 package liqp.nodes
 
 import liqp.ControlResult
-import liqp.ControlResult.*
+import liqp.ControlResult.BREAK
+import liqp.ControlResult.CONTINUE
+import liqp.ControlResult.NOOP
 import liqp.context.LContext
-import liqp.node.LNode
-import liqp.node.LValue.BREAK
-import liqp.node.LValue.CONTINUE
 import liqp.exceptions.LiquidRenderingException
+import liqp.node.LNode
 
-data class BlockNode(override val children: List<LNode>) : LNode {
+data class BlockNode(override val children: List<LNode>) : LNode() {
 
   fun withChildNode(node: LNode): BlockNode {
     return this.copy(children = this.children + node)
@@ -24,10 +24,13 @@ data class BlockNode(override val children: List<LNode>) : LNode {
     for (node in children) {
       val value: Any? = node.render(context)
       when (value) {
-        null -> null
+        null -> {
+          // shouldn't return null.
+        }
         NOOP-> return value
         BREAK -> return value
         CONTINUE -> return value
+        ControlResult.NO_CONTENT -> {}
         is Iterable<*> -> outputs.addAll(value.filterNotNull())
         is Array<*> -> outputs.addAll(value.filterNotNull())
         else -> outputs.add(value)
@@ -44,9 +47,5 @@ data class BlockNode(override val children: List<LNode>) : LNode {
         return output.toString()
       }
     }
-  }
-
-  override fun children(): List<LNode> {
-    return children
   }
 }

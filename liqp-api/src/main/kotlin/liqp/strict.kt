@@ -11,18 +11,28 @@ import kotlin.math.absoluteValue
 val strictLogic = object : LLogic {
 
   override fun isTrue(t: Any?): Boolean {
-    TODO()
+    return when (t) {
+      is LogicResult -> t == LogicResult.TRUE
+      else -> !isFalse(t)
+    }
   }
 
   override fun isFalse(t: Any?): Boolean {
-    TODO()
+    val value: Any = t ?: return true
+    return when (value) {
+      is Boolean -> !value
+      is LogicResult -> value == LogicResult.FALSE
+      else -> false
+    }
   }
 
   override fun compareTo(a: Any?, b: Any?): ComparisonResult {
     return when {
       a === b -> EQUAL
-      a == null -> if (b == null) NULL else LESS
+      a == null || b == null -> NULL
       a is Number && b is Number -> a.compareNumbers(b)
+      a == ControlResult.EMPTY -> size(b).compareNumbers(0)
+      b == ControlResult.EMPTY -> size(a).compareNumbers(0)
       a is CharSequence && b is CharSequence -> a.length.compareNumbers(b.length).and { a == b }
       isIterable(a) && isIterable(b) -> size(a).compareNumbers(size(b)).and { a == b }
       a is Map<*, *> && b is Map<*, *> -> a.size.compareNumbers(b.size).and { a == b }
@@ -38,12 +48,57 @@ val strictLogic = object : LLogic {
     }
   }
 
-  override fun add(t1: Any?, t2: Any?): Any? {
-    TODO()
+  override fun add(a: Any?, b: Any?): Any? {
+
+    //Numbers
+    val aLong = asLong(a)
+    val bLong = asLong(b)
+    if (aLong != null && bLong != null) {
+      return aLong + bLong
+    }
+
+    val aDbl = asDouble(a)
+    val bDbl = asDouble(b)
+    if (aDbl != null && bDbl != null) {
+      return aDbl + bDbl
+    }
+
+    if (isIterable(a)) {
+      val iter = asIterable(a)
+      return if (isIterable(b)) {
+        iter + asIterable(b)
+      } else {
+        iter + b
+      }
+    }
+
+    return NOOP
   }
 
-  override fun subtract(t1: Any?, t2: Any?): Any? {
-    TODO()
+  override fun subtract(a: Any?, b: Any?): Any? {
+    //Numbers
+    val aLong = asLong(a)
+    val bLong = asLong(b)
+    if (aLong != null && bLong != null) {
+      return aLong - bLong
+    }
+
+    val aDbl = asDouble(a)
+    val bDbl = asDouble(b)
+    if (aDbl != null && bDbl != null) {
+      return aDbl - bDbl
+    }
+
+    if (isIterable(a)) {
+      val iter = asIterable(a)
+      return if (isIterable(b)) {
+        iter - asIterable(b)
+      } else {
+        iter - b
+      }
+    }
+
+    return NOOP
   }
 
   override fun range(from: Any?, to: Any?): Any? {
@@ -58,7 +113,7 @@ val strictLogic = object : LLogic {
     return t is Iterable<*> || t is Array<*>
   }
 
-  override fun asIntegral(t: Any?): Long? {
+  override fun asLong(t: Any?): Long? {
     return when (t) {
       null -> 0
       is Long -> t
@@ -79,7 +134,7 @@ val strictLogic = object : LLogic {
     }
   }
 
-  override fun asString(t: Any?): String {
+  override fun asString(t: Any?): String? {
     return when (t) {
       is String -> t
       is Array<*> -> Arrays.toString(t)
@@ -114,6 +169,7 @@ val strictLogic = object : LLogic {
   override fun size(t: Any?): Int {
     return when (t) {
       null -> 0
+      is Boolean -> if (t) 1 else 0
       is Collection<*> -> t.size
       is Array<*> -> t.size
       is CharSequence -> t.trim().length

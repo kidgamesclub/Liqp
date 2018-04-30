@@ -2,8 +2,10 @@ package liqp.config
 
 import com.google.common.cache.CacheBuilder
 import liqp.LParser
+import liqp.Liquify
 import liqp.filter.Filters
 import liqp.filter.LFilter
+import liqp.parser.Flavor
 import liqp.tag.LTag
 import liqp.tag.Tags
 import java.io.File
@@ -24,8 +26,8 @@ interface ParseSettingsSpec {
   fun configure(): MutableParseSettings
 }
 
-data class ParseSettings(override val tags: Tags,
-                         override val filters: Filters,
+data class ParseSettings(override val tags: Tags = Liquify.provider.defaultTags,
+                         override val filters: Filters = Liquify.provider.defaultFilters,
                          override val baseDir: File,
                          override val includesDir: File,
                          override val isStrictVariables: Boolean = false,
@@ -91,6 +93,21 @@ data class MutableParseSettings(private var settings: ParseSettings) :
     return this
   }
 
+  fun includesDir(includesDir: File): MutableParseSettings {
+    settings = settings.copy(includesDir = includesDir)
+    return this
+  }
+
+  fun forJekyll():MutableParseSettings {
+    settings = settings.copy(includesDir = File(Flavor.JEKYLL.includesDirName))
+    return this
+  }
+
+  fun forLiquid():MutableParseSettings {
+    settings = settings.copy(includesDir = File(Flavor.LIQUID.includesDirName))
+    return this
+  }
+
   fun tags(tags: Tags): MutableParseSettings {
     settings = settings.copy(tags = tags)
     return this
@@ -111,10 +128,9 @@ data class MutableParseSettings(private var settings: ParseSettings) :
     return this
   }
 
-  fun build():ParseSettings {
-    return settings
-  }
+  fun build(): ParseSettings = settings
 
+  fun toParser(): LParser = Liquify.provider.createParser(this.build())
 }
 
 interface CacheSetup : Consumer<CacheBuilder<*, *>>

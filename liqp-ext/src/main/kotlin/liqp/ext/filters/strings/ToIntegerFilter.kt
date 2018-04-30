@@ -1,15 +1,14 @@
 package liqp.ext.filters.strings
-import liqp.nodes.RenderContext
 
-class ToIntegerFilter :Filter() {
+import liqp.context.LContext
+import liqp.exceptions.LiquidRenderingException
+import liqp.filter.FilterChainPointer
+import liqp.filter.FilterParams
+import liqp.filter.LFilter
 
-  override fun apply(context: RenderContext, value: Any, vararg params: Any): Any {
-    var ret = value
+class ToIntegerFilter : LFilter() {
 
-    if (value is String) {
-      ret = Integer.parseInt(value)
-    }
-
-    return ret
+  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+    return context.asLong(value) ?: throw LiquidRenderingException("Expected a double value")
   }
 }

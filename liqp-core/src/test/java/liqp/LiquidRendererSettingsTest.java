@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.exceptions.MissingVariableException;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 public class LiquidRendererSettingsTest {
@@ -23,15 +24,17 @@ public class LiquidRendererSettingsTest {
 
   @Test
   public void renderstrictVariables2() {
-    try {
-      LiquidParser.newBuilder().strictVariables(true)
-            .toParser()
-            .parse("{{mu}} {{qwe.asd.zxc}}")
-            .render("mu", "muValue");
-    } catch (RuntimeException ex) {
-      MissingVariableException e = (MissingVariableException) TestUtils.getExceptionRootCause(ex);
-      assertThat(e.getVariableName(), is("qwe.asd.zxc"));
-    }
+    Assertions.assertThatCode(() -> LiquidParser.newBuilder()
+          .strictVariables(true)
+          .toParser()
+          .parse("{{mu}} {{qwe.asd.zxc}}")
+          .render("mu", "muValue"))
+          .describedAs("Should throw missing variable exception")
+          .isInstanceOf(MissingVariableException.class)
+          .matches(ex -> {
+            Assertions.assertThat(((MissingVariableException) ex).getVariableName()).isEqualToIgnoringCase("qwe.asd.zxc");
+            return true;
+          });
   }
 
   @Test
@@ -39,7 +42,6 @@ public class LiquidRendererSettingsTest {
     LiquidParser.newBuilder().strictVariables(true)
           .toParser()
           .parse("{% if mu == \"somethingElse\" %}{{ badVariableName }}{% endif %}")
-
           .render("mu", "muValue");
   }
 
@@ -63,7 +65,6 @@ public class LiquidRendererSettingsTest {
       LiquidParser.newBuilder().strictVariables(true)
             .toParser()
             .parse("{% if mu == \"muValue\" and checkThis %}{{ badVariableName }}{% endif %}")
-
             .render("mu", "muValue");
     } catch (RuntimeException ex) {
       MissingVariableException e = (MissingVariableException) TestUtils.getExceptionRootCause(ex);

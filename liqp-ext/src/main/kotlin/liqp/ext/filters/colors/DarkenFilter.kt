@@ -1,15 +1,19 @@
 package liqp.ext.filters.colors
 
+import liqp.context.LContext
+import liqp.filter.FilterChainPointer
+import liqp.filter.FilterParams
+import liqp.filter.LFilter
 import liqp.nodes.RenderContext
 import java.awt.Color
 
-class DarkenFilter : Filter() {
+class DarkenFilter : LFilter() {
 
-  override fun apply(context: RenderContext, value: Any, vararg params: Any): Any {
+override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
     var ret = value
 
     if (value is String && params.size == 1) {
-      val darkenAmount = params[0] as Double
+      val darkenAmount = params[0, 0.0]
 
       val decoded = Color.decode(value)
       val darker = darker(decoded, darkenAmount)

@@ -1,8 +1,9 @@
 package liqp.filter
 
+import liqp.ControlResult.EMPTY
+import liqp.ControlResult.NOOP
+import liqp.ControlResult.NO_CONTENT
 import liqp.context.LContext
-import liqp.noAction
-import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Invokes a set of filter around an "action", or render output.
@@ -12,11 +13,10 @@ import java.util.concurrent.atomic.AtomicReference
  */
 class FilterChain(private val context: LContext,
                   private val filters: List<FilterInstance>,
-                  private val filterAction: (AtomicReference<Any?>) -> Any?) : FilterChainPointer {
+                  private val filterAction: LContext.() -> Any?) : FilterChainPointer {
 
   private val data = mutableMapOf<String, Any?>()
   private val pointer: Iterator<FilterInstance> = filters.reversed().iterator()
-  private val result: AtomicReference<Any?> = AtomicReference()
 
   /**
    * Processes the filter and returns the result.
@@ -29,7 +29,7 @@ class FilterChain(private val context: LContext,
     filters.forEach {
       it.filter.onEndChain(it.params, this, context)
     }
-    return result.get()
+    return context.result
   }
 
   /**
@@ -40,20 +40,22 @@ class FilterChain(private val context: LContext,
       val next = pointer.next()
       next.filter.doFilter(next.params, this, context)
     } else {
-      val actionResult = filterAction(result)
-      if (actionResult != noAction) {
-        result.set(actionResult)
+      val actionResult = context.filterAction()
+      if (actionResult != NO_CONTENT) {
+        context.result = actionResult
       }
       filters.forEach {
-        it.filter.onFilterAction(it.params, context.result, this, context)
+        val result = it.filter.onFilterAction(it.params, context.result, this, context)
+        if (result != NO_CONTENT && result != EMPTY && result != NOOP) {
+          context.result = result
+        }
       }
     }
-    return result.get()
+    return context.result
   }
 
   @Suppress("UNCHECKED_CAST")
-  override
-  operator fun <I> get(key: String): I? {
+  override operator fun <I> get(key: String): I? {
     return data[key] as I
   }
 
@@ -73,9 +75,9 @@ class FilterChain(private val context: LContext,
     data.remove(key)
   }
 
-  override fun <I> with(key:String, block:(I)->Unit) {
+  override fun <I> with(key: String, block: (I) -> Unit) {
     if (isFlagged(key)) {
-      val i:I = this[key]!!
+      val i: I = this[key]!!
       block(i)
       unflag(key)
     }

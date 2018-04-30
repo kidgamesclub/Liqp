@@ -1,5 +1,6 @@
 package liqp.lookup
 
+import liqp.context.LContext
 import liqp.exceptions.MissingVariableException
 import liqp.node.LNode
 import liqp.nodes.RenderContext
@@ -15,7 +16,7 @@ class Index(private val expression: LNode) : Indexable {
    */
   private var key: Any? = null
 
-  override fun get(value: Any?, context: RenderContext): Any? {
+  override operator fun get(value: Any?, context: LContext): Any? {
 
     if (value == null) {
       return null
@@ -40,7 +41,7 @@ class Index(private val expression: LNode) : Indexable {
 
       // This will cache the accessor for the path, so if the same expression resolves to the
       // same value, it will use the same accessor
-      val accessor = context.accessors.getAccessor(value, propertyName.toString())
+      val accessor = context.getAccessor(value, propertyName.toString())
       if (context.isStrictVariables && accessor.isNullAccessor()) {
         throw MissingVariableException(propertyName.toString())
       }

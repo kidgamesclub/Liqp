@@ -3,23 +3,25 @@ package liqp
 import liqp.config.MutableRenderSettings
 import liqp.config.RenderSettings
 import liqp.config.RenderSettingsSpec
+import liqp.context.LContext
 import liqp.lookup.PropertyAccessors
 import liqp.node.LTemplate
 import liqp.nodes.RenderContext
-import liqp.parser.Flavor
-import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
 
-typealias executeTemplate = (LTemplate, RenderContext) -> Any?
+typealias executeTemplate = (LTemplate, LContext) -> Any?
 
 val defaultRenderSettings = RenderSettings(defaultParseSettings.baseDir, defaultParseSettings.includesDir)
 
 data class LiquidRenderer
 @JvmOverloads constructor(val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
-                          val parser: LiquidParser = LiquidParser(),
-                          val settings: RenderSettings = defaultRenderSettings): RenderSettingsSpec by settings {
+                          val parser: LParser = LiquidParser(),
+                          override val settings: RenderSettings = defaultRenderSettings,
+                          val logic:LLogic = strictLogic):
+    RenderSettingsSpec by settings,
+    LRenderer {
 
   init {
     if (maxRenderTimeMillis != Long.MAX_VALUE && executor == null) {
@@ -54,28 +56,23 @@ data class LiquidRenderer
     }
   }
 
-  fun withTemplateFactory(factory: LiquidParser): LiquidRenderer {
-    return when (factory == this.parser) {
+  override fun withParser(parser: LParser): LRenderer {
+    return when (parser == this.parser) {
       true -> this
-      false -> this.copy(parser = factory)
+      false -> this.copy(parser = parser)
     }
   }
 
-  fun withExecutorService(executor: ExecutorService): LiquidRenderer {
-    return this.copy(settings = settings.copy(executor = executor))
-  }
+  override fun withExecutorService(executor: ExecutorService): LiquidRenderer = this.copy(settings = settings.copy(executor = executor))
+  override fun withRenderSettings(settings: RenderSettings): LiquidRenderer = this.copy(settings = settings)
 
-  fun withRenderSettings(settings: RenderSettings): LiquidRenderer {
-    return this.copy(settings = settings)
-  }
-
-  fun withRenderSettings(callback: (MutableRenderSettings) -> MutableRenderSettings): LiquidRenderer {
+  override fun withRenderSettings(callback: (MutableRenderSettings) -> MutableRenderSettings): LiquidRenderer {
     val builder = settings.toMutableRenderSettings()
     callback.invoke(builder)
     return withRenderSettings(builder.build())
   }
 
-  fun createRenderContext(inputData: Any?): RenderContext {
+  override fun createRenderContext(inputData: Any?): RenderContext {
     return RenderContext(
         rawInputData = inputData,
         accessors = this.accessors,
@@ -84,27 +81,11 @@ data class LiquidRenderer
         logic = logic)
   }
 
-  lateinit var logic:LLogic
-
-  @JvmOverloads
-  fun execute(template: Template, inputData: Any? = null): Any? {
-    return executeTemplate(template, createRenderContext(inputData))
-  }
-
-  fun executeWithContext(template: Template, context: RenderContext): Any? {
-    return executeTemplate(template, context)
-  }
-
-  fun render(template: LTemplate, context: RenderContext): String {
-    val result = executeTemplate(template, context)
-    return result.toNonNullString()
-  }
-
-  @JvmOverloads
-  fun render(template: Template, inputData: Any? = null): String {
-    val result = executeTemplate(template, createRenderContext(inputData))
-    return result.toNonNullString()
-  }
+  override fun execute(template: LTemplate, inputData: Any?): Any? = executeTemplate(template, createRenderContext(inputData))
+  override fun executeWithContext(template: LTemplate, context: LContext): Any? = executeTemplate(template, context)
+  override fun render(template: LTemplate, context: LContext): String = executeTemplate(template, context).toNonNullString()
+  override fun render(template: LTemplate, inputData: Any?): String = executeTemplate(template, createRenderContext(inputData)).toNonNullString()
+  override fun getAccessor(prototype: Any, prop: String): Getter<Any> = accessors.getAccessor(prototype, prop)
 }
 
 

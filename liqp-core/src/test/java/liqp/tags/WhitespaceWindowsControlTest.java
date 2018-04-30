@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import liqp.Template;
 import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -84,7 +85,7 @@ public class WhitespaceWindowsControlTest {
     public void defaultStrip() throws RecognitionException {
 
         String source = "a  \r\n  {% assign letter = 'b' %}  \r\n{{ letter }}\r\n  c";
-        Template template = LiquidParser.newBuilder()
+        LTemplate template = LiquidParser.newBuilder()
               .stripSpacesAroundTags(true)
               .toParser()
               .parse(source);

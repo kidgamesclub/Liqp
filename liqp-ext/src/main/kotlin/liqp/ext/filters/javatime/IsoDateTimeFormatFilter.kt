@@ -1,4 +1,8 @@
 package liqp.ext.filters.javatime
+import liqp.context.LContext
+import liqp.filter.FilterChainPointer
+import liqp.filter.FilterParams
+import liqp.filter.LFilter
 import liqp.nodes.RenderContext
 
 
@@ -7,9 +11,9 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAccessor
 
-class IsoDateTimeFormatFilter :Filter() {
+class IsoDateTimeFormatFilter : LFilter() {
 
-  override fun apply(context: RenderContext, value: Any, vararg params: Any): Any {
+override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
     var ret = value
 
     if (value is LocalDate) {

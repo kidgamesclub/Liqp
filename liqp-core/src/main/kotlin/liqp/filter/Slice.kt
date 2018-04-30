@@ -1,56 +1,47 @@
 package liqp.filter
 
-import java.util.Arrays
 import liqp.context.LContext
 
+typealias Slicer = (Int, Int) -> Any
+
+/**
+ * Returns a slice of an array or string.
+ */
 class Slice : LFilter() {
 
   override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
 
-    super.checkParams(params, 1, 2)
+    context.run {
+      val p1: Int = params[0] ?: throw IllegalArgumentException("liquid error: Invalid integer")
+      val p2: Int = params[1] ?: 1
 
-    if (!super.canBeInteger(params[0])) {
-      throw RuntimeException("Liquid error: invalid integer")
-    }
+      val totalLength: Int
 
-    var array: Array<Any>? = null
-    var string: String? = null
-    var offset = super.asNumber(params[0]).toInt()
-    var length = 1
-    val totalLength: Int
-
-    if (super.isArray(value)) {
-      array = context.asIterable(value)
-      totalLength = array!!.size
-    } else {
-      string = super.asString(value)
-      totalLength = string.length
-    }
-
-    if (params.size > 1) {
-
-      if (!super.canBeInteger(params[1])) {
-        throw RuntimeException("Liquid error: invalid integer")
+      val slicer: Slicer = when (isIterable(value)) {
+        true -> {
+          val iterable = asIterable(value).toList()
+          totalLength = iterable.size
+          { offset: Int, length: Int -> iterable.subList(offset, offset + length) }
+        }
+        false -> {
+          val string = asString(value) ?: return null
+          totalLength = string.length
+          { offset: Int, length: Int -> string.substring(offset, length) }
+        }
+      }
+      val offset: Int = when {
+        p1 < 0 -> totalLength + p1
+        else -> p1
+      }
+      val length = when {
+        offset + p2 > totalLength -> totalLength - offset
+        else -> p2
+      }
+      if (offset > totalLength || offset < 0) {
+        return ""
       }
 
-      length = super.asNumber(params[1]).toInt()
+      return slicer(offset, length)
     }
-
-    if (offset < 0) {
-      offset = totalLength + offset
-    }
-
-    if (offset + length > totalLength) {
-      length = totalLength - offset
-    }
-
-    if (offset > totalLength || offset < 0) {
-      return ""
-    }
-
-    return if (array == null)
-      string!!.substring(offset, offset + length)
-    else
-      Arrays.copyOfRange(array, offset, offset + length)
   }
 }

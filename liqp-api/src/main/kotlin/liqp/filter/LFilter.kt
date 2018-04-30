@@ -1,7 +1,7 @@
 package liqp.filter
 
+import liqp.ControlResult
 import liqp.context.LContext
-import liqp.noAction
 import liqp.toSnakeCase
 
 /**
@@ -34,7 +34,7 @@ abstract class LFilter(name: String? = null) {
                           value: Any?,
                           chain: FilterChainPointer,
                           context: LContext): Any? {
-    return noAction
+    return ControlResult.NO_CONTENT
   }
 
   open fun onEndChain(params: FilterParams,
@@ -42,28 +42,8 @@ abstract class LFilter(name: String? = null) {
                       context: LContext) {
   }
 
-  fun asString(value: Any?): String {
-    return ""
-  }
-
-  fun isNumber(value: Any?): Boolean {
-    return false
-  }
-
-  fun asNumber(value: Any?): Double {
-    return 0.0
-  }
-
   fun get(i: Int, params: FilterParams): Any? {
     return params[i]
-  }
-
-  fun checkParams(params: FilterParams, i: Int) {
-
-  }
-
-  fun isInteger(value: Any?): Boolean {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
 }
 

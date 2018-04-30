@@ -12,20 +12,13 @@ class Template(override val rootNode: LNode,
                private val parser: LiquidParser,
                private val engine: LiquidRenderer = LiquidRenderer.newInstance(parser.toRenderSettings())) : LTemplate {
 
-  @JvmOverloads
-  fun render(inputData: String, engine: LiquidRenderer = this.engine): String {
-    return engine.render(this, inputData)
-  }
+  override fun render(inputData: Any?): String = engine.render(this, inputData)
+  override fun render(key: String, value: Any?): String = engine.render(this, key to value)
+  override fun render(pair: Pair<String, Any?>): String = engine.render(this, pair)
+  override fun render(): String = engine.render(this)
 
-  @JvmOverloads
-  fun render(inputData: Any? = null, engine: LiquidRenderer = this.engine): String {
-    return engine.render(this, inputData)
-  }
-
-  @JvmOverloads
-  fun render(key: String, value: Any?, engine: LiquidRenderer = this.engine): String {
-    return engine.render(this, key to value)
-  }
+  fun render(key: String, value: Any?, engine: LiquidRenderer = this.engine): String =
+      engine.render(this, key to value)
 
   /**
    * Returns a string representation of the parse tree of the parsed

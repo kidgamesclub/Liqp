@@ -8,12 +8,11 @@ import liqp.node.LNode
  * params are resolved exactly once, and cached thereafter.
  */
 data class FilterParams(private val context: LContext,
-                        private val paramNodes: List<LNode?>) {
+                        private val paramNodes: List<LNode?>) : Iterable<Any?> {
 
-  val size
-    get() = resolvedParams.size
+  val size get() = resolvedParams.size
 
-  private val resolvedParams: List<Any?> by lazy {
+  val resolvedParams: List<Any?> by lazy {
     paramNodes
         .map { pnode ->
           when (pnode) {
@@ -23,8 +22,13 @@ data class FilterParams(private val context: LContext,
         }
   }
 
-  operator fun get(index: Int): Any? {
-    return resolvedParams.getOrNull(index)
+  inline operator fun <reified T : Any> get(index: Int): T? {
+    return resolvedParams.getOrNull(index) as T?
   }
 
+  inline operator fun <reified T : Any> get(index: Int, default:T): T {
+    return resolvedParams.getOrNull(index) as T? ?: default
+  }
+
+  override fun iterator(): Iterator<Any?> = resolvedParams.iterator()
 }

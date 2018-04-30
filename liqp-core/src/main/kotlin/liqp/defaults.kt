@@ -48,6 +48,7 @@ import liqp.filter.Uniq
 import liqp.filter.Upcase
 import liqp.filter.UrlDecode
 import liqp.filter.UrlEncode
+import liqp.tag.Include
 import liqp.tag.Tags
 import liqp.tags.Assign
 import liqp.tags.Break
@@ -60,7 +61,6 @@ import liqp.tags.Decrement
 import liqp.tags.For
 import liqp.tags.If
 import liqp.tags.Ifchanged
-import liqp.tag.Include
 import liqp.tags.Increment
 import liqp.tags.Raw
 import liqp.tags.Tablerow
@@ -133,3 +133,13 @@ val defaultTags = Tags(ImmutableList.of(
     Increment(),
     Raw(),
     Tablerow()))
+
+class LiquidDefaults {
+  companion object {
+    @JvmStatic
+    fun getDefaultTags(): Tags = defaultTags
+
+    @JvmStatic
+    fun getDefaultFilters(): Filters = defaultFilters
+  }
+}

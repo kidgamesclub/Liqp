@@ -1,9 +1,13 @@
 package liqp.ext.filters.collections
 
+import liqp.context.LContext
+import liqp.filter.FilterChainPointer
+import liqp.filter.FilterParams
+import liqp.filter.LFilter
 import liqp.nodes.RenderContext
 
-class HtmlBulletsFilter : Filter() {
-  override fun apply(context: RenderContext?, value: Any?, vararg params: Any?): Any {
+class HtmlBulletsFilter : LFilter() {
+  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
     return when (value) {
       is Iterable<*> -> {
         val builder = StringBuilder()

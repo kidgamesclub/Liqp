@@ -9,16 +9,13 @@ import liqp.context.LContext
 class SortNatural : LFilter() {
 
   override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
-
-    if (!super.isArray(value)) {
-      return value
+    context.run {
+      if (!isIterable(value)) {
+        return value
+      }
+      val iterable = asIterable(value).toMutableList()
+      iterable.sortBy { toString().toLowerCase() }
+      return iterable.toList()
     }
-
-    val array = context.asIterable(value)
-    val list = ArrayList(Arrays.asList<Any>(*array!!))
-
-    Collections.sort<Any>(list, { o1, o2 -> o1.toString().compareTo(o2.toString(), ignoreCase = true) } as Comparator<*>)
-
-    return list.toTypedArray()
   }
 }

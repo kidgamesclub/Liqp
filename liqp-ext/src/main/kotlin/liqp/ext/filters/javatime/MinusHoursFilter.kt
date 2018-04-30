@@ -1,25 +1,21 @@
 package liqp.ext.filters.javatime
-import liqp.nodes.RenderContext
 
-
+import liqp.context.LContext
+import liqp.filter.FilterChainPointer
+import liqp.filter.FilterParams
+import liqp.filter.LFilter
 import java.time.LocalTime
 import java.time.ZonedDateTime
 
-class MinusHoursFilter :Filter() {
+class MinusHoursFilter : LFilter() {
 
-  override fun apply(context: RenderContext, value: Any, vararg params: Any): Any {
-    val num = if (params.size == 1) params[0] as Long else 0
+  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+    val num = params[0, 0L]
 
-    val ret: Any
-
-    if (value is ZonedDateTime) {
-      ret = value.minusHours(num)
-    } else if (value is LocalTime) {
-      ret = value.minusHours(num)
-    } else {
-      ret = value
+    return when (value) {
+      is ZonedDateTime -> value.minusHours(num)
+      is LocalTime -> value.minusHours(num)
+      else -> value
     }
-
-    return ret
   }
 }

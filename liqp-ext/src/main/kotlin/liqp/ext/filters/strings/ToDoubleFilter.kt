@@ -1,12 +1,13 @@
 package liqp.ext.filters.strings
-import liqp.nodes.RenderContext
+import liqp.context.LContext
+import liqp.exceptions.LiquidRenderingException
+import liqp.filter.FilterChainPointer
+import liqp.filter.FilterParams
+import liqp.filter.LFilter
 
-class ToDoubleFilter :Filter() {
+class ToDoubleFilter : LFilter() {
 
-  override fun apply(context: RenderContext, value: Any, vararg params: Any): Any {
-    return when(value) {
-      is Number-> value.toDouble()
-      else-> value.toString().toDoubleOrNull() ?: 0
-    }
+override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+    return context.asDouble(value) ?: throw LiquidRenderingException("Expected a double value")
   }
 }

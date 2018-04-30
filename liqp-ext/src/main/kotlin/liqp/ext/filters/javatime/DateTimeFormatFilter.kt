@@ -1,8 +1,9 @@
 package liqp.ext.filters.javatime
-import liqp.nodes.RenderContext
 
-
-import com.google.common.base.Preconditions
+import liqp.context.LContext
+import liqp.filter.FilterChainPointer
+import liqp.filter.FilterParams
+import liqp.filter.LFilter
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.OffsetDateTime
@@ -11,17 +12,13 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.time.temporal.TemporalAccessor
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
-abstract class DateTimeFormatFilter(name: String, private val style: FormatStyle, private val locale: Locale) : Filter(name) {
+abstract class DateTimeFormatFilter(name: String,
+                                    private val style: FormatStyle) : LFilter(name) {
 
-  init {
-    Preconditions.checkNotNull(style, "style must not be null")
-    Preconditions.checkNotNull(locale, "locale must not be null")
-  }
-
-  override fun apply(context: RenderContext, value: Any, vararg params: Any): Any {
+  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+    val locale = context.locale
     var ret = value
 
     if (value is LocalDate) {

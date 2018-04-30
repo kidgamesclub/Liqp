@@ -1,9 +1,11 @@
 package liqp
 
+import liqp.node.LTemplate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
 
-class TemplateRenderAssert(val template: Template? = null, val renderResult: Any? = null,
+class TemplateRenderAssert(val template: LTemplate? = null,
+                           private val renderResult: Any? = null,
                            val error: Exception? = null) {
 
   fun isNotError(): TemplateRenderAssert {
