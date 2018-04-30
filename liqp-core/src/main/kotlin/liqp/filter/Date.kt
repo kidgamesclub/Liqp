@@ -1,12 +1,20 @@
 package liqp.filter
 
 import liqp.context.LContext
-import java.text.SimpleDateFormat
+import liqp.exceptions.LiquidRenderingException
+import liqp.swallow
 import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.time.format.ResolverStyle
+import java.time.temporal.ChronoField
+import java.time.temporal.TemporalAccessor
 import java.util.*
-import kotlin.collections.Map
 
 class Date : LFilter() {
 
@@ -43,61 +51,48 @@ class Date : LFilter() {
    * %% - Literal ``%'' character
    */
   override fun onFilterAction(params: FilterParams, value: Any?,
-                              chain: FilterChainPointer,
                               context: LContext): Any? {
 
     context.run {
       val zone = context.zoneId
       val locale = context.locale
-      val offsetDateTime: OffsetDateTime? = when (value) {
+      val date: TemporalAccessor? = when (value) {
         null -> return value //Exits completely
-        "now" -> OffsetDateTime.now()
-        is java.util.Date -> OffsetDateTime.ofInstant(value.toInstant(), zone)
-        is OffsetDateTime -> value
-        is Number -> OffsetDateTime.ofInstant(Instant.ofEpochSecond(value.toLong()), zone)
-        else -> tryParse(value.toString(), locale, zone)
+        "now" -> ZonedDateTime.now(zone)
+        "now()" -> ZonedDateTime.now(zone)
+        is java.util.Date -> ZonedDateTime.ofInstant(value.toInstant(), zone)
+        is OffsetDateTime -> value.atZoneSameInstant(zone)
+        is Number -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(value.toLong()), zone)
+        else -> tryParse(context, value.toString(), locale, zone)
+      } ?: throw LiquidRenderingException("Unable to extract date from $value")
+
+      // Default date format provided by render context.  Defaults to 'c' (see format table below)
+      val outputFormat = asString(params[0])
+      if (outputFormat?.isNotBlank() != true) {
+        //Default format
+        val formatter = findNamedFormat(locale, context.defaultDateFormat)!!
+        //Ensure we have a zonedDateTime because the default format accesses HOUR, etc
+        return formatter.format(date)
       }
 
-      try {
+      val formatBuilder = DateTimeFormatterBuilder()
 
-        val outputFormat = asString(params[0])
-        if (outputFormat == null || outputFormat.isBlank()) {
-          return value
-        }
-
-        val builder = StringBuilder()
-
-        val chars = outputFormat.iterator()
-        while (chars.hasNext()) {
-          var ch = chars.nextChar()
-
-          if (ch == '%') {
-            if (chars.hasNext()) {
-              ch = chars.nextChar()
-            }
-            if (!chars.hasNext()) {
-              // a trailing (single) '%' sign: just append it
-              builder.append("%")
-              return value
-            }
-
-            val simpleDateFormat = getFormat(locale, ch)
-
-            if (simpleDateFormat == null) {
-              // no valid date-format: append the '%' and the 'next'-char
-              builder.append("%").append(ch)
-            } else {
-              builder.append(simpleDateFormat.format(offsetDateTime))
-            }
-          } else {
-            builder.append(ch)
+      val chars = outputFormat.iterator()
+      while (chars.hasNext()) {
+        val ch = chars.nextChar()
+        if (ch == '%' && chars.hasNext()) {
+          val formatKey = chars.nextChar()
+          val namedFormat = findNamedFormat(locale, formatKey)
+          when (namedFormat) {
+            null -> formatBuilder.appendLiteral("%").appendLiteral(formatKey)
+            else -> formatBuilder.append(namedFormat)
           }
+        } else {
+          formatBuilder.appendLiteral(ch)
         }
-
-        return builder.toString()
-      } catch (e: Exception) {
-        return value
       }
+
+      return formatBuilder.toFormatter(locale).format(date)
     }
   }
 
@@ -105,82 +100,106 @@ class Date : LFilter() {
    * Try to parse `str` into a Date and return this Date as seconds
    * since EPOCH, or null if it could not be parsed.
    */
-  private fun tryParse(str: String, locale: Locale, zone: ZoneId): OffsetDateTime? {
-    parseFormats
+  private fun tryParse(context:LContext, str: String, locale: Locale, zone: ZoneId): ZonedDateTime? {
+    if (context.isIntegral(str)) {
+      return ZonedDateTime.ofInstant(Instant.ofEpochSecond(context.asLong(str)!!), zone)
+    }
+
+    val parsed = parsers
+        .getOrPut(locale, {
+          setOf(
+              DateTimeFormatter.ISO_ZONED_DATE_TIME,
+              DateTimeFormatter.ISO_OFFSET_DATE_TIME,
+              DateTimeFormatter.ISO_DATE_TIME,
+              *parseFmtStrings.map {
+                DateTimeFormatter.ofPattern(it, locale)
+                    .withResolverStyle(ResolverStyle.SMART)
+
+              }.toTypedArray())
+        })
         .mapNotNull {
-          try {
-            SimpleDateFormat(it, locale).parse(str)
-          } catch (e: Exception) {
-            return null
+          swallow {
+            val parsed = it.parse(str)
+            parsed
           }
         }
-        .map { OffsetDateTime.ofInstant(it.toInstant(), zone) }
-        .firstOrNull()
-    // Could not parse the string into a meaningful date, return null.
-    return null
-  }
+        .firstOrNull() ?: return null
 
-  companion object {
-
-    init {
-
+    // Do some safe checks to see what type of date/time we can support
+    return when {
+      parsed.isSupported(ChronoField.OFFSET_SECONDS) -> OffsetDateTime.from(parsed).atZoneSameInstant(zone)
+      parsed.isSupported(ChronoField.HOUR_OF_DAY) -> LocalDateTime.from(parsed).atZone(zone)
+      else -> LocalDate.from(parsed).atStartOfDay(zone)
     }
   }
 }
 
-internal val parseFormats = setOf("yyyy-MM-dd HH:mm:ss", "EEE MMM dd hh:mm:ss yyyy")
-internal val formats = mutableMapOf<Locale, Map<Char, SimpleDateFormat>>()
+internal val parseFmtStrings = listOf(
+    "yyyy-MM-dd hh:mm:ss a",
+    "yyyy/MM/dd hh:mm:ss a",
+    "yyyy-MM-dd hh:mm a",
+    "yyyy/MM/dd hh:mm a",
+    "yyyy-MM-dd HH:mm:ss",
+    "yyyy/MM/dd HH:mm:ss",
+    "yyyy-MM-dd HH:mm",
+    "yyyy/MM/dd HH:mm",
+    "yyyy-MM-dd",
+    "yyyy/MM/dd",
+    "EEE MMM dd HH:mm:ss yyyy")
 
-fun getFormat(locale: Locale, ch: Char): SimpleDateFormat? {
-  return formats.getOrPut(locale, {
+private val formatTable = mutableMapOf<Locale, kotlin.collections.Map<Char, DateTimeFormatter>>()
+private val parsers = mutableMapOf<Locale, Set<DateTimeFormatter>>()
+
+fun findNamedFormat(locale: Locale, ch: Char): DateTimeFormatter? {
+  return formatTable.getOrPut(locale, {
     mapOf(
-        '%' to SimpleDateFormat("%", locale),
+        '%' to DateTimeFormatter.ofPattern("%", locale),
         // %a - The abbreviated weekday name (``Sun'')
-        'a' to SimpleDateFormat("EEE", locale),
+        'a' to DateTimeFormatter.ofPattern("EEE", locale),
         // %A - The  full  weekday  name (``Sunday'')
-        'A' to SimpleDateFormat("EEEE", locale),
+        'A' to DateTimeFormatter.ofPattern("EEEE", locale),
         // %b - The abbreviated month name (``Jan'')
-        'b' to SimpleDateFormat("MMM", locale),
-        'h' to SimpleDateFormat("MMM", locale),
+        'b' to DateTimeFormatter.ofPattern("MMM", locale),
+        'h' to DateTimeFormatter.ofPattern("MMM", locale),
         // %B - The  full  month  name (``January'')
-        'B' to SimpleDateFormat("MMMM", locale),
+        'B' to DateTimeFormatter.ofPattern("MMMM", locale),
         // %c - The preferred local date and time representation
-        'c' to SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy", locale),
+        'c' to DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss yyyy", locale),
         // %d - Day of the month (01..31)
-        'd' to SimpleDateFormat("dd", locale),
+        'd' to DateTimeFormatter.ofPattern("dd", locale),
         // %H - Hour of the day, 24-hour clock (00..23)
-        'H' to SimpleDateFormat("HH", locale),
+        'H' to DateTimeFormatter.ofPattern("HH", locale),
         // %I - Hour of the day, 12-hour clock (01..12)
-        'I' to SimpleDateFormat("hh", locale),
+        'I' to DateTimeFormatter.ofPattern("hh", locale),
         // %j - Day of the year (001..366)
-        'j' to SimpleDateFormat("DDD", locale),
+        'j' to DateTimeFormatter.ofPattern("DDD", locale),
         // %m - Month of the year (01..12)
-        'm' to SimpleDateFormat("MM", locale),
+        'm' to DateTimeFormatter.ofPattern("MM", locale),
         // %M - Minute of the hour (00..59)
-        'M' to SimpleDateFormat("mm", locale),
+        'M' to DateTimeFormatter.ofPattern("mm", locale),
         // %p - Meridian indicator (``AM''  or  ``PM'')
-        'p' to SimpleDateFormat("a", locale),
+        'p' to DateTimeFormatter.ofPattern("a", locale),
         // %S - Second of the minute (00..60)
-        'S' to SimpleDateFormat("ss", locale),
+        'S' to DateTimeFormatter.ofPattern("ss", locale),
         // %U - Week  number  of the current year,
         //      starting with the first Sunday as the first
         //      day of the first week (00..53)
-        'U' to SimpleDateFormat("ww", locale),
+        'U' to DateTimeFormatter.ofPattern("ww", locale),
         // %W - Week  number  of the current year,
         //      starting with the first Monday as the first
         //      day of the first week (00..53)
-        'W' to SimpleDateFormat("ww", locale),
+        'W' to DateTimeFormatter.ofPattern("ww", locale),
         // %w - Day of the week (Sunday is 0, 0..6)
-        'w' to SimpleDateFormat("F", locale),
+        'w' to DateTimeFormatter.ofPattern("e", locale),
         // %x - Preferred representation for the date alone, no time
-        'x' to SimpleDateFormat("MM/dd/yy", locale),
+        'x' to DateTimeFormatter.ofPattern("MM/dd/yy", locale),
         // %X - Preferred representation for the time alone, no date
-        'X' to SimpleDateFormat("HH:mm:ss", locale),
+        'X' to DateTimeFormatter.ofPattern("HH:mm:ss", locale),
         // %y - Year without a century (00..99)
-        'y' to SimpleDateFormat("yy", locale),
+        'y' to DateTimeFormatter.ofPattern("yy", locale),
         // %Y - Year with century
-        'Y' to SimpleDateFormat("yyyy", locale),
+        'Y' to DateTimeFormatter.ofPattern("yyyy", locale),
         // %Z - Time zone name
-        'Z' to SimpleDateFormat("z", locale))
+        'Z' to DateTimeFormatter.ofPattern("z", locale))
   })[ch]
 }

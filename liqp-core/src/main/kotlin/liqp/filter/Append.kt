@@ -9,9 +9,11 @@ import liqp.context.LContext
  */
 class Append : LFilter() {
 
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     context.run {
-      return asString(value) + asString(params[0])
+      val content = asString(value) ?: ""
+      val append: String = asString(params[0]) ?: return content
+      return content + append
     }
   }
 }

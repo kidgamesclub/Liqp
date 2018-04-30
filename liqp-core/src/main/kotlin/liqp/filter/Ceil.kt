@@ -7,9 +7,9 @@ import liqp.context.LContext
  * {{ 4.3 | ceil }} -> 5
  */
 class Ceil : LFilter() {
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     context.run {
-      return Math.ceil(asDouble(value) ?: 0.0)
+      return Math.ceil(asDouble(value) ?: 0.0).toLong()
     }
   }
 }

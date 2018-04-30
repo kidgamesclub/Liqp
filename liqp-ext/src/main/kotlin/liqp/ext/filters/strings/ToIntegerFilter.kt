@@ -8,7 +8,7 @@ import liqp.filter.LFilter
 
 class ToIntegerFilter : LFilter() {
 
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     return context.asLong(value) ?: throw LiquidRenderingException("Expected a double value")
   }
 }

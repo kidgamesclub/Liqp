@@ -5,6 +5,7 @@ import liqp.ComparisonResult.GREATER
 import liqp.ComparisonResult.LESS
 import liqp.ComparisonResult.NOOP
 import liqp.ComparisonResult.NULL
+import liqp.exceptions.LiquidRenderingException
 import java.util.*
 import kotlin.math.absoluteValue
 
@@ -49,7 +50,6 @@ val strictLogic = object : LLogic {
   }
 
   override fun add(a: Any?, b: Any?): Any? {
-
     //Numbers
     val aLong = asLong(a)
     val bLong = asLong(b)
@@ -73,6 +73,78 @@ val strictLogic = object : LLogic {
     }
 
     return NOOP
+  }
+
+  override fun min(a: Any?, b: Any?): Number? {
+
+    //Numbers
+    val aLong = asLong(a)
+    val bLong = asLong(b)
+    if (aLong != null && bLong != null) {
+      return Math.min(aLong, bLong)
+    }
+
+    val aDbl = asDouble(a)
+    val bDbl = asDouble(b)
+    if (aDbl != null && bDbl != null) {
+      return Math.min(aDbl, +bDbl)
+    }
+
+    return null
+  }
+
+  override fun div(a: Any?, b: Any?): Any? {
+    //Numbers
+    val aDbl = asDouble(a)
+    val bDbl = asDouble(b)
+    if (aDbl != null && bDbl != null) {
+      if (bDbl == 0.0) {
+        throw LiquidRenderingException("Div by 0")
+      }
+      val result = aDbl / bDbl
+      return if (isIntegral(result)) {
+        asLong(result)
+      } else {
+        result
+      }
+    }
+
+    return null
+  }
+
+  override fun mult(a: Any?, b: Any?): Any? {
+    //Numbers
+    val aLong = asLong(a)
+    val bLong = asLong(b)
+    if (aLong != null && bLong != null) {
+      return aLong * bLong
+    }
+
+    val aDbl = asDouble(a)
+    val bDbl = asDouble(b)
+    if (aDbl != null && bDbl != null) {
+      return aDbl * bDbl
+    }
+
+    return null
+  }
+
+  override fun max(a: Any?, b: Any?): Number? {
+
+    //Numbers
+    val aLong = asLong(a)
+    val bLong = asLong(b)
+    if (aLong != null && bLong != null) {
+      return Math.max(aLong, bLong)
+    }
+
+    val aDbl = asDouble(a)
+    val bDbl = asDouble(b)
+    if (aDbl != null && bDbl != null) {
+      return Math.max(aDbl, +bDbl)
+    }
+
+    return null
   }
 
   override fun subtract(a: Any?, b: Any?): Any? {
@@ -116,6 +188,7 @@ val strictLogic = object : LLogic {
   override fun asLong(t: Any?): Long? {
     return when (t) {
       null -> 0
+      is Double-> t.toLong()
       is Long -> t
       is Int -> t.toLong()
       is Boolean -> if (t) 1 else 0
@@ -136,6 +209,7 @@ val strictLogic = object : LLogic {
 
   override fun asString(t: Any?): String? {
     return when (t) {
+      null -> null
       is String -> t
       is Array<*> -> Arrays.toString(t)
       else -> t.toString()
@@ -170,6 +244,10 @@ val strictLogic = object : LLogic {
     return when (t) {
       null -> 0
       is Boolean -> if (t) 1 else 0
+      is Long-> {
+        val len = t.toString().length / 2
+        len + len%2
+      }
       is Collection<*> -> t.size
       is Array<*> -> t.size
       is CharSequence -> t.trim().length

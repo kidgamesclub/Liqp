@@ -9,9 +9,11 @@ class Prepend : LFilter() {
    *
    * add one string to another
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     context.run {
-      return asString(params[0]) + asString(value)
+      val content = asString(value) ?: ""
+      val prepend: String = asString(params[0]) ?: return content
+      return prepend + content
     }
   }
 }

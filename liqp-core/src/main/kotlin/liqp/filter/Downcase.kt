@@ -9,7 +9,7 @@ class Downcase : LFilter() {
    *
    * convert a input string to DOWNCASE
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     return context.asString(value)?.toLowerCase()
   }
 }

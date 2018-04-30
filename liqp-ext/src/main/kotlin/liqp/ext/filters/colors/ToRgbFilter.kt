@@ -8,7 +8,7 @@ import java.awt.Color
 
 class ToRgbFilter : LFilter() {
 
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     return try {
       val decoded = when (value) {
         is Color -> value

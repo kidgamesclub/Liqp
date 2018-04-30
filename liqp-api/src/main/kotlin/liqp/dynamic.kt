@@ -25,8 +25,12 @@ interface Comparisons {
 
 interface Combiners {
   fun add(a: Any?, b: Any?): Any?
+  fun div(a: Any?, b: Any?): Any?
+  fun mult(a: Any?, b: Any?): Any?
   fun subtract(a: Any?, b: Any?): Any?
   fun range(from:Any?, to:Any?): Any?
+  fun min(a:Any?, b:Any?):Number?
+  fun max(a:Any?, b:Any?):Number?
   fun contains(t:Any?):LogicResult
 }
 

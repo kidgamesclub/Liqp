@@ -12,6 +12,7 @@ interface RenderSettingsSpec {
   val includesDir:File
   val maxSizeRenderedString: Int
   val maxRenderTimeMillis: Long
+  val defaultDateFormat:Char
   val executor: ExecutorService?
 
   fun toMutableRenderSettings(): MutableRenderSettings
@@ -25,6 +26,7 @@ data class RenderSettings(override val baseDir: File,
                           override val isUseTruthyChecks: Boolean = false,
                           override val maxSizeRenderedString: Int = Integer.MAX_VALUE,
                           override val maxRenderTimeMillis: Long = Long.MAX_VALUE,
+                          override val defaultDateFormat: Char = 'c',
                           override val executor: ExecutorService? = null) : RenderSettingsSpec {
 
   override fun toMutableRenderSettings(): MutableRenderSettings {
@@ -44,6 +46,7 @@ data class MutableRenderSettings(internal var settings: RenderSettings = RenderS
   override var isUseTruthyChecks by delegate(settings::isUseTruthyChecks, this::withUseTruthyChecks)
   override var maxSizeRenderedString by delegate(settings::maxSizeRenderedString, this::withMaxSizeRenderedString)
   override var maxRenderTimeMillis by delegate(settings::maxRenderTimeMillis, this::withMaxRenderTimeMillis)
+  override var defaultDateFormat by delegate(settings::defaultDateFormat, this::withDefaultDateFormat)
   override var executor by delegate(settings::executor, this::withExecutor)
 
   fun withStrictVariables(strictVariables: Boolean): MutableRenderSettings {
@@ -83,6 +86,11 @@ data class MutableRenderSettings(internal var settings: RenderSettings = RenderS
 
   fun withMaxRenderTimeMillis(maxRenderTimeMillis: Long): MutableRenderSettings {
     settings = settings.copy(maxRenderTimeMillis = maxRenderTimeMillis)
+    return this
+  }
+
+  fun withDefaultDateFormat(defaultDateFormat: Char): MutableRenderSettings {
+    settings = settings.copy(defaultDateFormat = defaultDateFormat)
     return this
   }
 

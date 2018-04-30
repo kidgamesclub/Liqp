@@ -9,7 +9,11 @@ class Plus : LFilter() {
    *
    * addition
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
-    return context.add(value, params[0])
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+    var sum = value
+    for (param in params) {
+      sum = context.add(sum, param)
+    }
+    return sum
   }
 }

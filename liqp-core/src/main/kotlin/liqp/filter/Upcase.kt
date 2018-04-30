@@ -9,7 +9,7 @@ class Upcase : LFilter() {
    *
    * convert a input string to UPCASE
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     return context.asString(value)?.toUpperCase()
   }
 }

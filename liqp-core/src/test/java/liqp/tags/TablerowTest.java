@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import liqp.Template;
 import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -305,7 +306,7 @@ public class TablerowTest {
 
         for (String[] test : tests) {
 
-            Template template = LiquidParser.newInstance().parse(test[0]);
+            LTemplate template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render(json));
             assertThat(rendered, is(test[1]));
         }

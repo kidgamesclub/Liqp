@@ -13,7 +13,6 @@ class Split : LFilter() {
    * E.g. {{ "a~b" | split:'~' | first }} #=> 'a'
    */
   override fun onFilterAction(params: FilterParams, value: Any?,
-                              chain: FilterChainPointer,
                               context: LContext): Any? {
 
     val original = context.asString(value)

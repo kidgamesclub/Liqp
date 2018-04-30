@@ -9,7 +9,7 @@ class Size : LFilter() {
    *
    * Return the size of an array or of an string
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     return context.size(value)
   }
 }

@@ -9,7 +9,7 @@ import java.time.ZonedDateTime
 
 class MinusDaysFilter : LFilter() {
 
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     val num = params[0, 0L]
 
     return if (value is ZonedDateTime) {

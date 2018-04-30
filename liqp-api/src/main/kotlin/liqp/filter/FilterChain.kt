@@ -45,7 +45,7 @@ class FilterChain(private val context: LContext,
         context.result = actionResult
       }
       filters.forEach {
-        val result = it.filter.onFilterAction(it.params, context.result, this, context)
+        val result = it.filter.onFilterAction(it.params, context.result, context)
         if (result != NO_CONTENT && result != EMPTY && result != NOOP) {
           context.result = result
         }

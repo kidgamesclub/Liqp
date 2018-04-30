@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import liqp.Template;
 import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -24,7 +25,7 @@ public class CaseTest {
 
         for (String[] test : tests) {
 
-            Template template = LiquidParser.newInstance().parse(test[0]);
+            LTemplate template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render(json));
 
             assertThat(rendered, is(test[1]));
@@ -228,7 +229,7 @@ public class CaseTest {
     public void assign_from_caseTest() throws RecognitionException {
 
         String code = "{% case collection.handle %}{% when 'menswear-jackets' %}{% assign ptitle = 'menswear' %}{% when 'menswear-t-shirts' %}{% assign ptitle = 'menswear' %}{% else %}{% assign ptitle = 'womenswear' %}{% endcase %}{{ ptitle }}";
-        Template template = LiquidParser.newInstance().parse(code);
+        LTemplate template = LiquidParser.newInstance().parse(code);
 
         assertThat(template.render("{ \"collection\" : {\"handle\" : \"menswear-jackets\"} }"), is("menswear"));
         assertThat(template.render("{ \"collection\" : {\"handle\" : \"menswear-t-shirts\"} }"), is("menswear"));

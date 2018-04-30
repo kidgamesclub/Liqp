@@ -7,7 +7,7 @@ import liqp.filter.LFilter
 
 class ToDoubleFilter : LFilter() {
 
-override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     return context.asDouble(value) ?: throw LiquidRenderingException("Expected a double value")
   }
 }

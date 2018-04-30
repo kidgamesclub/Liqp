@@ -9,7 +9,7 @@ class Last : LFilter() {
    *
    * Get the last element of the passed in array
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     return context.asIterable(value).lastOrNull()
   }
 }

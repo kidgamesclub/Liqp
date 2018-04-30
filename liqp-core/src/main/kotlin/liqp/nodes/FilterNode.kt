@@ -4,6 +4,7 @@ import liqp.context.LContext
 import liqp.filter.FilterInstance
 import liqp.filter.FilterParams
 import liqp.filter.LFilter
+import liqp.filter.ResolvableFilterParams
 import liqp.node.LNode
 
 class FilterNode
@@ -18,6 +19,6 @@ constructor(val filter: LFilter, val params: List<LNode>) : LNode() {
    * filter params, in case this filter is never invoked.
    */
   operator fun get(context: LContext): FilterInstance {
-    return FilterInstance(filter, FilterParams(context, params))
+    return FilterInstance(filter, ResolvableFilterParams(context, params))
   }
 }

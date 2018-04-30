@@ -9,7 +9,7 @@ class Remove : LFilter() {
    *
    * remove a substring
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     val original = context.asString(value)
     val needle:Any = params[0] ?: throw RuntimeException("invalid pattern: " + params[0])
 

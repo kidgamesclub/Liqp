@@ -45,7 +45,7 @@ object Examples {
     // first register your custom filter
     val ctx = LiquidParser.newInstance()
         .withFilters(object : LFilter("b") {
-          override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+          override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
             // create a string from the  value
             val text = context.asString(value)
 
@@ -65,7 +65,7 @@ object Examples {
     // first register your custom filter
     val ctx = LiquidParser.newInstance()
         .withFilters(object : LFilter("repeat") {
-          fun apply(context: LContext, value: Any, vararg params: Any): Any? {
+          override fun apply(context: LContext, value: Any?, vararg params: Any?): Any? {
             context.run {
 
               // check if an optional parameter is provided
@@ -88,9 +88,8 @@ object Examples {
     val ctx = LiquidParser.newInstance()
         .withFilters(object : LFilter("sum") {
           override fun onFilterAction(params: FilterParams,
-                                  value: Any?,
-                                  chain: FilterChainPointer,
-                                  context: LContext): Any? {
+                                      value: Any?,
+                                      context: LContext): Any? {
 
             val numbers = context.asIterable(value)
             var sum = 0.0

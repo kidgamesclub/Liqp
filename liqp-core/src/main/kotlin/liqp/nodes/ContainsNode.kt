@@ -1,10 +1,8 @@
 package liqp.nodes
 
 import com.google.common.collect.ImmutableSet
-import java.util.Arrays
 import liqp.context.LContext
 import liqp.node.LNode
-import lombok.Getter
 
 class ContainsNode(lhs: LNode, rhs: LNode) : ExpressionNode(lhs, rhs) {
 
@@ -19,6 +17,10 @@ class ContainsNode(lhs: LNode, rhs: LNode) : ExpressionNode(lhs, rhs) {
     }
 
     val string = context.asString(collection)
-    return string?.contains(context.asString(needle)!!) ?: false
+    val needlStr = context.asString(needle)
+    return when (needlStr) {
+      null -> false
+      else -> string?.contains(needlStr) ?: false
+    }
   }
 }

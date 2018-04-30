@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import liqp.Template;
 import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import org.junit.Test;
 
 public class IfchangedTest {
@@ -30,7 +31,7 @@ public class IfchangedTest {
 
         for (String[] test : tests) {
 
-            Template template = LiquidParser.newInstance().parse(test[0]);
+            LTemplate template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render(test[1]));
 
             assertThat(rendered, is(test[2]));

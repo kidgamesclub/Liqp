@@ -32,7 +32,6 @@ abstract class LFilter(name: String? = null) {
 
   open fun onFilterAction(params: FilterParams,
                           value: Any?,
-                          chain: FilterChainPointer,
                           context: LContext): Any? {
     return ControlResult.NO_CONTENT
   }
@@ -40,6 +39,14 @@ abstract class LFilter(name: String? = null) {
   open fun onEndChain(params: FilterParams,
                       chain: FilterChainPointer,
                       context: LContext) {
+  }
+
+  open fun doPostFilter(context:LContext, value:Any?, vararg params:Any?):Any? {
+    return onFilterAction(ResolvedFilterParams(*params), value, context)
+  }
+
+  open fun apply(context:LContext, value:Any?, vararg params:Any?):Any? {
+    return onFilterAction(ResolvedFilterParams(*params), value, context)
   }
 
   fun get(i: Int, params: FilterParams): Any? {

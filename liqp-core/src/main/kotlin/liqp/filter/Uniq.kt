@@ -6,7 +6,7 @@ import liqp.context.LContext
 
 class Uniq : LFilter() {
 
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     return LinkedHashSet(context.asIterable(value).toList()).toList()
   }
 }

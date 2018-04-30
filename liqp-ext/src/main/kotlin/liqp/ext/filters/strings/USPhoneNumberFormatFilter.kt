@@ -11,7 +11,7 @@ import javax.swing.text.MaskFormatter
  */
 class USPhoneNumberFormatFilter : LFilter() {
 
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
 
     var rtn: String?
     if (value != null) {

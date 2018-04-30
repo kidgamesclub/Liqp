@@ -17,7 +17,7 @@ import java.util.*
 abstract class DateTimeFormatFilter(name: String,
                                     private val style: FormatStyle) : LFilter(name) {
 
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     val locale = context.locale
     var ret = value
 

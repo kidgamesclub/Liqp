@@ -9,7 +9,7 @@ class StripNewlines : LFilter() {
    *
    * Remove all newlines from the string
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     return context.asString(value)?.replace("[\r\n]++".toRegex(), "")
   }
 }

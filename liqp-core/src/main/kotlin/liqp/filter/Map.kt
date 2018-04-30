@@ -10,7 +10,7 @@ class Map : LFilter() {
    *
    * map/collect on a given property
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
 
     val v = value ?: return null
     val key:Any? = params[0]

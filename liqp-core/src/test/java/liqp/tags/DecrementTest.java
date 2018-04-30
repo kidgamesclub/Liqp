@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import liqp.Template;
 import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import org.junit.Test;
 
 public class DecrementTest {
@@ -22,7 +23,7 @@ public class DecrementTest {
 
         for (String[] test : tests) {
 
-            Template template = LiquidParser.newInstance().parse(test[0]);
+            LTemplate template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));

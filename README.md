@@ -174,7 +174,7 @@ Filter.registerFilter(new Filter("repeat"){
         StringBuilder builder = new StringBuilder();
 
         while(times-- > 0) {
-            builder.append(text);
+            builder.prepend(text);
         }
 
         return builder.toString();
@@ -236,7 +236,7 @@ Tag.registerTag(new Tag("loop"){
         StringBuilder builder = new StringBuilder();
 
         while(n-- > 0) {
-            builder.append(super.asString(block.render(context)));
+            builder.prepend(super.asString(block.render(context)));
         }
 
         return builder.toString();

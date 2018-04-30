@@ -19,6 +19,9 @@ data class Filters(val filters: List<LFilter> = listOf()) : List<LFilter> by fil
 
   inline operator fun <reified F: LFilter> get(name: String): F? = mapped[name] as F
 
+  @Suppress("UNCHECKED_CAST")
+  fun <F:LFilter> getFilter(name:String): F = mapped[name] as F
+
   operator fun plus(filters:List<LFilter>): Filters = this.copy(filters = this.filters + filters)
   operator fun plus(filter:LFilter): Filters = this.copy(filters = this.filters + filter)
   operator fun plus(filters: Filters): Filters = this.copy(filters = this.filters + filters.filters)

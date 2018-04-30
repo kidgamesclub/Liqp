@@ -9,7 +9,7 @@ class Truncatewords : LFilter() {
    *
    * Truncate a string down to x words
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
 
     val v = value ?: return null
     context.run {

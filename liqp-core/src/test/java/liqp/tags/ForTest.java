@@ -9,6 +9,7 @@ import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import liqp.Template;
 import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,7 +54,7 @@ public class ForTest {
   public void applyTest(String templateString, String expected) throws RecognitionException {
     String json = "{\"array\" : [1,2,3,4,5,6,7,8,9,10], \"item\" : {\"quantity\" : 5} }";
 
-    Template template = LiquidParser.newInstance().parse(templateString);
+    LTemplate template = LiquidParser.newInstance().parse(templateString);
     String rendered = String.valueOf(template.render(json));
 
     if (!rendered.equals(expected)) {

@@ -20,7 +20,7 @@ abstract class DateAdjustmentFilter : LFilter() {
   open val localTimeAdjust:LocalTimeAdjustment = TODO()
   open val localDateTimeAdjust:LocalDateTimeAdjustment = TODO()
 
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     val num = params[0, 0L]
     return when (value) {
       null-> null

@@ -48,7 +48,7 @@ data class LiquidRenderer
   private val executeTemplate: executeTemplate = when (executor) {
     null -> inthread@{ template, context -> return@inthread template.rootNode.render(context) }
     else -> executor@{ template, context ->
-      val future = executor.submit(Callable<Any?> task@{
+      val future = executor.submit(Callable task@{
         return@task template.rootNode.render(context)
       })
 

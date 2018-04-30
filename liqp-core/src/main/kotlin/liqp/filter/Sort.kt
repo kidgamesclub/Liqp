@@ -11,7 +11,7 @@ class Sort : LFilter() {
    * Sort elements of the array provide optional property with
    * which to sort an array of hashes or drops
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
 
     val v = value ?: return null
 

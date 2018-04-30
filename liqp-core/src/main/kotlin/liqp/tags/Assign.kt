@@ -5,6 +5,7 @@ import liqp.context.LContext
 import liqp.filter.FilterChain
 import liqp.filter.FilterInstance
 import liqp.filter.FilterParams
+import liqp.filter.ResolvableFilterParams
 import liqp.node.LNode
 import liqp.nodes.FilterNode
 import liqp.tag.LTag
@@ -18,7 +19,7 @@ class Assign : LTag() {
     val filters = nodes
         .filter { node -> node is FilterNode }
         .map { node -> node as FilterNode }
-        .map { node -> FilterInstance(node.filter, FilterParams(context, node.params)) }
+        .map { node -> FilterInstance(node.filter, ResolvableFilterParams(context, node.params)) }
     val chain = FilterChain(context, filters) {
       val expression = nodes[1]
       result = expression.render(context)

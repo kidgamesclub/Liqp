@@ -10,7 +10,7 @@ import liqp.context.LContext
  */
 class Compact : LFilter() {
 
-  override fun onFilterAction(params: FilterParams, value: Any?, chain: FilterChainPointer, context: LContext): Any? {
+  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
     context.run {
       return when (value) {
         is kotlin.collections.Map<*, *> -> value.filterKeys { it != null }.filterValues { it != null }

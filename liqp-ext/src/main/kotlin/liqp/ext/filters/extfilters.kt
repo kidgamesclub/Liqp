@@ -24,6 +24,7 @@ import liqp.ext.filters.javatime.PlusSecondsFilter
 import liqp.ext.filters.javatime.PlusWeeksFilter
 import liqp.ext.filters.javatime.PlusYearsFilter
 import liqp.ext.filters.javatime.ShortDateTimeFormatFilter
+import liqp.ext.filters.strings.StripHtmlFilter
 import liqp.ext.filters.strings.ToDoubleFilter
 import liqp.ext.filters.strings.ToIntegerFilter
 import liqp.ext.filters.strings.USPhoneNumberFormatFilter
@@ -54,9 +55,11 @@ val EXTRA_FILTERS = Filters(
     PlusWeeksFilter(),
     PlusYearsFilter(),
     ShortDateTimeFormatFilter(),
+    StripHtmlFilter(),
     ToDoubleFilter(),
     ToIntegerFilter(),
     USPhoneNumberFormatFilter()
+
 )
 
 class ExtraFilters {

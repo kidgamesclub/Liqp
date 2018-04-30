@@ -10,7 +10,7 @@ class Minus : LFilter() {
    * subtraction
    */
   override fun onFilterAction(params: FilterParams, value: Any?,
-                              chain: FilterChainPointer, context: LContext): Any? {
+                              context: LContext): Any? {
     return context.subtract(value, params[0])
   }
 }
