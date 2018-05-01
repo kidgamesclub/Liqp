@@ -9,7 +9,7 @@ import liqp.parameterized.LiquifyNoInputTest;
 import org.junit.Test;
 
 public class Escape_OnceTest extends LiquifyNoInputTest {
-  public static Object[] testParams() {
+  public Object[] testParams() {
     return new String[][]{
           {"{{ nil | escape_once }}", ""},
           {"{{ 42 | escape_once }}", "42"},

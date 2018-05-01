@@ -58,6 +58,6 @@ fun LTemplate.rendering(data: Any? = null, renderer: MutableRenderSettings.() ->
   return renderAssert(this, LiquidRenderer.newInstance(renderer), data)
 }
 
-fun LFilter.withAssertions(): FilterAssert {
+fun LFilter.assertThat(): FilterAssert {
   return FilterAssert(this)
 }

@@ -34,7 +34,7 @@ val strictLogic = object : LLogic {
       a is Number && b is Number -> a.compareNumbers(b)
       a == ControlResult.EMPTY -> size(b).compareNumbers(0)
       b == ControlResult.EMPTY -> size(a).compareNumbers(0)
-      a is CharSequence && b is CharSequence -> a.length.compareNumbers(b.length).and { a == b }
+      a is CharSequence && b is CharSequence -> a.toString().compareTo(b.toString()).toComparisonResult()
       isIterable(a) && isIterable(b) -> size(a).compareNumbers(size(b)).and { a == b }
       a is Map<*, *> && b is Map<*, *> -> a.size.compareNumbers(b.size).and { a == b }
       else -> (a == b).asComparison()
@@ -76,7 +76,6 @@ val strictLogic = object : LLogic {
   }
 
   override fun min(a: Any?, b: Any?): Number? {
-
     //Numbers
     val aLong = asLong(a)
     val bLong = asLong(b)
@@ -102,13 +101,12 @@ val strictLogic = object : LLogic {
         throw LiquidRenderingException("Div by 0")
       }
       val result = aDbl / bDbl
-      return if (isIntegral(result)) {
-        asLong(result)
+      return if (a.isIntegral() && b.isIntegral()) {
+        result.toLong()
       } else {
         result
       }
     }
-
     return null
   }
 
@@ -188,7 +186,7 @@ val strictLogic = object : LLogic {
   override fun asLong(t: Any?): Long? {
     return when (t) {
       null -> 0
-      is Double-> t.toLong()
+      is Double-> if(t.isIntegral()) t.toLong() else null
       is Long -> t
       is Int -> t.toLong()
       is Boolean -> if (t) 1 else 0

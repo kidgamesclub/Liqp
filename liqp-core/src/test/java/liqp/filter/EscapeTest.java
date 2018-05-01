@@ -3,14 +3,17 @@ package liqp.filter;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import junitparams.JUnitParamsRunner;
 import liqp.LiquidDefaults;
 import liqp.Mocks;
 import liqp.parameterized.LiquifyNoInputTest;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnitParamsRunner.class)
 public class EscapeTest extends LiquifyNoInputTest {
 
-  public static Object[] testParams() {
+  public Object[] testParams() {
     return new String[][]{
 
           {"{{ nil | escape }}", ""},
@@ -21,7 +24,7 @@ public class EscapeTest extends LiquifyNoInputTest {
     };
   }
 
-  public EscapeTest(String input) {
+  public EscapeTest() {
     super("{ \"n\" : [1,2,3,4,5] }");
   }
 

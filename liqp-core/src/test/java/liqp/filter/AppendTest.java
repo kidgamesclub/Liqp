@@ -3,14 +3,16 @@ package liqp.filter;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import junitparams.Parameters;
+import junitparams.JUnitParamsRunner;
 import liqp.LiquidParser;
 import liqp.parameterized.LiquifyNoInputTest;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnitParamsRunner.class)
 public class AppendTest extends LiquifyNoInputTest {
 
-  public static Object[] testParams() {
+  public Object[] testParams() {
     return new String[][]{
           {"{{ 'a' | append: 'b' }}", "ab"},
           {"{{ '' | append: '' }}", ""},
@@ -18,13 +20,6 @@ public class AppendTest extends LiquifyNoInputTest {
           {"{{ nil | append: 'a' }}", "a"},
           {"{{ nil | append: nil }}", ""},
     };
-  }
-
-  @Parameters(method = "testParams")
-  @Test
-  @Override
-  public void run(String templateString, Object expectedResult) {
-    super.run(templateString, expectedResult);
   }
 
   /*

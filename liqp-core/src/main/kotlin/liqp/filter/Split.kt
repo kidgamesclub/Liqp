@@ -16,7 +16,7 @@ class Split : LFilter() {
                               context: LContext): Any? {
 
     val original = context.asString(value)
-    val delimiter = context.asString(params[0])
+    val delimiter = context.asString(params[0]) ?: ""
 
     return original
         ?.split(("(?<!^)" + Pattern.quote(delimiter)).toRegex())

@@ -6,18 +6,14 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import liqp.LiquidParser;
-import liqp.Template;
 import liqp.exceptions.LiquidRenderingException;
-import org.antlr.runtime.RecognitionException;
+import liqp.parameterized.LiquifyNoInputTest;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
-public class Divided_ByTest {
+public class Divided_ByTest extends LiquifyNoInputTest {
 
-  @Test
-  public void applyTest() throws RecognitionException {
-
+  public Object[] testParams() {
     String[][] tests = {
           {"{{ 8 | divided_by: 2 }}", "4"},
           {"{{ 8 | divided_by: 3 }}", "2"},
@@ -26,26 +22,22 @@ public class Divided_ByTest {
           {"{{ 8 | divided_by: 2.0 }}", "4.0"},
           {"{{ 0 | divided_by: 2.0 }}", "0.0"},
     };
-
-    for (String[] test : tests) {
-
-      Template template = LiquidParser.newInstance().parse(test[0]);
-      String rendered = String.valueOf(template.render());
-
-      assertThat(rendered, is(test[1]));
-    }
+    return tests;
   }
 
-  @Test(expected = LiquidRenderingException.class)
+  @Test
   public void applyTestInvalid1() {
-    getDefaultFilters().getFilter("divided_by").apply(mockRenderContext(), 1);
+    Assertions.assertThat(getDefaultFilters()
+          .getFilter("divided_by")
+          .apply(mockRenderContext(), 1))
+          .isEqualTo(1);
   }
 
   @Test
   public void applyTestInvalid2() {
     final LFilter filter = getDefaultFilters().getFilter("divided_by");
-    Assertions.assertThat(filter.apply(mockRenderContext(), 1, 2, 3))
-          .isEqualTo(0.5);
+    Assertions.assertThat(filter.apply(mockRenderContext(), 1, 2.0, 3))
+          .isEqualTo(1.0 / 6);
   }
 
   @Test(expected = LiquidRenderingException.class)
@@ -70,8 +62,8 @@ public class Divided_ByTest {
 
     LFilter filter = getDefaultFilters().getFilter("divided_by");
 
-    assertThat(filter.doPostFilter(mockRenderContext(), 12L, 3L), is((Object) 4L));
-    assertThat(filter.doPostFilter(mockRenderContext(), 14L, 3L), is((Object) 4L));
+    assertThat(filter.doPostFilter(mockRenderContext(), 12L, 3L), is(4L));
+    assertThat(filter.doPostFilter(mockRenderContext(), 14L, 3L), is(4L));
     assertTrue(String.valueOf(filter.doPostFilter(mockRenderContext(), 14L, 3.0)).matches("4[,.]6{10,}7"));
 
     // see: applyTestInvalid3()

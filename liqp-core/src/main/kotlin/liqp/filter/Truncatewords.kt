@@ -19,9 +19,9 @@ class Truncatewords : LFilter() {
       val length = asInteger(params[0]) ?: return value
       val truncateString = params[1] ?: "..."
 
-      return {
-        if (length >= words.size) text
-        else words.joinToString(separator = " ",
+      return when {
+        length >= words.size -> text
+        else -> words.joinToString(separator = " ",
             limit = length,
             truncated = truncateString)
       }

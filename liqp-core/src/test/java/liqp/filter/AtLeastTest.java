@@ -3,7 +3,7 @@ package liqp.filter;
 import liqp.parameterized.LiquifyNoInputTest;
 
 public class AtLeastTest extends LiquifyNoInputTest {
-  public static Object[] testParams() {
+  public String[][] testParams() {
     return new String[][]{
 
     /*

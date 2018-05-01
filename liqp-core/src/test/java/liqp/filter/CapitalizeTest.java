@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class CapitalizeTest extends LiquifyNoInputTest {
 
-  public static Object[] testParams() {
+  public Object[] testParams() {
     return new String[][]{
           {"{{'a' | capitalize}}", "A"},
           {"{{'' | capitalize}}", ""},

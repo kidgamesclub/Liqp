@@ -37,14 +37,14 @@ public class MinusTest {
   public void applyTestInvalid1() {
     Assertions.assertThat(
           LiquidDefaults.getDefaultFilters().getFilter("minus").apply(Mocks.mockRenderContext(), 1))
-          .isEqualTo(1L);
+          .isEqualTo(1);
   }
 
   @Test
   public void applyTestInvalid2() {
     Assertions.assertThat(
           LiquidDefaults.getDefaultFilters().getFilter("minus").apply(Mocks.mockRenderContext(), 1, 2, 3))
-          .isEqualTo(-1L);
+          .isEqualTo(-4L);
   }
 
   /*

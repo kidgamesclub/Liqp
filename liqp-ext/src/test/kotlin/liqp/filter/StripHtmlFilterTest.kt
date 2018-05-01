@@ -3,7 +3,7 @@ package liqp.filter
 
 import liqp.LiquidParser
 import liqp.ext.filters.strings.StripHtmlFilter
-import liqp.withAssertions
+import liqp.assertThat
 import org.antlr.runtime.RecognitionException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -42,19 +42,19 @@ class StripHtmlFilterTest {
   fun applyOriginalTest() {
 
     val filter = StripHtmlFilter()
-    filter.withAssertions()
+    filter.assertThat()
         .filtering("<div>test</div>")
         .isEqualTo("test")
 
-    filter.withAssertions()
+    filter.assertThat()
         .filtering("<div id='test'>test</div>")
         .isEqualTo("test")
 
-    filter.withAssertions()
+    filter.assertThat()
         .filtering("<script type='text/javascript'>document.write('some stuff');\" + \"</script>")
         .isEqualTo("")
 
-    filter.withAssertions()
+    filter.assertThat()
         .filtering(null)
         .isEqualTo(null)
   }

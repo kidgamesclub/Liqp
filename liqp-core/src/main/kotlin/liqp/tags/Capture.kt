@@ -16,7 +16,7 @@ class Capture : LTag() {
     val block = nodes[1]
 
     // Capture causes variable to be saved "globally"
-    context[id] = block.render(context)
+    context[id] = block.execute(context)
 
     return ControlResult.NO_CONTENT
   }

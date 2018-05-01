@@ -3,6 +3,7 @@ package liqp
 import com.google.common.base.CaseFormat
 import liqp.filter.LFilter
 import liqp.tag.LTag
+import java.math.BigInteger
 
 val SNAKE_CONVERTER = CaseFormat.UPPER_CAMEL.converterTo(CaseFormat.LOWER_UNDERSCORE)
 
@@ -23,7 +24,7 @@ inline fun <reified T : Any> swallow(block: () -> T): T? {
   }
 }
 
-inline fun Long.neededBits(): Int {
+fun Long.neededBits(): Int {
   var value = this
   var count = 0
   while (value > 0) {
@@ -31,4 +32,30 @@ inline fun Long.neededBits(): Int {
     value = value shr 1
   }
   return count
+}
+
+fun Number.toNumber(): Number {
+  return when (this.isIntegral()) {
+    true -> this.toLong()
+    else -> this.toDouble()
+  }
+}
+
+fun Any?.isIntegral():Boolean {
+  return when (this) {
+    is Long -> true
+    is Int -> true
+    is BigInteger -> true
+    else-> false
+  }
+}
+
+fun Any?.canBeIntegral():Boolean {
+  return when (this) {
+    is Long -> true
+    is Int -> true
+    is BigInteger -> true
+    is Number-> toDouble() % 1.0 == 0.0
+    else -> false
+  }
 }

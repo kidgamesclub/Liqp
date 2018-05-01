@@ -43,7 +43,7 @@ data class BlockNode(override val children: List<LNode>) : LNode() {
       nonString == 1 && outputs.size == 1 -> outputs[0]
       else -> {
         val output = StringBuilder()
-        outputs.forEach { output.append(it).checkSize() }
+        outputs.filter{it !is ControlResult}.forEach { output.append(it).checkSize() }
         return output.toString()
       }
     }

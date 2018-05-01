@@ -9,7 +9,7 @@ import liqp.parameterized.LiquifyNoInputTest;
 import org.junit.Test;
 
 public class HTest extends LiquifyNoInputTest {
-  public static Object[] testParams() {
+  public Object[] testParams() {
     return new String[][]{
 
           {"{{ nil | h }}", ""},

@@ -1,5 +1,9 @@
 package liqp
 
+import liqp.ComparisonResult.EQUAL
+import liqp.ComparisonResult.GREATER
+import liqp.ComparisonResult.LESS
+
 interface InstanceFacts {
   fun isIterable(t: Any?): Boolean
   fun isEmpty(t: Any?): Boolean
@@ -10,7 +14,7 @@ interface InstanceFacts {
   fun asIterable(t: Any?): Iterable<Any>
   fun asString(t: Any?): String?
   fun asNumber(t: Any?): Number?
-  fun size(t:Any?):Int
+  fun size(t: Any?): Int
 }
 
 interface Truth {
@@ -28,10 +32,10 @@ interface Combiners {
   fun div(a: Any?, b: Any?): Any?
   fun mult(a: Any?, b: Any?): Any?
   fun subtract(a: Any?, b: Any?): Any?
-  fun range(from:Any?, to:Any?): Any?
-  fun min(a:Any?, b:Any?):Number?
-  fun max(a:Any?, b:Any?):Number?
-  fun contains(t:Any?):LogicResult
+  fun range(from: Any?, to: Any?): Any?
+  fun min(a: Any?, b: Any?): Number?
+  fun max(a: Any?, b: Any?): Number?
+  fun contains(t: Any?): LogicResult
 }
 
 enum class ComparisonResult {
@@ -41,17 +45,25 @@ enum class ComparisonResult {
   LESS,
   EQUAL;
 
-  fun also(check:()->ComparisonResult):ComparisonResult {
+  fun also(check: () -> ComparisonResult): ComparisonResult {
     return when (this) {
-      EQUAL-> check()
-      else-> this
+      EQUAL -> check()
+      else -> this
     }
   }
 
-  fun and(check:()->Boolean):ComparisonResult {
+  fun and(check: () -> Boolean): ComparisonResult {
     return when (this) {
-      EQUAL-> if(check()) EQUAL else GREATER
+      EQUAL -> if (check()) EQUAL else GREATER
       else -> this
+    }
+  }
+
+  fun toInt(): Int {
+    return when (this) {
+      GREATER -> 1
+      EQUAL -> 0
+      else -> -1
     }
   }
 }
@@ -74,11 +86,21 @@ enum class DynamicType {
   MAP
 }
 
+fun Int.toComparisonResult(): ComparisonResult {
+  return when (this) {
+    0 -> EQUAL
+    else -> {
+      if (this < 0) LESS else GREATER
+    }
+  }
+}
+
 interface LLogic : InstanceFacts, Truth, Comparisons, Combiners
 
 data class LiquidLogic(val types: InstanceFacts,
                        val truth: Truth,
                        val comparisons: Comparisons,
-                       val combiners: Combiners): LLogic, InstanceFacts by types,
+                       val combiners: Combiners) : LLogic, InstanceFacts by types,
     Truth by truth, Comparisons by comparisons, Combiners by combiners
+
 

@@ -1,7 +1,10 @@
 package liqp.filter;
 
+import junitparams.JUnitParamsRunner;
 import liqp.parameterized.LiquifyWithInputTest;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnitParamsRunner.class)
 public class RoundTest extends LiquifyWithInputTest {
 
   /*
@@ -13,7 +16,7 @@ public class RoundTest extends LiquifyWithInputTest {
         assert_template_result "4", "{{ price | round }}", 'price' => NumberLikeThing.new(4.3)
       end
   */
-  public static Object[] testParams() {
+  public Object[] testParams() {
     return new String[][]{
 
           {"{{ nil | round }}", "0", "{}"},

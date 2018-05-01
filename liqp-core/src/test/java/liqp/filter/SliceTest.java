@@ -3,8 +3,8 @@ package liqp.filter;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import liqp.Template;
 import liqp.LiquidParser;
+import liqp.Template;
 import org.junit.Test;
 
 public class SliceTest {
@@ -25,56 +25,50 @@ public class SliceTest {
           assert_equal 'oob', @filter.slice('foobar', '1', '3')
         end
     */
-    @Test
-    public void applyTest() {
 
-        String[][] tests = {
-                {"{{ 'foobar' | slice: 1, 3 }}", "oob", "{}"},
-                {"{{ 'foobar' | slice: 1, 1000 }}", "oobar", "{}"},
-                {"{{ 'foobar' | slice: 1, 0 }}", "", "{}"},
-                {"{{ 'foobar' | slice: 1, 1 }}", "o", "{}"},
-                {"{{ 'foobar' | slice: 3, 3 }}", "bar", "{}"},
-                {"{{ 'foobar' | slice: -2, 2 }}", "ar", "{}"},
-                {"{{ 'foobar' | slice: -2, 1000 }}", "ar", "{}"},
-                {"{{ 'foobar' | slice: -1 }}", "r", "{}"},
-                {"{{ nil | slice: 0 }}", "", "{}"},
-                {"{{ nil | slice: 5, 1000 }}", "", "{}"},
-                {"{{ 'foobar' | slice: 100, 10 }}", "", "{}"},
-                {"{{ 'foobar' | slice: 6 }}", "", "{}"},
-                {"{{ 'foobar' | slice: -100, 10 }}", "", "{}"},
-                {"{{ 'foobar' | slice: '1', '3' }}", "oob", "{}"},
-                {"{{ x | slice: 1 }}", "2", "{ \"x\": [1, 2, 3, 4, 5] }"},
-                {"{{ x | slice: 1, 3 }}", "234", "{ \"x\": [1, 2, 3, 4, 5] }"},
-                {"{{ x | slice: 1, 3000 }}", "2345", "{ \"x\": [1, 2, 3, 4, 5] }"},
-                {"{{ x | slice: -2, 2 }}", "45", "{ \"x\": [1, 2, 3, 4, 5] }"},
-        };
+  public static Object[] testParams() {
 
-        for (String[] test : tests) {
+    String[][] tests = {
+          {"{{ 'foobar' | slice: 1, 3 }}", "oob", "{}"},
+          {"{{ 'foobar' | slice: 1, 1000 }}", "oobar", "{}"},
+          {"{{ 'foobar' | slice: 1, 0 }}", "", "{}"},
+          {"{{ 'foobar' | slice: 1, 1 }}", "o", "{}"},
+          {"{{ 'foobar' | slice: 3, 3 }}", "bar", "{}"},
+          {"{{ 'foobar' | slice: -2, 2 }}", "ar", "{}"},
+          {"{{ 'foobar' | slice: -2, 1000 }}", "ar", "{}"},
+          {"{{ 'foobar' | slice: -1 }}", "r", "{}"},
+          {"{{ nil | slice: 0 }}", "", "{}"},
+          {"{{ nil | slice: 5, 1000 }}", "", "{}"},
+          {"{{ 'foobar' | slice: 100, 10 }}", "", "{}"},
+          {"{{ 'foobar' | slice: 6 }}", "", "{}"},
+          {"{{ 'foobar' | slice: -100, 10 }}", "", "{}"},
+          {"{{ 'foobar' | slice: '1', '3' }}", "oob", "{}"},
+          {"{{ x | slice: 1 }}", "2", "{ \"x\": [1, 2, 3, 4, 5] }"},
+          {"{{ x | slice: 1, 3 }}", "234", "{ \"x\": [1, 2, 3, 4, 5] }"},
+          {"{{ x | slice: 1, 3000 }}", "2345", "{ \"x\": [1, 2, 3, 4, 5] }"},
+          {"{{ x | slice: -2, 2 }}", "45", "{ \"x\": [1, 2, 3, 4, 5] }"},
+    };
 
-            Template template = LiquidParser.newInstance().parse(test[0]);
-            String rendered = String.valueOf(template.render(test[2]));
+    return tests;
+  }
 
-            assertThat(rendered, is(test[1]));
-        }
-    }
+  @Test(expected = RuntimeException.class)
+  public void noParamsThrowsException() {
+    LiquidParser.newInstance().parse("{{ 'mu' | slice }}").render();
+  }
 
-    @Test(expected = RuntimeException.class)
-    public void noParamsThrowsException() {
-        LiquidParser.newInstance().parse("{{ 'mu' | slice }}").render();
-    }
+  @Test(expected = RuntimeException.class)
+  public void noIntegerParamThrowsException() {
+    LiquidParser.newInstance().parse("{{ 'mu' | slice: false }}").render();
+  }
 
-    @Test(expected = RuntimeException.class)
-    public void noIntegerParamThrowsException() {
-        LiquidParser.newInstance().parse("{{ 'mu' | slice: false }}").render();
-    }
+  @Test(expected = RuntimeException.class)
+  public void noIntegersParamThrowsException() {
+    LiquidParser.newInstance().parse("{{ 'mu' | slice: 1, 3.1415 }}").render();
+  }
 
-    @Test(expected = RuntimeException.class)
-    public void noIntegersParamThrowsException() {
-        LiquidParser.newInstance().parse("{{ 'mu' | slice: 1, 3.1415 }}").render();
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void threeParamsThrowsException() {
-        LiquidParser.newInstance().parse("{{ 'mu' | slice: 1, 2, 3 }}").render();
-    }
+  @Test(expected = RuntimeException.class)
+  public void threeParamsThrowsException() {
+    LiquidParser.newInstance().parse("{{ 'mu' | slice: 1, 2, 3 }}").render();
+  }
 }

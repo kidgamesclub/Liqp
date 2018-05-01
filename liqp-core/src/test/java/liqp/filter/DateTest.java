@@ -34,7 +34,7 @@ public class DateTest extends LiquifyNoInputTest {
     return new SimpleDateFormat(pattern, Locale.ENGLISH);
   }
 
-  public static Object[] testParams() {
+  public Object[] testParams() {
     return new String[][] {
           {"{{" + seconds + " | date: 'mu'}}", "mu"},
           {"{{" + seconds + " | date: '%'}}", "%"},

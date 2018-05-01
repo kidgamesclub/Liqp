@@ -102,7 +102,8 @@ class For : LTag() {
 
   private fun renderRange(id: String, context: LContext, vararg tokens: LNode): Any {
 
-    val builder = StringBuilder()
+    val results = mutableListOf<Any?>()
+
 
     // attributes start from index 5
     val attributes = getAttributes(5, context, *tokens)
@@ -148,13 +149,9 @@ class For : LTag() {
           }
 
           if (context.isIterable(value)) {
-            val arr = context.asIterable(value)
-
-            for (obj in arr) {
-              builder.append(obj.toString())
-            }
+            results.addAll(context.asIterable(value))
           } else {
-            builder.append(context.asString(value))
+            results.add(value)
           }
         }
 
@@ -173,7 +170,7 @@ class For : LTag() {
       /* just ignore incorrect expressions */
     }
 
-    return builder.toString()
+    return results
   }
 
   private fun getAttributes(fromIndex: Int, context: LContext, vararg tokens: LNode): Map<String, Int> {

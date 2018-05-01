@@ -1,7 +1,11 @@
 package liqp.filter
 
 import liqp.context.LContext
+import liqp.exceptions.LiquidRenderingException
+import liqp.lookup.isNullAccessor
 import kotlin.collections.Map
+
+typealias Sorter = Comparator<Any?>
 
 class Sort : LFilter() {
 
@@ -16,58 +20,25 @@ class Sort : LFilter() {
     val v = value ?: return null
 
     context.run {
-      val asList: MutableList<Any> = asIterable(value).toMutableList()
+      val list: List<Any> = asIterable(value).toList()
       val property = asString(params[0])
 
-      val list:MutableList<Comparable<Any>> = asComparableList(asList, property)
-      list.sort()
-      return list
-    }
-  }
-
-  private fun asComparableList(array: MutableList<Any>, property: String?): MutableList<Comparable<Any>> {
-    val list = mutableListOf<Comparable<Any>>()
-
-    for (obj in array) {
-
-      if (obj is kotlin.collections.Map<*, *> && property != null) {
-        val asMap = obj as kotlin.collections.Map<String, Comparable<Any>>
-        list.add(SortableMap(asMap.toMutableMap(), property) as Comparable<Any>)
-      } else {
-        list.add(obj as Comparable<Any>)
-      }
-    }
-
-    return list
-  }
-
-  internal class SortableMap(val map: MutableMap<String, Comparable<Any>>, val property: String) :
-      MutableMap<String, Comparable<Any>> by map,
-      Comparable<SortableMap> {
-
-    init {
-      putAll(map)
-    }
-
-    override fun compareTo(that: SortableMap): Int {
-      val thisValue = this[property]
-      val thatValue = that[property]
-
-      if (thisValue == null || thatValue == null) {
-        throw RuntimeException("Liquid error: comparison of Hash with Hash failed")
+      val sorter:Sorter = when (property) {
+        null-> Comparator {a:Any?, b:Any?-> context.compareTo(a, b).toInt() }
+        else-> Comparator{a:Any?, b:Any?->
+          val aVal = a
+              ?.run{context.getAccessor(a, property)}
+              ?.apply { if(this.isNullAccessor()) throw LiquidRenderingException("Property $property not found for ${a!!::class.java}") }
+              ?.invoke(a)
+          val bVal = b
+              ?.run{context.getAccessor(b, property)}
+              ?.apply { if(this.isNullAccessor()) throw LiquidRenderingException("Property $property not found for ${a!!::class.java}") }
+              ?.invoke(b)
+          context.compareTo(aVal, bVal).toInt()
+        }
       }
 
-      return thisValue.compareTo(thatValue)
-    }
-
-    override fun toString(): String {
-      val builder = StringBuilder()
-
-      for ((key, value) in this) {
-        builder.append(key).append(value)
-      }
-
-      return builder.toString()
+      return list.sortedWith(sorter)
     }
   }
 }
