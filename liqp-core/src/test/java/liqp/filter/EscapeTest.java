@@ -39,6 +39,6 @@ public class EscapeTest extends LiquifyNoInputTest {
 
     LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("escape");
 
-    assertThat(filter.doPostFilter(Mocks.mockRenderContext(), "<strong>"), is((Object) "&lt;strong&gt;"));
+    assertThat(filter.onFilterAction(Mocks.mockRenderContext(), "<strong>"), is((Object) "&lt;strong&gt;"));
   }
 }

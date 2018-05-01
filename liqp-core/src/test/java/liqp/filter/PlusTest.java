@@ -35,13 +35,13 @@ public class PlusTest {
 
   @Test
   public void applyTestInvalid1() {
-    Assertions.assertThat(LiquidDefaults.getDefaultFilters().getFilter("plus").apply(Mocks.mockRenderContext(), 1))
+    Assertions.assertThat(LiquidDefaults.getDefaultFilters().getFilter("plus").onFilterAction(Mocks.mockRenderContext(), 1))
           .isEqualTo(1);
   }
 
   @Test
   public void applyTestInvalid2() {
-    Assertions.assertThat(LiquidDefaults.getDefaultFilters().getFilter("plus").apply(Mocks.mockRenderContext(), 1, 2,
+    Assertions.assertThat(LiquidDefaults.getDefaultFilters().getFilter("plus").onFilterAction(Mocks.mockRenderContext(), 1, 2,
           3)).isEqualTo(6L);
   }
 

@@ -44,7 +44,7 @@ public class JoinTest {
 
         LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("join");
 
-        assertThat(filter.doPostFilter(Mocks.mockRenderContext(), new Integer[]{1,2,3,4}), is((Object)"1 2 3 4"));
-        assertThat(filter.doPostFilter(Mocks.mockRenderContext(), new Integer[]{1,2,3,4}, " - "), is((Object)"1 - 2 - 3 - 4"));
+        assertThat(filter.onFilterAction(Mocks.mockRenderContext(), new Integer[]{1,2,3,4}), is((Object)"1 2 3 4"));
+        assertThat(filter.onFilterAction(Mocks.mockRenderContext(), new Integer[]{1,2,3,4}, " - "), is((Object)"1 - 2 - 3 - 4"));
     }
 }

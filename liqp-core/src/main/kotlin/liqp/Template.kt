@@ -10,14 +10,14 @@ import org.antlr.v4.runtime.tree.ParseTree
 class Template(override val rootNode: LNode,
                private val parseTree: ParseTree?,
                private val parser: LiquidParser,
-               private val engine: LiquidRenderer = LiquidRenderer.newInstance(parser.toRenderSettings())) : LTemplate {
+               override val renderer: LiquidRenderer = LiquidRenderer.newInstance(parser.toRenderSettings())) : LTemplate {
 
-  override fun render(inputData: Any?): String = engine.render(this, inputData)
-  override fun render(key: String, value: Any?): String = engine.render(this, key to value)
-  override fun render(pair: Pair<String, Any?>): String = engine.render(this, pair)
-  override fun render(): String = engine.render(this)
+  override fun render(inputData: Any?): String = renderer.render(this, inputData)
+  override fun render(key: String, value: Any?): String = renderer.render(this, key to value)
+  override fun render(pair: Pair<String, Any?>): String = renderer.render(this, pair)
+  override fun render(): String = renderer.render(this)
 
-  fun render(key: String, value: Any?, engine: LiquidRenderer = this.engine): String =
+  fun render(key: String, value: Any?, engine: LiquidRenderer = this.renderer): String =
       engine.render(this, key to value)
 
   /**

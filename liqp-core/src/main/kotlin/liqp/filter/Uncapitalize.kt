@@ -7,7 +7,7 @@ import liqp.context.LContext
  */
 class Uncapitalize : LFilter() {
 
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
     return context.asString(value)?.decapitalize() ?: value
   }
 }

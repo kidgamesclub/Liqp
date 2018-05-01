@@ -8,7 +8,7 @@ import liqp.context.LContext
  */
 class Concat : LFilter() {
 
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
     context.run {
       return asIterable(value).toList() + asIterable(params[0]).toList()
     }

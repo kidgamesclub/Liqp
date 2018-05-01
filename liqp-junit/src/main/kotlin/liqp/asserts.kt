@@ -36,27 +36,33 @@ private fun createTemplateAssert(createTestTemplate: CreateTestTemplate, data: A
                                  configureRenderer: RenderConfigurer = { this }): TemplateRenderAssert {
   val template: LTemplate
   try {
-    val factory = MutableParseSettings(defaultParseSettings).configureParser().toParser()
-    template = factory.createTestTemplate()
+    val parser = MutableParseSettings(defaultParseSettings).configureParser().toParser()
+    template = parser.createTestTemplate()
   } catch (e: Exception) {
     return TemplateRenderAssert(error = e)
   }
 
-  return renderAssert(template, LiquidRenderer.newInstance(configureRenderer), data)
+  return executeTemplateAndAssert(template, LiquidRenderer.newInstance(configureRenderer), data)
 }
 
-fun renderAssert(template: LTemplate, engine: LiquidRenderer, data: Any? = null): TemplateRenderAssert {
+fun executeTemplateAndAssert(template: LTemplate, engine: LRenderer, data: Any? = null): TemplateRenderAssert {
   return try {
-    val results = engine.execute(template, data)
-    TemplateRenderAssert(template, results)
+    val context = engine.createRenderContext(data)
+    val results = engine.executeWithContext(template, context)
+    TemplateRenderAssert(template = template, renderResult = results, context=context)
   } catch (e: Exception) {
     TemplateRenderAssert(template = template, error = e)
   }
 }
 
 fun LTemplate.rendering(data: Any? = null, renderer: MutableRenderSettings.() -> Unit = {}): TemplateRenderAssert {
-  return renderAssert(this, LiquidRenderer.newInstance(renderer), data)
+  return executeTemplateAndAssert(this, LiquidRenderer.newInstance(renderer), data)
 }
+
+fun LTemplate.assertThat(): TemplateAssert {
+  return TemplateAssert(this, this.renderer)
+}
+
 
 fun LFilter.assertThat(): FilterAssert {
   return FilterAssert(this)

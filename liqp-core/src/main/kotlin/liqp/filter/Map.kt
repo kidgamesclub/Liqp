@@ -1,7 +1,6 @@
 package liqp.filter
 
 import liqp.context.LContext
-import java.util.*
 
 class Map : LFilter() {
 
@@ -10,7 +9,7 @@ class Map : LFilter() {
    *
    * map/collect on a given property
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
 
     val v = value ?: return null
     val key:Any? = params[0]

@@ -38,7 +38,7 @@ public class SortTest extends LiquifyNoInputTest {
   public void applyOriginalTest() {
 
     LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("sort");
-    final Object rendered = filter.doPostFilter(mockRenderContext(),
+    final Object rendered = filter.onFilterAction(mockRenderContext(),
           new Integer[]{4, 3, 2, 1});
     Assertions.assertThat(rendered).asList().containsExactly(1, 2, 3, 4);
   }
@@ -47,7 +47,7 @@ public class SortTest extends LiquifyNoInputTest {
   public void applySortWithProperty() {
 
     LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("sort");
-    final List<Sortage> rendered = (List<Sortage>) filter.doPostFilter(mockRenderContext(),
+    final List<Sortage> rendered = (List<Sortage>) filter.onFilterAction(mockRenderContext(),
           ImmutableList.of(
                 new Sortage(4, "Four"),
                 new Sortage(2, "Two"),
@@ -67,7 +67,7 @@ public class SortTest extends LiquifyNoInputTest {
   public void applySortWithMissingProperty() {
     Assertions.assertThatCode(() -> {
       LFilter filter = new Sort();
-      final List<Sortage> rendered = (List<Sortage>) filter.doPostFilter(mockRenderContext(),
+      final List<Sortage> rendered = (List<Sortage>) filter.onFilterAction(mockRenderContext(),
             ImmutableList.of(
                   new Sortage(4, "Four"),
                   new Sortage(2, "Two"),

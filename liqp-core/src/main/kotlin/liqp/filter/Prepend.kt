@@ -9,7 +9,7 @@ class Prepend : LFilter() {
    *
    * add one string to another
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
     context.run {
       val content = asString(value) ?: ""
       val prepend: String = asString(params[0]) ?: return content

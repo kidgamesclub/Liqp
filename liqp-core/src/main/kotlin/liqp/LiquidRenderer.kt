@@ -4,6 +4,7 @@ import liqp.config.MutableRenderSettings
 import liqp.config.RenderSettings
 import liqp.config.RenderSettingsSpec
 import liqp.context.LContext
+import liqp.exceptions.LiquidRenderingException
 import liqp.lookup.PropertyAccessors
 import liqp.node.LTemplate
 import liqp.nodes.RenderContext
@@ -19,7 +20,7 @@ data class LiquidRenderer
 @JvmOverloads constructor(val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
                           val parser: LParser = LiquidParser(),
                           override val settings: RenderSettings = defaultRenderSettings,
-                          val logic:LLogic = strictLogic):
+                          val logic: LLogic = strictLogic) :
     RenderSettingsSpec by settings,
     LRenderer {
 
@@ -83,9 +84,25 @@ data class LiquidRenderer
 
   override fun execute(template: LTemplate, inputData: Any?): Any? = executeTemplate(template, createRenderContext(inputData))
   override fun executeWithContext(template: LTemplate, context: LContext): Any? = executeTemplate(template, context)
-  override fun render(template: LTemplate, context: LContext): String = executeTemplate(template, context).toNonNullString()
-  override fun render(template: LTemplate, inputData: Any?): String = executeTemplate(template, createRenderContext(inputData)).toNonNullString()
+  override fun render(template: LTemplate, context: LContext): String = executeTemplate(template, context).liquify(context)
+
+  override fun render(template: LTemplate, inputData: Any?): String {
+    val context = createRenderContext(inputData)
+    return executeTemplate(template, context).liquify(context)
+  }
+
   override fun getAccessor(prototype: Any, prop: String): Getter<Any> = accessors.getAccessor(prototype, prop)
+}
+
+fun String.checkSize(maxSize: Int): String {
+  if (this.length > maxSize) {
+    throw LiquidRenderingException("rendered content too large: $maxSize")
+  }
+  return this
+}
+
+private fun Any?.liquify(context: LContext): String {
+  return context.asString(this)?.checkSize(context.maxSizeRenderedString) ?: ""
 }
 
 

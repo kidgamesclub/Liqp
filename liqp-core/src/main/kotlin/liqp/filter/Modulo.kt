@@ -11,7 +11,7 @@ class Modulo : LFilter() {
    *
    * modulus
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
     val num = context.asNumber(value)?.toDouble() ?: 0.0
     val param1: Any? = params[0]
 

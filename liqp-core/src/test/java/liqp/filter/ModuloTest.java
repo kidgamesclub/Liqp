@@ -29,14 +29,14 @@ public class ModuloTest extends LiquifyNoInputTest {
   @Test(expected = LiquidRenderingException.class)
   public void applyTestInvalid1() {
     Assertions.assertThat(
-          getDefaultFilters().getFilter("modulo").apply(Mocks.mockRenderContext(), 1))
+          getDefaultFilters().getFilter("modulo").onFilterAction(Mocks.mockRenderContext(), 1))
           .isEqualTo(1L);
   }
 
   @Test
   public void applyTestInvalid2() {
     Assertions.assertThat(
-          getDefaultFilters().getFilter("modulo").apply(Mocks.mockRenderContext(), 4, 2, 3))
+          getDefaultFilters().getFilter("modulo").onFilterAction(Mocks.mockRenderContext(), 4, 2, 3))
           .isEqualTo(0L);
   }
 

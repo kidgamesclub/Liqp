@@ -9,7 +9,7 @@ class NewlineToBr : LFilter() {
    *
    * Add <br /> tags in front of all newlines in input string
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
 
     return context.asString(value)
         ?.replace("[\n]".toRegex(), "<br />\n")

@@ -9,9 +9,9 @@ class H : LFilter() {
    *
    * Alias for: escape
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
     val escape:Escape by context.filters
-    return escape.onFilterAction(params, value, context)
+    return escape.onFilterAction(context, value, params)
   }
 }
 

@@ -6,7 +6,6 @@ import liqp.ComparisonResult.LESS
 import liqp.ComparisonResult.NOOP
 import liqp.ComparisonResult.NULL
 import liqp.exceptions.LiquidRenderingException
-import java.util.*
 import kotlin.math.absoluteValue
 
 val strictLogic = object : LLogic {
@@ -139,6 +138,7 @@ val strictLogic = object : LLogic {
     val aDbl = asDouble(a)
     val bDbl = asDouble(b)
     if (aDbl != null && bDbl != null) {
+
       return Math.max(aDbl, +bDbl)
     }
 
@@ -206,13 +206,21 @@ val strictLogic = object : LLogic {
   }
 
   override fun asString(t: Any?): String? {
-    return when (t) {
-      null -> null
-      is String -> t
-      is Array<*> -> Arrays.toString(t)
+    return when {
+      t == null -> null
+      t is String -> t
+      isIterable(t) -> {
+        val builder = StringBuilder()
+        asIterable(t)
+            .filter { it !is ControlResult }
+            .map { asString(it) }
+            .forEach { r -> builder.append(r) }
+        builder.toString()
+      }
       else -> t.toString()
     }
   }
+
 
   override fun asDouble(t: Any?): Double? {
     return when (t) {

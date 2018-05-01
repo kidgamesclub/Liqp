@@ -9,7 +9,7 @@ class Truncatewords : LFilter() {
    *
    * Truncate a string down to x words
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
 
     val v = value ?: return null
     context.run {
@@ -21,9 +21,7 @@ class Truncatewords : LFilter() {
 
       return when {
         length >= words.size -> text
-        else -> words.joinToString(separator = " ",
-            limit = length,
-            truncated = truncateString)
+        else -> words.subList(0, length).joinToString(separator = " ") + truncateString
       }
     }
   }

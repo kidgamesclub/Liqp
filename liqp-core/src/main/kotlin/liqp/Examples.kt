@@ -3,9 +3,7 @@ package liqp
 import java.util.Collections.singletonMap
 
 import com.google.common.collect.ImmutableList
-import com.google.common.collect.ImmutableMap
 import liqp.context.LContext
-import liqp.filter.FilterChainPointer
 import liqp.filter.FilterParams
 import liqp.filter.LFilter
 
@@ -45,7 +43,7 @@ object Examples {
     // first register your custom filter
     val ctx = LiquidParser.newInstance()
         .withFilters(object : LFilter("b") {
-          override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+          override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
             // create a string from the  value
             val text = context.asString(value)
 
@@ -65,7 +63,7 @@ object Examples {
     // first register your custom filter
     val ctx = LiquidParser.newInstance()
         .withFilters(object : LFilter("repeat") {
-          override fun apply(context: LContext, value: Any?, vararg params: Any?): Any? {
+          override fun onFilterAction(context: LContext, value: Any?, vararg params: Any?): Any? {
             context.run {
 
               // check if an optional parameter is provided
@@ -87,9 +85,9 @@ object Examples {
 
     val ctx = LiquidParser.newInstance()
         .withFilters(object : LFilter("sum") {
-          override fun onFilterAction(params: FilterParams,
+          override fun onFilterAction(context: LContext,
                                       value: Any?,
-                                      context: LContext): Any? {
+                                      params: FilterParams): Any? {
 
             val numbers = context.asIterable(value)
             var sum = 0.0

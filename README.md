@@ -190,7 +190,7 @@ System.out.println(rendered);
     bbbbb
 */
 ```
-You can use an array (or list) as well, and can also return a numerical value:
+You can use an iterated (or list) as well, and can also return a numerical value:
 
 ```java
 Filter.registerFilter(new Filter("sum"){

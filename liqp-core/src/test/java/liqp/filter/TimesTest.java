@@ -61,8 +61,8 @@ public class TimesTest extends LiquifyNoInputTest {
 
     LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("times");
 
-    assertThat(filter.doPostFilter(Mocks.mockRenderContext(), 3L, 4L), is((Object) 12L));
+    assertThat(filter.onFilterAction(Mocks.mockRenderContext(), 3L, 4L), is((Object) 12L));
     // assert_template_result "0", "{{ 'foo' | times:4 }}" // see: applyTest()
-    assertTrue(String.valueOf(filter.doPostFilter(Mocks.mockRenderContext(), 2.1, 3L)).matches("6[.,]30{10,}1"));
+    assertTrue(String.valueOf(filter.onFilterAction(Mocks.mockRenderContext(), 2.1, 3L)).matches("6[.,]30{10,}1"));
   }
 }

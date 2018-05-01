@@ -1,7 +1,10 @@
 package liqp.tags;
 
+import junitparams.JUnitParamsRunner;
 import liqp.parameterized.LiquifyNoInputTest;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnitParamsRunner.class)
 public class AssignTests extends LiquifyNoInputTest {
 
   public Object[] testParams() {

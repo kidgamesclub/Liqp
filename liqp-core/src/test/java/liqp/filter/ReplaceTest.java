@@ -58,6 +58,6 @@ public class ReplaceTest {
   public void applyOriginalTest() {
 
     LFilter filter = getDefaultFilters().getFilter("replace");
-    assertThat(filter.onFilterAction(FilterParams.of("a", "b"), "a a a a", mockRenderContext()), is("b b b b"));
+    assertThat(filter.onFilterAction(mockRenderContext(), "a a a a", FilterParams.of("a", "b")), is("b b b b"));
   }
 }

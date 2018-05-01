@@ -1,7 +1,6 @@
 package liqp.ext.filters.strings
 
 import liqp.context.LContext
-import liqp.filter.FilterChainPointer
 import liqp.filter.FilterParams
 import liqp.filter.LFilter
 import javax.swing.text.MaskFormatter
@@ -11,7 +10,7 @@ import javax.swing.text.MaskFormatter
  */
 class USPhoneNumberFormatFilter : LFilter() {
 
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
 
     var rtn: String?
     if (value != null) {

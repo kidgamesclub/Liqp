@@ -9,7 +9,7 @@ class Escape : LFilter() {
    *
    * escape a string
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
     val str = context.asString(value)
     return str?.replace("&", "&amp;")
         ?.replace("<", "&lt;")

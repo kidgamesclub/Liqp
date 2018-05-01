@@ -4,11 +4,14 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
+import junitparams.JUnitParamsRunner;
 import liqp.LiquidDefaults;
 import liqp.Mocks;
 import liqp.parameterized.LiquifyNoInputTest;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnitParamsRunner.class)
 public class DowncaseTest extends LiquifyNoInputTest {
 
   public Object[] testParams() {
@@ -31,7 +34,7 @@ public class DowncaseTest extends LiquifyNoInputTest {
   public void applyOriginalTest() {
 
     final LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("downcase");
-    assertThat(filter.doPostFilter(Mocks.mockRenderContext(), "Testing"), is((Object) "testing"));
-    assertThat(filter.doPostFilter(Mocks.mockRenderContext(), null), nullValue());
+    assertThat(filter.onFilterAction(Mocks.mockRenderContext(), "Testing"), is((Object) "testing"));
+    assertThat(filter.onFilterAction(Mocks.mockRenderContext(), null), nullValue());
   }
 }

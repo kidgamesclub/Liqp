@@ -53,7 +53,7 @@ public class MapTest {
 
         LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("map");
 
-        List<Object> rendered = (List<Object>) filter.doPostFilter(Mocks.mockRenderContext(),
+        List<Object> rendered = (List<Object>) filter.onFilterAction(Mocks.mockRenderContext(),
               new HashMap[]{
                       new HashMap<String, Integer>(){{ put("a", 1); }},
                       new HashMap<String, Integer>(){{ put("a", 2); }},

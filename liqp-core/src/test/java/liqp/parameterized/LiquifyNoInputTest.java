@@ -23,6 +23,7 @@ public abstract class LiquifyNoInputTest {
 
 
   @Parameters(method = "testParams")
+  @Test
   public void run(String templateString, String expectedResult) {
     LTemplate template = LiquidParser.newInstance().parse(templateString);
     String rendered = String.valueOf(template.render(input));

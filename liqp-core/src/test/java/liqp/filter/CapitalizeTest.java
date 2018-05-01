@@ -4,11 +4,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-import liqp.LiquidDefaults;
+import junitparams.JUnitParamsRunner;
 import liqp.Mocks;
 import liqp.parameterized.LiquifyNoInputTest;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnitParamsRunner.class)
 public class CapitalizeTest extends LiquifyNoInputTest {
 
   public Object[] testParams() {
@@ -25,9 +27,9 @@ public class CapitalizeTest extends LiquifyNoInputTest {
   @Test
   public void applyOriginalTest() {
 
-    LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("capitalize");
+    LFilter filter = new Capitalize();
 
-    assertThat(filter.doPostFilter(Mocks.mockRenderContext(), "testing"), is((Object) "Testing"));
-    assertThat(filter.doPostFilter(Mocks.mockRenderContext(), null), nullValue());
+    assertThat(filter.onFilterAction(Mocks.mockRenderContext(), "testing"), is("Testing"));
+    assertThat(filter.onFilterAction(Mocks.mockRenderContext(), null), nullValue());
   }
 }

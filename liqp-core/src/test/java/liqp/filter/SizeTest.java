@@ -46,8 +46,8 @@ public class SizeTest {
   public void applyOriginalTest() {
 
     final LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("size");
-    assertThat(filter.doPostFilter(mockRenderContext(), new Integer[]{1, 2, 3}), is((Object) 3));
-    assertThat(filter.doPostFilter(mockRenderContext(), new Object[0]), is((Object) 0));
-    assertThat(filter.doPostFilter(mockRenderContext(), null), is((Object) 0));
+    assertThat(filter.onFilterAction(mockRenderContext(), new Integer[]{1, 2, 3}), is((Object) 3));
+    assertThat(filter.onFilterAction(mockRenderContext(), new Object[0]), is((Object) 0));
+    assertThat(filter.onFilterAction(mockRenderContext(), null), is((Object) 0));
   }
 }

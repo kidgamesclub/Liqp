@@ -3,6 +3,7 @@ package liqp.tags
 import liqp.ControlResult
 import liqp.LogicResult.TRUE
 import liqp.context.LContext
+import liqp.find
 import liqp.node.LNode
 import liqp.nodes.BlockNode
 import liqp.tag.LTag
@@ -13,14 +14,17 @@ class Case : LTag() {
    * Block tag, its the standard case...when block
    */
   override fun render(context: LContext, vararg nodes: LNode): Any? {
+    val iterator = nodes.iterator()
+    if (!iterator.hasNext()) {
+      return ControlResult.NO_CONTENT
+    }
     //        ^(CASE condition           var
     //            ^(WHEN term+ block)    1,2,3  b1
     //            ^(ELSE block?))               b2
-    val condition = nodes[0].render(context)
+    val subject = iterator.next().render(context)
 
-    val iterator = nodes.iterator()
     while (iterator.hasNext()) {
-      val node = iterator.next()
+      var node = iterator.next()
       if (!iterator.hasNext() && node is BlockNode) {
         // this must be the trailing (optional) else-block
         return node.render(context)
@@ -31,8 +35,11 @@ class Case : LTag() {
         // and stop when we encounter a BlockNode
         while (node !is BlockNode && iterator.hasNext()) {
           val whenExpressionValue = node.render(context)
-          if (context.areEqual(condition, whenExpressionValue) == TRUE) {
-            return node.render(context)
+          if (context.areEqual(subject, whenExpressionValue) == TRUE) {
+            val nextBlockNode = iterator.find {it is BlockNode}
+            return nextBlockNode.render(context)
+          } else {
+            node = iterator.next()
           }
         }
       }

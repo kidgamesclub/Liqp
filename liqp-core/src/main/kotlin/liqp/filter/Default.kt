@@ -5,7 +5,7 @@ import liqp.isFalsy
 
 class Default : LFilter() {
 
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
     return when {
       value.isFalsy()-> params[0]
       else-> value

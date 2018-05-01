@@ -48,6 +48,6 @@ public class RemoveTest {
 
         LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("remove");
 
-        assertThat(filter.doPostFilter(Mocks.mockRenderContext(), "a a a a", "a"), is((Object)"   "));
+        assertThat(filter.onFilterAction(Mocks.mockRenderContext(), "a a a a", "a"), is((Object)"   "));
     }
 }

@@ -4,13 +4,16 @@ import static liqp.LiquidParser.newInstance;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import junitparams.JUnitParamsRunner;
 import liqp.LiquidDefaults;
 import liqp.Mocks;
 import liqp.parameterized.LiquifyNoInputTest;
 import org.antlr.runtime.RecognitionException;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnitParamsRunner.class)
 public class ReplaceFirstTest extends LiquifyNoInputTest {
 
   public Object[] testParams() {
@@ -46,7 +49,7 @@ public class ReplaceFirstTest extends LiquifyNoInputTest {
 
     LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("replace_first");
 
-    assertThat(filter.doPostFilter(Mocks.mockRenderContext(), "a a a a", "a", "b"), is((Object) "b a a a"));
+    assertThat(filter.onFilterAction(Mocks.mockRenderContext(), "a a a a", "a", "b"), is((Object) "b a a a"));
     assertThat(newInstance().parse("{{ 'a a a a' | replace_first: 'a', 'b' }}").render(), is("b a a a"));
   }
 }

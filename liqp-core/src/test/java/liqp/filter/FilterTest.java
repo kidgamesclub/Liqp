@@ -21,7 +21,8 @@ public class FilterTest {
 
       @Nullable
       @Override
-      public Object onFilterAction(@NotNull FilterParams params, @Nullable Object value, @NotNull LContext context) {
+      public Object onFilterAction(@NotNull LContext context, @Nullable Object value,
+                                   @NotNull FilterParams params) {
         String s = context.asString(value).trim();
         return "<b>" + s.substring(1, s.length() - 1) + "</b>";
       }

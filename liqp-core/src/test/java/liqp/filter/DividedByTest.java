@@ -6,12 +6,15 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import junitparams.JUnitParamsRunner;
 import liqp.exceptions.LiquidRenderingException;
 import liqp.parameterized.LiquifyNoInputTest;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class Divided_ByTest extends LiquifyNoInputTest {
+@RunWith(JUnitParamsRunner.class)
+public class DividedByTest extends LiquifyNoInputTest {
 
   public Object[] testParams() {
     String[][] tests = {
@@ -29,20 +32,20 @@ public class Divided_ByTest extends LiquifyNoInputTest {
   public void applyTestInvalid1() {
     Assertions.assertThat(getDefaultFilters()
           .getFilter("divided_by")
-          .apply(mockRenderContext(), 1))
+          .onFilterAction(mockRenderContext(), 1))
           .isEqualTo(1);
   }
 
   @Test
   public void applyTestInvalid2() {
     final LFilter filter = getDefaultFilters().getFilter("divided_by");
-    Assertions.assertThat(filter.apply(mockRenderContext(), 1, 2.0, 3))
+    Assertions.assertThat(filter.onFilterAction(mockRenderContext(), 1, 2.0, 3))
           .isEqualTo(1.0 / 6);
   }
 
   @Test(expected = LiquidRenderingException.class)
   public void applyTestInvalid3() {
-    getDefaultFilters().getFilter("divided_by").apply(mockRenderContext(), 15L, 0L);
+    getDefaultFilters().getFilter("divided_by").onFilterAction(mockRenderContext(), 15L, 0L);
   }
 
   /*
@@ -62,9 +65,9 @@ public class Divided_ByTest extends LiquifyNoInputTest {
 
     LFilter filter = getDefaultFilters().getFilter("divided_by");
 
-    assertThat(filter.doPostFilter(mockRenderContext(), 12L, 3L), is(4L));
-    assertThat(filter.doPostFilter(mockRenderContext(), 14L, 3L), is(4L));
-    assertTrue(String.valueOf(filter.doPostFilter(mockRenderContext(), 14L, 3.0)).matches("4[,.]6{10,}7"));
+    assertThat(filter.onFilterAction(mockRenderContext(), 12L, 3L), is(4L));
+    assertThat(filter.onFilterAction(mockRenderContext(), 14L, 3L), is(4L));
+    assertTrue(String.valueOf(filter.onFilterAction(mockRenderContext(), 14L, 3.0)).matches("4[,.]6{10,}7"));
 
     // see: applyTestInvalid3()
     // assert_template_result "Liquid error: divided by 0", "{{ 5 | divided_by:0 }}"

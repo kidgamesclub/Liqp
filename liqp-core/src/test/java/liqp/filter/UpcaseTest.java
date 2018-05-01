@@ -1,48 +1,43 @@
 package liqp.filter;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+import junitparams.JUnitParamsRunner;
 import liqp.LiquidDefaults;
 import liqp.Mocks;
-import liqp.Template;
-import liqp.LiquidParser;
-import org.antlr.runtime.RecognitionException;
+import liqp.parameterized.LiquifyNoInputTest;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class UpcaseTest {
+@RunWith(JUnitParamsRunner.class)
+public class UpcaseTest extends LiquifyNoInputTest {
+  @Override
+  public Object[] testParams() {
 
-    @Test
-    public void applyTest() throws RecognitionException {
+    String[][] tests = {
+          {"{{ '' | upcase }}", ""},
+          {"{{ nil | upcase }}", ""},
+          {"{{ 'Abc' | upcase }}", "ABC"},
+          {"{{ 'abc' | upcase }}", "ABC"},
+    };
 
-        String[][] tests = {
-                {"{{ '' | upcase }}", ""},
-                {"{{ nil | upcase }}", ""},
-                {"{{ 'Abc' | upcase }}", "ABC"},
-                {"{{ 'abc' | upcase }}", "ABC"},
-        };
+    return tests;
+  }
 
-        for (String[] test : tests) {
+  /*
+   * def test_upcase
+   *   assert_equal 'TESTING', @filter.upcase("Testing")
+   *   assert_equal '', @filter.upcase(nil)
+   * end
+   */
+  @Test
+  public void applyOriginalTest() {
 
-            Template template = LiquidParser.newInstance().parse(test[0]);
-            String rendered = String.valueOf(template.render());
+    final LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("upcase");
 
-            assertThat(rendered, is(test[1]));
-        }
-    }
-
-    /*
-     * def test_upcase
-     *   assert_equal 'TESTING', @filter.upcase("Testing")
-     *   assert_equal '', @filter.upcase(nil)
-     * end
-     */
-    @Test
-    public void applyOriginalTest() {
-
-        final LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("upcase");
-
-        assertThat(filter.doPostFilter(Mocks.mockRenderContext(), "Testing"), is((Object)"TESTING"));
-        assertThat(filter.doPostFilter(Mocks.mockRenderContext(), null), is((Object)""));
-    }
+    assertThat(filter.onFilterAction(Mocks.mockRenderContext(), "Testing"), is("TESTING"));
+    assertThat(filter.onFilterAction(Mocks.mockRenderContext(), null), nullValue());
+  }
 }

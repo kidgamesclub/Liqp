@@ -1,7 +1,6 @@
 package liqp.ext.filters.javatime
 
 import liqp.context.LContext
-import liqp.filter.FilterChainPointer
 import liqp.filter.FilterParams
 import liqp.filter.LFilter
 import java.time.LocalDate
@@ -17,7 +16,7 @@ import java.util.*
 abstract class DateTimeFormatFilter(name: String,
                                     private val style: FormatStyle) : LFilter(name) {
 
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
     val locale = context.locale
     var ret = value
 

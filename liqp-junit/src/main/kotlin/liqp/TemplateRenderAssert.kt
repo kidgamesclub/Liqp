@@ -1,12 +1,19 @@
 package liqp
 
+import liqp.context.LContext
 import liqp.node.LTemplate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
+import org.assertj.core.api.ListAssert
 
 class TemplateRenderAssert(val template: LTemplate? = null,
                            private val renderResult: Any? = null,
+                           private val context: LContext? = null,
                            val error: Exception? = null) {
+
+  private val renderedString: String? by lazy {
+    context!!.asString(renderResult)
+  }
 
   fun isNotError(): TemplateRenderAssert {
     assertThat(error).isNull()
@@ -32,7 +39,7 @@ class TemplateRenderAssert(val template: LTemplate? = null,
     return this
   }
 
-  fun isTruncated(limit:Int=-1):TemplateRenderAssert {
+  fun isTruncated(limit: Int = -1): TemplateRenderAssert {
     isNotError().isNotNullResult().isString()
 
     assertThat(renderResult as String).describedAs("Should have been truncated").endsWith("...")
@@ -60,20 +67,30 @@ class TemplateRenderAssert(val template: LTemplate? = null,
   }
 
   fun isEqualTo(value: Any): TemplateRenderAssert {
+    isNotError()
     when (value) {
-      is String -> assertThat(renderResult.toNonNullString()).isEqualTo(value)
+      is String -> assertThat(renderedString).isEqualTo(value)
       else -> assertThat(renderResult).isNotNull.isEqualTo(value)
     }
     return this
   }
 
   fun contains(value: String): TemplateRenderAssert {
-    assertThat(renderResult.toNonNullString()).contains(value)
+    assertThat(renderedString).contains(value)
     return this
   }
 
   fun doesNotContain(value: String): TemplateRenderAssert {
-    assertThat(renderResult.toNonNullString()).doesNotContain(value)
+    assertThat(renderedString).doesNotContain(value)
     return this
+  }
+
+  fun asList(): ListAssert<Any?> {
+    isNotError().isNotNullResult()
+    return assertThat(renderResult as List<Any?>)
+  }
+
+  fun containsExactly(vararg elements: Any) {
+    asList().containsExactly(*elements)
   }
 }

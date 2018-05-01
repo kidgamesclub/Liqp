@@ -9,7 +9,7 @@ class Truncate : LFilter() {
      *
      * Truncate a string down to x characters
      */
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
     context.run {
       val v = value ?: return null;
       val text = context.asString(v)!!

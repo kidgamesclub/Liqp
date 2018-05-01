@@ -3,11 +3,14 @@ package liqp.filter;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import junitparams.JUnitParamsRunner;
 import liqp.LiquidDefaults;
 import liqp.Mocks;
 import liqp.parameterized.LiquifyNoInputTest;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnitParamsRunner.class)
 public class HTest extends LiquifyNoInputTest {
   public Object[] testParams() {
     return new String[][]{
@@ -35,6 +38,6 @@ public class HTest extends LiquifyNoInputTest {
 
     LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("h");
 
-    assertThat(filter.doPostFilter(Mocks.mockRenderContext(), "<strong>"), is((Object) "&lt;strong&gt;"));
+    assertThat(filter.onFilterAction(Mocks.mockRenderContext(), "<strong>"), is((Object) "&lt;strong&gt;"));
   }
 }

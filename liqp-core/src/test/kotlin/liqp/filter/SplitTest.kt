@@ -1,10 +1,13 @@
 package liqp.filter
 
+import junitparams.JUnitParamsRunner
 import liqp.parameterized.LiquifyNoInputTest
 import liqp.assertThat
 import org.junit.Test
+import org.junit.runner.RunWith
 import java.util.regex.Pattern
 
+@RunWith(JUnitParamsRunner::class)
 class SplitTest : LiquifyNoInputTest() {
 
   override fun testParams() = arrayOf(

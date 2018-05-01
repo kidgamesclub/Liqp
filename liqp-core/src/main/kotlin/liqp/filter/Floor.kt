@@ -4,7 +4,7 @@ import liqp.context.LContext
 
 class Floor : LFilter() {
 
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
     return Math.floor(context.asDouble(value) ?: 0.0).toLong()
   }
 }

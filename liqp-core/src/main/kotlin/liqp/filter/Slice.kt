@@ -9,7 +9,7 @@ typealias Slicer = (Int, Int) -> Any
  */
 class Slice : LFilter() {
 
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
 
     context.run {
       val p1: Int = params[0] ?: throw IllegalArgumentException("liquid error: Invalid integer")

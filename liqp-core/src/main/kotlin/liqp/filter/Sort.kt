@@ -3,7 +3,6 @@ package liqp.filter
 import liqp.context.LContext
 import liqp.exceptions.LiquidRenderingException
 import liqp.lookup.isNullAccessor
-import kotlin.collections.Map
 
 typealias Sorter = Comparator<Any?>
 
@@ -15,7 +14,7 @@ class Sort : LFilter() {
    * Sort elements of the array provide optional property with
    * which to sort an array of hashes or drops
    */
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
 
     val v = value ?: return null
 

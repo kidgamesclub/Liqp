@@ -1,9 +1,13 @@
 package liqp.filter;
 
+import junitparams.JUnitParamsRunner;
 import liqp.parameterized.LiquifyNoInputTest;
+import liqp.parameterized.LiquifyWithInputTest;
+import org.junit.runner.RunWith;
 
-public class AtLeastTest extends LiquifyNoInputTest {
-  public String[][] testParams() {
+@RunWith(JUnitParamsRunner.class)
+public class AtLeastTest extends LiquifyWithInputTest {
+  public Object[] testParams() {
     return new String[][]{
 
     /*

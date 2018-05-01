@@ -12,8 +12,8 @@ class Split : LFilter() {
    *
    * E.g. {{ "a~b" | split:'~' | first }} #=> 'a'
    */
-  override fun onFilterAction(params: FilterParams, value: Any?,
-                              context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?,
+                              params: FilterParams): Any? {
 
     val original = context.asString(value)
     val delimiter = context.asString(params[0]) ?: ""

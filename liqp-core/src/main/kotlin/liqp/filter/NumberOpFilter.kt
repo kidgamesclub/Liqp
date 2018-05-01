@@ -5,7 +5,7 @@ import liqp.context.LContext
 typealias NumberOp = LContext.(Any?, Any?) -> Any?
 
 abstract class NumberOpFilter(private val op: NumberOp) : LFilter() {
-  override fun onFilterAction(params: FilterParams, value: Any?, context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
     var result = value
     for (param in params) {
       result = context.op(result, param)

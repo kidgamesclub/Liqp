@@ -50,8 +50,8 @@ class Date : LFilter() {
    * %Z - Time zone name
    * %% - Literal ``%'' character
    */
-  override fun onFilterAction(params: FilterParams, value: Any?,
-                              context: LContext): Any? {
+  override fun onFilterAction(context: LContext, value: Any?,
+                              params: FilterParams): Any? {
 
     context.run {
       val zone = context.zoneId

@@ -35,7 +35,7 @@ public class LastTest {
 
         LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("last");
 
-        assertThat(filter.doPostFilter(Mocks.mockRenderContext(), new Integer[]{1, 2, 3}), is(3));
-        assertThat(filter.doPostFilter(Mocks.mockRenderContext(), new Integer[]{}), is((Object)null));
+        assertThat(filter.onFilterAction(Mocks.mockRenderContext(), new Integer[]{1, 2, 3}), is(3));
+        assertThat(filter.onFilterAction(Mocks.mockRenderContext(), new Integer[]{}), is((Object)null));
     }
 }

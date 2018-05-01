@@ -37,7 +37,7 @@ public class FirstTest {
     final First filter = new First();
 
     final FilterParams params = new ResolvedFilterParams();
-    assertThat(filter.onFilterAction(params, ImmutableList.of(1, 2, 3), mockRenderContext()), is(1));
-    assertThat(filter.onFilterAction(params, new Integer[]{}, mockRenderContext()), is((Object) null));
+    assertThat(filter.onFilterAction(mockRenderContext(), ImmutableList.of(1, 2, 3), params), is(1));
+    assertThat(filter.onFilterAction(mockRenderContext(), new Integer[]{}, params), is((Object) null));
   }
 }

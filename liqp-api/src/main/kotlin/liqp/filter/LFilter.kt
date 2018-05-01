@@ -30,9 +30,9 @@ abstract class LFilter(name: String? = null) {
                         context: LContext) {
   }
 
-  open fun onFilterAction(params: FilterParams,
+  open fun onFilterAction(context: LContext,
                           value: Any?,
-                          context: LContext): Any? {
+                          params: FilterParams): Any? {
     return ControlResult.NO_CONTENT
   }
 
@@ -41,12 +41,13 @@ abstract class LFilter(name: String? = null) {
                       context: LContext) {
   }
 
-  open fun doPostFilter(context:LContext, value:Any?, vararg params:Any?):Any? {
-    return onFilterAction(ResolvedFilterParams(*params), value, context)
-  }
-
-  open fun apply(context:LContext, value:Any?, vararg params:Any?):Any? {
-    return onFilterAction(ResolvedFilterParams(*params), value, context)
+  open fun onFilterAction(context: LContext, value: Any?, vararg params: Any?): Any? {
+    val params:FilterParams = when {
+      params.isEmpty() -> emptyParams
+      params.size == 1 && params[0] is FilterParams -> params[0] as FilterParams
+      else -> ResolvedFilterParams(*params)
+    }
+    return onFilterAction(context, value, params)
   }
 
   fun get(i: Int, params: FilterParams): Any? {

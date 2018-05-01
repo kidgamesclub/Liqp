@@ -48,7 +48,7 @@ public class RemoveFirstTest {
 
     LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("remove_first");
 
-    assertThat(filter.doPostFilter(mockRenderContext(), "a a a a", "a "), is((Object) "a a a"));
+    assertThat(filter.onFilterAction(mockRenderContext(), "a a a a", "a "), is((Object) "a a a"));
     assertThat(LiquidParser.newInstance().parse("{{ 'a a a a' | remove_first: 'a ' }}")
           .render(), is((Object) "a a " +
           "a"));

@@ -1,6 +1,5 @@
 package liqp.filter;
 
-import static java.util.Collections.emptyMap;
 import static liqp.Mocks.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -9,16 +8,13 @@ import static org.mockito.Mockito.mock;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import junitparams.JUnitParamsRunner;
 import liqp.LiquidDefaults;
-import liqp.Template;
-import liqp.LiquidRenderer;
-import liqp.LiquidParser;
-import liqp.context.LContext;
-import liqp.nodes.RenderContext;
 import liqp.parameterized.LiquifyNoInputTest;
-import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnitParamsRunner.class)
 public class DateTest extends LiquifyNoInputTest {
 
   private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
@@ -90,28 +86,28 @@ public class DateTest extends LiquifyNoInputTest {
   public void applyOriginalTest() throws Exception {
 
     final LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("date");
-    assertThat(filter.doPostFilter(mockRenderContext(), seconds("2006-05-05 10:00:00"), "%B"), is( "May"));
-    assertThat(filter.doPostFilter(mockRenderContext(), seconds("2006-06-05 10:00:00"), "%B"), is( "June"));
-    assertThat(filter.doPostFilter(mockRenderContext(), seconds("2006-07-05 10:00:00"), "%B"), is( "July"));
+    assertThat(filter.onFilterAction(mockRenderContext(), seconds("2006-05-05 10:00:00"), "%B"), is( "May"));
+    assertThat(filter.onFilterAction(mockRenderContext(), seconds("2006-06-05 10:00:00"), "%B"), is( "June"));
+    assertThat(filter.onFilterAction(mockRenderContext(), seconds("2006-07-05 10:00:00"), "%B"), is( "July"));
 
-    assertThat(filter.doPostFilter(mockRenderContext(), "2006-05-05 10:00:00", "%B"), is("May"));
-    assertThat(filter.doPostFilter(mockRenderContext(), "2006-06-05 10:00:00", "%B"), is( "June"));
-    assertThat(filter.doPostFilter(mockRenderContext(), "2006-07-05 10:00:00", "%B"), is( "July"));
+    assertThat(filter.onFilterAction(mockRenderContext(), "2006-05-05 10:00:00", "%B"), is("May"));
+    assertThat(filter.onFilterAction(mockRenderContext(), "2006-06-05 10:00:00", "%B"), is( "June"));
+    assertThat(filter.onFilterAction(mockRenderContext(), "2006-07-05 10:00:00", "%B"), is( "July"));
 
-    assertThat(filter.doPostFilter(mockRenderContext(), "2006-07-05 10:00:00", ""), is( "Wed Jul 05 10:00:00 2006"));
-    assertThat(filter.doPostFilter(mockRenderContext(), "2006-07-05 10:00:00", (String) null), is("Wed Jul 05 " +
+    assertThat(filter.onFilterAction(mockRenderContext(), "2006-07-05 10:00:00", ""), is( "Wed Jul 05 10:00:00 2006"));
+    assertThat(filter.onFilterAction(mockRenderContext(), "2006-07-05 10:00:00", (String) null), is("Wed Jul 05 " +
           "10:00:00 2006"));
 
-    assertThat(filter.doPostFilter(mockRenderContext(), "2006-07-05 10:00:00", "%m/%d/%Y"), is( "07/05/2006"));
+    assertThat(filter.onFilterAction(mockRenderContext(), "2006-07-05 10:00:00", "%m/%d/%Y"), is( "07/05/2006"));
 
-    assertThat(filter.doPostFilter(mockRenderContext(), "2006-07-05 10:00", "%m/%d/%Y"), is( "07/05/2006"));
-    assertThat(filter.doPostFilter(mockRenderContext(), "2006-07-05", "%m/%d/%Y"), is( "07/05/2006"));
+    assertThat(filter.onFilterAction(mockRenderContext(), "2006-07-05 10:00", "%m/%d/%Y"), is( "07/05/2006"));
+    assertThat(filter.onFilterAction(mockRenderContext(), "2006-07-05", "%m/%d/%Y"), is( "07/05/2006"));
 
-    assertThat(filter.doPostFilter(mockRenderContext(), "Fri Jul 16 01:00:00 2004", "%m/%d/%Y"), is( "07/16/2004"));
+    assertThat(filter.onFilterAction(mockRenderContext(), "Fri Jul 16 01:00:00 2004", "%m/%d/%Y"), is( "07/16/2004"));
 
-    assertThat(filter.doPostFilter(mockRenderContext(), null, "%B"), nullValue());
+    assertThat(filter.onFilterAction(mockRenderContext(), null, "%B"), nullValue());
 
-    assertThat(filter.doPostFilter(mockRenderContext(), 1152098955, "%m/%d/%Y"), is( "07/05/2006"));
-    assertThat(filter.doPostFilter(mockRenderContext(), "1152098955", "%m/%d/%Y"), is( "07/05/2006"));
+    assertThat(filter.onFilterAction(mockRenderContext(), 1152098955, "%m/%d/%Y"), is( "07/05/2006"));
+    assertThat(filter.onFilterAction(mockRenderContext(), "1152098955", "%m/%d/%Y"), is( "07/05/2006"));
   }
 }
