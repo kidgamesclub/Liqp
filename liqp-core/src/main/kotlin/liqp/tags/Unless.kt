@@ -12,16 +12,15 @@ class Unless : LTag() {
    */
   override fun render(context: LContext, vararg nodes: LNode): Any? {
 
-    var i = 0
-    while (i < nodes.size - 1) {
-
-      val exprNodeValue = nodes[i].render(context)
-      val blockNode = nodes[i + 1]
+    val iterator = nodes.iterator()
+    while (iterator.hasNext()) {
+      val exprNodeValue = iterator.next().render(context)
+      val blockNode = iterator.next()
 
       if (context.isFalse(exprNodeValue)) {
         return blockNode.render(context)
       }
-      i += 2
+
     }
 
     return ControlResult.NO_CONTENT

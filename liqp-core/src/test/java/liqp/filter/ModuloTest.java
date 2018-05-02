@@ -21,9 +21,9 @@ public class ModuloTest extends LiquifyNoInputTest {
     String[][] tests = {
           {"{{ 8 | modulo: 2 }}", "0"},
           {"{{ 8 | modulo: 3 }}", "2"},
-          {"{{ \"8\" | modulo: 3. }}", "2"},
+          {"{{ \"8\" | modulo: 3. }}", "2.0"},
           {"{{ 8 | modulo: 3.0 }}", "2.0"},
-          {"{{ 8 | modulo: '2.0' }}", "0"},
+          {"{{ 8 | modulo: '2.0' }}", "0.0"},
     };
 
     return tests;

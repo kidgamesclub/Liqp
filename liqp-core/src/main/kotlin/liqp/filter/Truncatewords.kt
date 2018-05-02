@@ -10,10 +10,7 @@ class Truncatewords : LFilter() {
    * Truncate a string down to x words
    */
   override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
-
-    val v = value ?: return null
     context.run {
-
       val text = asString(value) ?: return null
       val words = text.split(' ').filter { it.isNotBlank() }
       val length = asInteger(params[0]) ?: return value

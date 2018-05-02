@@ -5,7 +5,7 @@ import liqp.node.LNode
 import liqp.context.LContext
 import liqp.exceptions.LiquidRenderingException
 
-const val INITIAL_DECR_VALUE:Long = -1
+const val INITIAL_DECR_VALUE:Long = 0
 /**
     decrement
 
@@ -43,16 +43,16 @@ class Decrement : LTag() {
       }
 
       val varExists = context.get<Boolean>(variableExistsFlag)
-      if (varExists == null || varExists == false) {
+      if (varExists != true) {
         // Set the 'variable' to the next value, only if it was flagged as not being defined in the outer scope
-        //todo:ericm This seems really odd - a weird side effect
+        //todo:ericm Shouldn't this variable shadow the outer scope variable?
         context[variable] = nextValue
       }
 
       // Store the nextValue
       context[decrementVar] = nextValue
 
-      return value
+      return nextValue
     }
   }
 }

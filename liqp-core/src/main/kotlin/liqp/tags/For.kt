@@ -1,15 +1,13 @@
 package liqp.tags
 
-import liqp.ControlResult.BREAK
+import liqp.ControlResult
+import liqp.ControlResult.*
 import liqp.context.LContext
 import liqp.exceptions.ExceededMaxIterationsException
 import liqp.exceptions.LiquidRenderingException
 import liqp.node.LNode
 import liqp.safeSubList
 import liqp.tag.LTag
-
-private const val OFFSET = "offset"
-private const val CONTINUE = "continue"
 
 class For : LTag() {
 
@@ -90,7 +88,7 @@ class For : LTag() {
       i++
     }
 
-    context.setRoot(CONTINUE, continueIndex + 1)
+    context.setRoot(CONTINUE.name, continueIndex + 1)
     return results
   }
 
@@ -149,7 +147,7 @@ class For : LTag() {
         n++
       }
 
-      context[CONTINUE] = continueIndex + 1
+      context[CONTINUE.name] = continueIndex + 1
     } catch (e: ExceededMaxIterationsException) {
       throw e
     } catch (e: Exception) {
@@ -180,6 +178,4 @@ class For : LTag() {
 
     return attributes
   }
-
-
 }

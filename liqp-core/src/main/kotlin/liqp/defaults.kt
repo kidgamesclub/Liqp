@@ -64,6 +64,7 @@ import liqp.tags.Ifchanged
 import liqp.tags.Increment
 import liqp.tags.Raw
 import liqp.tags.Tablerow
+import liqp.tags.Unless
 
 val defaultFilters: Filters by lazy {
   // Register all standard filter.
@@ -132,7 +133,7 @@ val defaultTags = Tags(ImmutableList.of(
     Include(),
     Increment(),
     Raw(),
-    Tablerow()))
+    Tablerow(), Unless()))
 
 class LiquidDefaults {
   companion object {

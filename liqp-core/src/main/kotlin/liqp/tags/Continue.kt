@@ -1,7 +1,6 @@
 package liqp.tags
 
-import liqp.ControlResult
-import liqp.ControlResult.*
+import liqp.ControlResult.CONTINUE
 import liqp.context.LContext
 import liqp.node.LNode
 import liqp.tag.LTag

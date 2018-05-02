@@ -14,7 +14,9 @@ class Truncate : LFilter() {
       val v = value ?: return null;
       val text = context.asString(v)!!
 
-      val length = params[0] ?: 50
+      val p1:Number = params[0] ?: 50
+      val length = p1.toInt()
+
       val truncateString = context.asString(params[1]) ?: "..."
 
       if (truncateString.length >= length) {

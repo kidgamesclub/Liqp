@@ -36,6 +36,8 @@ val strictLogic = object : LLogic {
       a is CharSequence && b is CharSequence -> a.toString().compareTo(b.toString()).toComparisonResult()
       isIterable(a) && isIterable(b) -> size(a).compareNumbers(size(b)).and { a == b }
       a is Map<*, *> && b is Map<*, *> -> a.size.compareNumbers(b.size).and { a == b }
+      // If same type
+      a is Comparable<*> && a::class.isInstance(b)-> (a as Comparable<Any>).compareTo(b).toComparisonResult()
       else -> (a == b).asComparison()
     }
   }
@@ -75,20 +77,13 @@ val strictLogic = object : LLogic {
   }
 
   override fun min(a: Any?, b: Any?): Number? {
-    //Numbers
-    val aLong = asLong(a)
-    val bLong = asLong(b)
-    if (aLong != null && bLong != null) {
-      return Math.min(aLong, bLong)
+    val numA = asNumber(a)
+    val numB = asNumber(b)
+    if (numA == null || numB == null) {
+      return null
     }
 
-    val aDbl = asDouble(a)
-    val bDbl = asDouble(b)
-    if (aDbl != null && bDbl != null) {
-      return Math.min(aDbl, +bDbl)
-    }
-
-    return null
+    return if (numA.toDouble() <= numB.toDouble()) numA else numB
   }
 
   override fun div(a: Any?, b: Any?): Any? {
@@ -128,21 +123,13 @@ val strictLogic = object : LLogic {
 
   override fun max(a: Any?, b: Any?): Number? {
 
-    //Numbers
-    val aLong = asLong(a)
-    val bLong = asLong(b)
-    if (aLong != null && bLong != null) {
-      return Math.max(aLong, bLong)
+    val numA = asNumber(a)
+    val numB = asNumber(b)
+    if (numA == null || numB == null) {
+      return null
     }
 
-    val aDbl = asDouble(a)
-    val bDbl = asDouble(b)
-    if (aDbl != null && bDbl != null) {
-
-      return Math.max(aDbl, +bDbl)
-    }
-
-    return null
+    return if (numA.toDouble() >= numB.toDouble()) numA else numB
   }
 
   override fun subtract(a: Any?, b: Any?): Any? {
@@ -189,7 +176,6 @@ val strictLogic = object : LLogic {
       is Double-> if(t.isIntegral()) t.toLong() else null
       is Long -> t
       is Int -> t.toLong()
-      is Boolean -> if (t) 1 else 0
       is String -> t.toLongOrNull()
       else -> null
     }
@@ -208,6 +194,7 @@ val strictLogic = object : LLogic {
   override fun asString(t: Any?): String? {
     return when {
       t == null -> null
+      t is ControlResult-> null
       t is String -> t
       isIterable(t) -> {
         val builder = StringBuilder()
@@ -221,7 +208,6 @@ val strictLogic = object : LLogic {
     }
   }
 
-
   override fun asDouble(t: Any?): Double? {
     return when (t) {
       null -> 0.0
@@ -234,10 +220,16 @@ val strictLogic = object : LLogic {
 
   override fun asNumber(t: Any?): Number? {
     return when (t) {
-      null -> 0.0
-      is Number -> t
-      is Boolean -> if (t) 1 else 0
-      is String -> t.toDoubleOrNull()
+      is Long->t
+      is Double->t
+      is Short->t.toLong()
+      is Int-> t.toInt()
+      is Float-> t.toDouble()
+      is Byte-> t.toLong()
+      is Char-> t.toLong()
+      is Number -> if(t.isIntegral()) t.toLong() else t.toDouble()
+      is Boolean -> if (t) 1L else 0L
+      is CharSequence -> t.toString().toNumberOrNull()
       else -> null
     }
   }
@@ -264,7 +256,7 @@ val strictLogic = object : LLogic {
   }
 }
 
-private inline fun Number.compareNumbers(num: Number): ComparisonResult {
+private fun Number.compareNumbers(num: Number): ComparisonResult {
   val delta = this.toDouble() - num.toDouble()
   return when {
     delta.absoluteValue < 0.00000000001 -> EQUAL
@@ -274,6 +266,6 @@ private inline fun Number.compareNumbers(num: Number): ComparisonResult {
   }
 }
 
-private inline fun Boolean.asComparison(): ComparisonResult {
-  return if (this) EQUAL else GREATER
+private fun Boolean.asComparison(): ComparisonResult {
+  return if (this) EQUAL else NOOP
 }

@@ -14,7 +14,8 @@ public class DefaultTest extends LiquifyWithInputTest {
         end
     */
 
-  public static Object[] testParams() {
+  @Override
+  public Object[] testParams() {
     return new String[][]{
           {"{{ a | default: b }}", "foo", "{ \"a\": \"foo\", \"b\": \"bar\" }"},
           {"{{ a | default: b }}", "bar", "{ \"a\": null, \"b\": \"bar\" }"},

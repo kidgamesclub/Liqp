@@ -30,7 +30,7 @@ interface LContext : LLogic, PropertyContainer, ParseSettingsSpec, RenderSetting
 
   operator fun set(varName: String, value: Any?)
   operator fun <T:Any> get(propName: String): T?
-  operator fun <T:Any> get(propName: String, supplier:()->T): T?
+  operator fun <T:Any> get(propName: String, supplier:()->T): T
   operator fun <T:Any> getValue(ctx: LContext, prop: KProperty<*>): T?
 
   fun startLoop(length: Int, name: String? = null)

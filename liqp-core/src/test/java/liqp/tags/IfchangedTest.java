@@ -1,28 +1,29 @@
 package liqp.tags;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
 import junitparams.JUnitParamsRunner;
-import liqp.Template;
-import liqp.LiquidParser;
-import liqp.node.LTemplate;
-import liqp.parameterized.LiquifyNoInputTest;
-import org.junit.Test;
+import liqp.parameterized.LiquifyWithInputTest;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitParamsRunner.class)
-public class IfchangedTest extends LiquifyNoInputTest {
+public class IfchangedTest extends LiquifyWithInputTest {
   @Override
   public Object[] testParams() {
-        String[][] tests = {
-                {"{%for item in array%}{%ifchanged%}{{item}}{% endifchanged %}{%endfor%}", "{ \"array\": [1, 1] }", "1"},
-                {"{%for item in array%}{%ifchanged%}{{item}}{% endifchanged %}{%endfor%}", "{ \"array\": [1, 1, 2, 2, 3, 3] }", "123"},
-                {"{%for item in array%}{%ifchanged%}{{item}}{% endifchanged %}{%endfor%}", "{ \"array\": [1, 1, 1, 1] }", "1"},
-                {"{%for item in array%}{%ifchanged%}{{item}}{% endifchanged %}{%endfor%}", "{ \"array\": [] }", ""},
-                {"{%for item in array%}{%ifchanged%}{{item}}{% endifchanged %}{%endfor%}", "{}", ""}
-        };
-
-        return tests;
-    }
+    return new String[][]{
+          {"{%for item in array%}{%ifchanged%}{{item}}{% endifchanged %}{%endfor%}",
+                "1",
+                "{ \"array\": [1, 1] }"},
+          {"{%for item in array%}{%ifchanged%}{{item}}{% endifchanged %}{%endfor%}",
+                "123",
+                "{ \"array\": [1, 1, 2, 2, 3, 3] }"},
+          {"{%for item in array%}{%ifchanged%}{{item}}{% endifchanged %}{%endfor%}",
+                "1",
+                "{ \"array\": [1, 1, 1, 1] }"},
+          {"{%for item in array%}{%ifchanged%}{{item}}{% endifchanged %}{%endfor%}",
+                "",
+                "{ \"array\": [] }"},
+          {"{%for item in array%}{%ifchanged%}{{item}}{% endifchanged %}{%endfor%}",
+                "",
+                "{}"}
+    };
+  }
 }

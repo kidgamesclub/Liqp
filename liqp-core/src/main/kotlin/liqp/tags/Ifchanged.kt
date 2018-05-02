@@ -39,7 +39,7 @@ class Ifchanged : LTag() {
       context[TEMP_SET_KEY] = alreadySeen
     } else {
       // Retrieve the Set that keeps track of all the unique values
-      alreadySeen = context[TEMP_SET_KEY] ?: mutableSetOf()
+      alreadySeen = context[TEMP_SET_KEY]!!
     }
 
     val rendered = nodes[0].render(context)

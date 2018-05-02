@@ -1,9 +1,6 @@
 package liqp.filter;
 
-import liqp.LiquidParser;
-import liqp.Template;
 import liqp.parameterized.LiquifyWithInputTest;
-import org.junit.Test;
 
 public class ConcatTest extends LiquifyWithInputTest {
 
@@ -15,7 +12,8 @@ public class ConcatTest extends LiquifyWithInputTest {
         end
     */
 
-  public static Object[] testParams() {
+  @Override
+  public Object[] testParams() {
     return new String[][]{
           {"{{ a | concat: b }}", "1234", "{ \"a\": [1, 2], \"b\": [3, 4], \"c\": \"FOO\" }"},
           {"{{ a | concat: b }}", "12X", "{ \"a\": [1, 2], \"b\": [\"X\"], \"c\": \"FOO\" }"},
@@ -25,5 +23,4 @@ public class ConcatTest extends LiquifyWithInputTest {
           {"{{ a | concat: c }}", "12FOO", "{ \"a\": [1, 2], \"b\": [3, 4], \"c\": \"FOO\" }"},
     };
   }
-
 }

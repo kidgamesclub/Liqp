@@ -1,7 +1,6 @@
 package liqp.tags
 
 import junitparams.JUnitParamsRunner
-import liqp.ControlResult
 import liqp.LiquidParser
 import liqp.assertThat
 import liqp.parameterized.LiquifyNoInputTest
@@ -541,30 +540,44 @@ public class ForTest : LiquifyNoInputTest("{\"array\" : [1,2,3,4,5,6,7,8,9,10], 
    * end
    */
   @Test
-  @Throws(RecognitionException::class)
   fun forWithContinueTest() {
 
     var assigns = "{ \"array\": { \"items\":[1,2,3,4,5] } }"
 
     var markup = "{% for i in array.items %}{% continue %}{% endfor %}"
     var expected = ""
-    assertThat(LiquidParser.newInstance().parse(markup).render(assigns), `is`(expected))
+    LiquidParser.newInstance().parse(markup)
+        .assertThat()
+        .rendering(assigns)
+        .isEqualTo(expected)
 
     markup = "{% for i in array.items %}{{ i }}{% continue %}{% endfor %}"
     expected = "12345"
-    assertThat(LiquidParser.newInstance().parse(markup).render(assigns), `is`(expected))
+    LiquidParser.newInstance().parse(markup)
+        .assertThat()
+        .rendering(assigns)
+        .isEqualTo(expected)
 
     markup = "{% for i in array.items %}{% continue %}{{ i }}{% endfor %}"
     expected = ""
-    assertThat(LiquidParser.newInstance().parse(markup).render(assigns), `is`(expected))
+    LiquidParser.newInstance().parse(markup)
+        .assertThat()
+        .rendering(assigns)
+        .isEqualTo(expected)
 
     markup = "{% for i in array.items %}{% if i > 3 %}{% continue %}{% endif %}{{ i }}{% endfor %}"
     expected = "123"
-    assertThat(LiquidParser.newInstance().parse(markup).render(assigns), `is`(expected))
+    LiquidParser.newInstance().parse(markup)
+        .assertThat()
+        .rendering(assigns)
+        .isEqualTo(expected)
 
     markup = "{% for i in array.items %}{% if i == 3 %}{% continue %}{% else %}{{ i }}{% endif %}{% endfor %}"
     expected = "1245"
-    assertThat(LiquidParser.newInstance().parse(markup).render(assigns), `is`(expected))
+    LiquidParser.newInstance().parse(markup)
+        .assertThat()
+        .rendering(assigns)
+        .isEqualTo(expected)
 
     assigns = "{ \"array\":[[1,2],[3,4],[5,6]] }"
 
@@ -577,13 +590,19 @@ public class ForTest : LiquifyNoInputTest("{\"array\" : [1,2,3,4,5,6,7,8,9,10], 
         "{% endfor %}" +
         "{% endfor %}"
     expected = "23456"
-    assertThat(LiquidParser.newInstance().parse(markup).render(assigns), `is`(expected))
+    LiquidParser.newInstance().parse(markup)
+        .assertThat()
+        .rendering(assigns)
+        .isEqualTo(expected)
 
     assigns = "{ \"array\": { \"items\":[1,2,3,4,5] } }"
 
     markup = "{% for i in array.items %}{% if i == 9999 %}{% continue %}{% endif %}{{ i }}{% endfor %}"
     expected = "12345"
-    assertThat(LiquidParser.newInstance().parse(markup).render(assigns), `is`(expected))
+    LiquidParser.newInstance().parse(markup)
+        .assertThat()
+        .rendering(assigns)
+        .isEqualTo(expected)
   }
 
   /*

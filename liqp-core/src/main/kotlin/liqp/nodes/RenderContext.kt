@@ -52,7 +52,7 @@ data class RenderContext
   override var zoneId: ZoneId by delegated(ZoneId.systemDefault())
   private val stack: Deque<RenderFrame> by lazy { ArrayDeque<RenderFrame>() }
 
-  val inputData: PropertyContainer by lazy {
+  private val inputData: PropertyContainer by lazy {
     when (rawInputData) {
       is String -> rawInputData.parseJSON()::get
       is HasProperties -> { prop -> rawInputData.get(prop) }
@@ -157,7 +157,7 @@ data class RenderContext
     }
   }
 
-  override operator fun <T:Any> get(propName: String, supplier: () -> T): T? {
+  override operator fun <T:Any> get(propName: String, supplier: () -> T): T {
     return current[propName, supplier] as T
   }
 
