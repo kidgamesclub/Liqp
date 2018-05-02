@@ -85,7 +85,7 @@ class AlphanumComparator : Comparator<String> {
         result = thisChunkLength - thatChunk.length
         // If equal, the first different number counts.
         if (result == 0) {
-          for (i in 0..thisChunkLength - 1) {
+          for (i in 0 until thisChunkLength) {
             result = thisChunk[i] - thatChunk[i]
             if (result != 0) {
               return result

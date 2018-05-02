@@ -11,8 +11,7 @@ class SortNatural : LFilter() {
         return value
       }
       return asIterable(value)
-          .map(Any::toString)
-          .sortAlphaNumeric()
+          .sortedBy{context.asString(it)?.toLowerCase()}
     }
   }
 }

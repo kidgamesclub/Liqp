@@ -4,13 +4,16 @@ import static liqp.LiquidDefaults.getDefaultFilters;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import junitparams.JUnitParamsRunner;
 import liqp.LiquidParser;
 import liqp.Mocks;
 import liqp.exceptions.LiquidRenderingException;
 import liqp.parameterized.LiquifyNoInputTest;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnitParamsRunner.class)
 public class ModuloTest extends LiquifyNoInputTest {
 
   public Object[] testParams() {
