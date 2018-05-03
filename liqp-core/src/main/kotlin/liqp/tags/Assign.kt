@@ -4,8 +4,7 @@ import liqp.ControlResult
 import liqp.context.LContext
 import liqp.filter.FilterChain
 import liqp.filter.FilterInstance
-import liqp.filter.FilterParams
-import liqp.filter.ResolvableFilterParams
+import liqp.params.ResolvableFilterParams
 import liqp.node.LNode
 import liqp.nodes.FilterNode
 import liqp.tag.LTag

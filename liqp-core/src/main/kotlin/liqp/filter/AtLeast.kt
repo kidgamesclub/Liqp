@@ -1,6 +1,7 @@
 package liqp.filter
 
 import liqp.context.LContext
+import liqp.params.FilterParams
 
 /**
  * {{ 10 | at_least:32 }} -> 32

@@ -1,15 +1,18 @@
 package liqp
 
+import assertk.Assert
+import assertk.assert
+import assertk.assertions.isInstanceOf
+import assertk.assertions.isNotNull
+import assertk.assertions.isNull
+import liqp.context.LContext
 import liqp.filter.LFilter
 import liqp.node.LNode
 import liqp.nodes.AtomNode
 import liqp.nodes.FilterNode
 import liqp.nodes.OutputNode
 import liqp.nodes.RenderContext
-import org.assertj.core.api.AbstractDoubleAssert
-import org.assertj.core.api.AbstractLongAssert
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.ListAssert
 
 data class FilterAssert(val filter: LFilter,
                         val parser: LiquidParser = LiquidParser(),
@@ -17,33 +20,36 @@ data class FilterAssert(val filter: LFilter,
                         val result: Any? = null,
                         val error: Exception? = null,
                         val engine: LiquidRenderer = LiquidRenderer(parser = parser),
-                        val context: RenderContext = RenderContext(inputData, parser,
+                        val context: LContext = RenderContext(inputData, parser,
                             engine.logic,
                             engine.parser,
                             engine,
                             engine.accessors,
                             engine.settings)) {
 
-  fun withInputData(inputData: Any?): FilterAssert {
-    return this.copy(inputData = inputData)
+
+  fun resultAsString(): Assert<String> {
+    return result()
   }
 
-  fun asList(): ListAssert<Any?> {
-    hadNoErrors()
-    return assertThat(result as List<Any?>)
+  fun <T:Any> result(type: Class<T>): Assert<T> {
+    return liqp.assertThat(result as T)
   }
 
-  fun asDouble(): AbstractDoubleAssert<*>? {
-    hadNoErrors()
-    return assertThat((result as Double).toDouble())
+
+  inline fun <reified T:Any> result(): Assert<T> {
+    return (result as T?).asserting()
   }
 
-  fun asLong(): AbstractLongAssert<*>? {
-    hadNoErrors()
-    return assertThat((result as Number).toLong())
+  fun results(): Assert<List<*>> {
+    return result()
   }
 
-  fun filtering(value: Any?, vararg params: Any): FilterAssert {
+  inline fun <reified T:Any> nullableResult(): Assert<T?> {
+    return (inputData as T?).assertNullable()
+  }
+
+  fun filtering(inputData: Any?, vararg params: Any): FilterAssert {
     val filterNode = FilterNode(filter, params = params.map {
       when (it) {
         is LNode -> it
@@ -52,9 +58,29 @@ data class FilterAssert(val filter: LFilter,
     })
     val result: Any?
     return try {
-      val outputNode = OutputNode(expr = value, filters = listOf(filterNode))
+      val outputNode = OutputNode(expr = inputData, filters = listOf(filterNode))
       result = outputNode.render(context)
-      this.copy(result = result)
+      this.copy(result = result, inputData = inputData)
+    } catch (e: Exception) {
+      copy(error = e)
+    }
+  }
+
+  fun withParams(vararg params: Any): FilterAssert {
+    val filterNode = FilterNode(filter, params = params.map {
+      when (it) {
+        is LNode -> it
+        else -> AtomNode(it)
+      }
+    })
+    val result: Any?
+    return try {
+      val outputNode = OutputNode(expr = inputData, filters = listOf(filterNode))
+      result = outputNode.render(context)
+      this.copy(result = result,
+          inputData = inputData,
+          error = null,
+          context = context.reset())
     } catch (e: Exception) {
       copy(error = e)
     }
@@ -62,19 +88,15 @@ data class FilterAssert(val filter: LFilter,
 
   @JvmOverloads
   fun hadError(ofType: Class<*> = Exception::class.java): FilterAssert {
-    assertThat(error).describedAs("Should have had an error but didn't")
-        .isNotNull()
-        .isInstanceOf(ofType)
+    assertk.assert(error, "thrown error").isNotNull {
+      it.isInstanceOf(ofType)
+    }
 
     return this
   }
 
   fun hadNoErrors(): FilterAssert {
-    assertThat(error).describedAs("Should not have had an error but found $error")
-        .isNull()
-
-    assertThat(result).describedAs("Result was null.  Did you call the filtering() method?")
-        .isNotNull()
+    assert(error, "Unexpected error").isNull()
     return this
   }
 

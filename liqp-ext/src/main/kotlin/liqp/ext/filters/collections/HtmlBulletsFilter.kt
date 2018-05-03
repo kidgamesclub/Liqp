@@ -1,7 +1,7 @@
 package liqp.ext.filters.collections
 
 import liqp.context.LContext
-import liqp.filter.FilterParams
+import liqp.params.FilterParams
 import liqp.filter.LFilter
 
 class HtmlBulletsFilter : LFilter() {

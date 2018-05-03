@@ -3,6 +3,7 @@ package liqp.filter
 import liqp.context.LContext
 import liqp.exceptions.LiquidRenderingException
 import liqp.lookup.isNullAccessor
+import liqp.params.FilterParams
 
 typealias Sorter = Comparator<Any?>
 
@@ -19,7 +20,7 @@ class Sort : LFilter() {
     val v = value ?: return null
 
     context.run {
-      val list: List<Any> = asIterable(value).toList()
+      val list: List<Any?> = asIterable(value).toList()
       val property = asString(params[0])
 
       val sorter:Sorter = when (property) {

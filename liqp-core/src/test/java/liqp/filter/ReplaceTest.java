@@ -6,10 +6,9 @@ import static liqp.Mocks.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import liqp.LiquidDefaults;
-import liqp.Mocks;
 import liqp.Template;
 import liqp.LiquidParser;
+import liqp.params.FilterParams;
 import org.antlr.runtime.RecognitionException;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;

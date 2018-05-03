@@ -1,5 +1,7 @@
 package liqp
 
+import assertk.Assert
+import assertk.fail
 import liqp.config.MutableParseSettings
 import liqp.config.MutableRenderSettings
 import liqp.filter.LFilter
@@ -67,3 +69,29 @@ fun LTemplate.assertThat(): TemplateAssert {
 fun LFilter.assertThat(): FilterAssert {
   return FilterAssert(this)
 }
+
+inline fun <reified T:Any> T?.asserting(): Assert<T> {
+  return when (this) {
+    null-> {
+      fail("Expected non-null value for ${T::class.qualifiedName}")
+      TODO()
+    }
+    else-> assertk.assert(this)
+  }
+}
+
+fun <T:Any> assertThat(subject:T?): Assert<T> {
+  return when (subject) {
+    null-> {
+      fail("Expected non-null value")
+      TODO()
+    }
+    else-> assertk.assert(subject)
+  }
+}
+
+
+inline fun <reified T:Any> T?.assertNullable(): Assert<T?> {
+  return assertk.assert(this)
+}
+

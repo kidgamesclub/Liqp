@@ -2,6 +2,7 @@ package liqp.filter
 
 import liqp.context.LContext
 import liqp.isFalsy
+import liqp.params.FilterParams
 
 class Default : LFilter() {
 

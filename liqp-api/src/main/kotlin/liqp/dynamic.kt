@@ -3,6 +3,7 @@ package liqp
 import liqp.ComparisonResult.EQUAL
 import liqp.ComparisonResult.GREATER
 import liqp.ComparisonResult.LESS
+import kotlin.reflect.full.isSubclassOf
 
 interface InstanceFacts {
   fun isIterable(t: Any?): Boolean
@@ -11,10 +12,51 @@ interface InstanceFacts {
   fun asInteger(t: Any?): Int? = asLong(t)?.toInt()
   fun isIntegral(t: Any?): Boolean = asLong(t) != null
   fun asDouble(t: Any?): Double?
-  fun asIterable(t: Any?): Iterable<Any>
+  fun asIterable(t: Any?): Iterable<Any?>
   fun asString(t: Any?): String?
   fun asNumber(t: Any?): Number?
   fun size(t: Any?): Int
+}
+
+class TypeCoersion(private val facts: InstanceFacts,
+                   private val truth: Truth) : InstanceFacts by facts, Truth by truth {
+
+  inline fun <reified T : Any> coerceOrNull(from: Any?): T? {
+    return coerceOrNull(from, T::class.java)
+  }
+
+  inline fun <reified T : Any> coerce(from: Any?): T? {
+    return coerceTo(from, T::class.java)
+  }
+
+  fun <T : Any> coerceTo(from: Any?, to: T): T? {
+    return coerceTo(from, to::class.java)
+  }
+
+  fun <T : Any> coerceTo(from: Any?, type: Class<T>): T {
+    return coerceOrNull(from, type)
+        ?: throw NullPointerException("Unexpected null value for ${type.name}")
+  }
+
+  fun <T : Any> coerceOrNull(from: Any?, type: Class<T>): T? {
+    val value = from ?: return null
+    return when (type) {
+      List::class.java -> asIterable(value).toList() as T?
+      String::class.java -> asString(value) as T?
+      Boolean::class.java -> isTrue(value) as T?
+      Int::class.java -> asInteger(value) as T?
+      Integer::class.java -> asInteger(value) as T?
+      Long::class.java -> asLong(value) as T?
+      Double::class.java -> asDouble(value) as T?
+      else -> {
+        when {
+          Number::class.java.isAssignableFrom(type) -> asNumber(value) as T?
+          Iterable::class.java.isAssignableFrom(type) -> asIterable(value) as T?
+          else -> value as T?
+        }
+      }
+    }
+  }
 }
 
 interface Truth {
@@ -102,5 +144,4 @@ data class LiquidLogic(val types: InstanceFacts,
                        val comparisons: Comparisons,
                        val combiners: Combiners) : LLogic, InstanceFacts by types,
     Truth by truth, Comparisons by comparisons, Combiners by combiners
-
 

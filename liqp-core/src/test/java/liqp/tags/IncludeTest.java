@@ -30,7 +30,7 @@ public class IncludeTest {
   }
 
   @Test
-  public void renderTest() throws RecognitionException {
+  public void renderTest() {
 
     String source =
           "{% assign shape = 'circle' %}\n" +
@@ -64,6 +64,7 @@ public class IncludeTest {
     File index = new File(included, "index_with_quotes.html");
     LTemplate template = LiquidParser.newBuilder()
           .baseDir(included)
+          .forLiquid()
           .toParser()
           .parseFile(index);
     String result = template.render();
@@ -75,6 +76,7 @@ public class IncludeTest {
 
     File index = new File(included, "index_without_quotes.html");
     LTemplate template = LiquidParser.newBuilder()
+          .forJekyll()
           .baseDir(included)
           .toParser()
           .parseFile(index);
@@ -87,6 +89,7 @@ public class IncludeTest {
   public void renderTestWithIncludeDirectorySpecifiedInJekyllFlavor() throws Exception {
     File index = new File(included, "index_without_quotes.html");
     LTemplate template = LiquidParser.newBuilder()
+          .forJekyll()
           .baseDir(included)
           .toParser()
           .parseFile(index);
@@ -112,6 +115,7 @@ public class IncludeTest {
     String source = "{% assign variable = 'header.html' %}{% include {{variable}} %}";
 
     String rendered = LiquidParser.newBuilder()
+          .forJekyll()
 //          .flavor(Flavor.JEKYLL)
 
           .baseDir(included)

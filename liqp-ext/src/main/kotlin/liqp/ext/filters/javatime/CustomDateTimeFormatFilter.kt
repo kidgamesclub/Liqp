@@ -1,7 +1,7 @@
 package liqp.ext.filters.javatime
 
 import liqp.context.LContext
-import liqp.filter.FilterParams
+import liqp.params.FilterParams
 import liqp.filter.LFilter
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAccessor

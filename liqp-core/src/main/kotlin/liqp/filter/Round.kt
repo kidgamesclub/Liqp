@@ -1,6 +1,7 @@
 package liqp.filter
 
 import liqp.context.LContext
+import liqp.params.FilterParams
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.math.roundToLong

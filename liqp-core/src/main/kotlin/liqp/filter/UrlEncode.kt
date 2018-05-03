@@ -1,6 +1,7 @@
 package liqp.filter
 
 import liqp.context.LContext
+import liqp.params.FilterParams
 import java.net.URLEncoder
 
 class UrlEncode : LFilter() {

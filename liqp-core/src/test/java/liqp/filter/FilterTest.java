@@ -7,6 +7,7 @@ import liqp.LParser;
 import liqp.LiquidParser;
 import liqp.context.LContext;
 import liqp.node.LTemplate;
+import liqp.params.FilterParams;
 import org.antlr.runtime.RecognitionException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -2,6 +2,7 @@ package liqp.filter
 
 import java.util.LinkedHashSet
 import liqp.context.LContext
+import liqp.params.FilterParams
 
 class Uniq : LFilter() {
 

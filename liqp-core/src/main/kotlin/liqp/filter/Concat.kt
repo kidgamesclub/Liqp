@@ -1,6 +1,7 @@
 package liqp.filter
 
 import liqp.context.LContext
+import liqp.params.FilterParams
 
 /**
  * Combines two lists.  If the parameters and/or value are not lists, they will be converted before

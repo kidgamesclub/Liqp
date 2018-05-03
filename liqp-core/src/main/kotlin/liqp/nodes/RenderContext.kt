@@ -6,6 +6,7 @@ import liqp.LParser
 import liqp.LRenderer
 import liqp.PropertyContainer
 import liqp.RenderFrame
+import liqp.TypeCoersion
 import liqp.config.MutableRenderSettings
 import liqp.config.ParseSettingsSpec
 import liqp.config.RenderSettings
@@ -42,10 +43,12 @@ data class RenderContext
     ParseSettingsSpec by parser,
     LContext, LLogic by logic {
 
+  override val coersion: TypeCoersion = TypeCoersion(logic, logic)
   override val includesDir = settings.includesDir
   override val isStrictVariables = settings.isStrictVariables
   override val baseDir = settings.baseDir
   private var iterationCount: Int = 0
+
 
   override val logs = mutableListOf<Any>()
   override var locale: Locale by delegated(Locale.US)
@@ -82,17 +85,17 @@ data class RenderContext
     loopState.increment()
   }
 
-  override fun isTrue(value: Any?): Boolean {
+  override fun isTrue(t: Any?): Boolean {
     return when {
-      isUseTruthyChecks -> value.isTruthy()
-      else -> logic.isTrue(value)
+      isUseTruthyChecks -> t.isTruthy()
+      else -> logic.isTrue(t)
     }
   }
 
-  override fun isFalse(value: Any?): Boolean {
+  override fun isFalse(t: Any?): Boolean {
     return when {
-      isUseTruthyChecks -> value.isFalsy()
-      else -> logic.isTrue(value)
+      isUseTruthyChecks -> t.isFalsy()
+      else -> logic.isFalse(t)
     }
   }
 
@@ -218,13 +221,17 @@ data class RenderContext
   override fun invoke(propName: String): Any? = get(propName)
   override fun getAccessor(container: Any, prop: String): Getter<Any> = renderer.getAccessor(container, prop)
 
-  override fun withFrame(block: () -> Unit) {
+  override fun withFrame(block: () -> Any?):Any? {
     pushFrame()
     try {
-      block()
+      return block()
     } finally {
       popFrame()
     }
+  }
+
+  override fun reset(): LContext {
+    return this.copy(result = null)
   }
 }
 

@@ -2,6 +2,9 @@ package liqp.filter
 
 import liqp.ControlResult
 import liqp.context.LContext
+import liqp.params.FilterParams
+import liqp.params.ResolvedFilterParams
+import liqp.params.emptyParams
 import liqp.toSnakeCase
 
 /**
@@ -42,12 +45,12 @@ abstract class LFilter(name: String? = null) {
   }
 
   open fun onFilterAction(context: LContext, value: Any?, vararg params: Any?): Any? {
-    val params:FilterParams = when {
+    val filterParams: FilterParams = when {
       params.isEmpty() -> emptyParams
       params.size == 1 && params[0] is FilterParams -> params[0] as FilterParams
       else -> ResolvedFilterParams(*params)
     }
-    return onFilterAction(context, value, params)
+    return onFilterAction(context, value, filterParams)
   }
 
   fun get(i: Int, params: FilterParams): Any? {

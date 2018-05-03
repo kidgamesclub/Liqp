@@ -1,12 +1,11 @@
 package liqp.tags
 
-import liqp.ControlResult
-import liqp.ControlResult.*
+import liqp.ControlResult.BREAK
+import liqp.ControlResult.CONTINUE
 import liqp.context.LContext
-import liqp.exceptions.ExceededMaxIterationsException
-import liqp.exceptions.LiquidRenderingException
 import liqp.node.LNode
-import liqp.safeSubList
+import liqp.params.ResolvableNamedParams
+import liqp.safeSlice
 import liqp.tag.LTag
 
 class For : LTag() {
@@ -28,24 +27,27 @@ class For : LTag() {
     val isArray:Boolean = nodes[0].execute(context)
     val id:String = nodes[1].execute(context)
 
-    // Each for tag has its own context that keeps track of its own variables (scope)
-    context.pushFrame()
-
-    val rendered = if (isArray) renderArray(id, context, *nodes) else renderRange(id, context, *nodes)
-
-    context.popFrame()
-    return rendered
-  }
-
-  private fun renderArray(id: String, context: LContext, vararg tokens: LNode): Any? {
-
-    val results = mutableListOf<Any?>()
 
     // attributes start from index 5
-    val attributes = getAttributes(5, context, *tokens)
+    val attributes = ResolvableNamedParams(context,
+        paramNodes = nodes.slice(5..nodes.lastIndex)
+    )
 
-    val offset = attributes[OFFSET] ?: 0
-    val limit = attributes[LIMIT] ?: 0
+    val offset:Int = attributes[OFFSET, 0]
+    val limit:Int = attributes[LIMIT, Integer.MAX_VALUE]
+
+    // Each for tag has its own context that keeps track of its own variables (scope)
+    return context.withFrame {
+      when (isArray) {
+        true -> renderArray(id, context, offset, limit, *nodes)
+        false -> renderRange(id, context, offset, limit, *nodes)
+      }
+    }
+  }
+
+  private fun renderArray(id: String, context: LContext, offset:Int, limit:Int, vararg tokens: LNode): Any? {
+
+    val results = mutableListOf<Any?>()
 
     val iterated:List<Any>? = tokens[2].executeOrNull(context)
 
@@ -63,8 +65,14 @@ class For : LTag() {
 
     var continueIndex = offset
 
+    val adjustedLimit = when (limit) {
+      Integer.MAX_VALUE -> iterated.size
+      else -> offset + limit
+    }
+
     var i = offset
-    iterated.safeSubList(offset, offset + limit).forEachIndexed outer@{ n, item->
+    val sliced = iterated.safeSlice(offset, adjustedLimit)
+    outer@for (item in sliced) {
       context.incrementIterations()
 
       continueIndex = i
@@ -80,7 +88,7 @@ class For : LTag() {
         }
 
         if (value == BREAK) {
-          return@outer
+          break@outer
         }
 
         results.addAll(context.asIterable(value))
@@ -88,94 +96,59 @@ class For : LTag() {
       i++
     }
 
-    context.setRoot(CONTINUE.name, continueIndex + 1)
+    context.setRoot(CONTINUE.name.toLowerCase(), continueIndex + 1)
     return results
   }
 
-  private fun renderRange(id: String, context: LContext, vararg tokens: LNode): Any {
+  private fun renderRange(id: String, context: LContext, offset:Int, limit:Int, vararg tokens: LNode): Any {
 
     val results = mutableListOf<Any?>()
-
-
-    // attributes start from index 5
-    val attributes = getAttributes(5, context, *tokens)
-
-    val offset = attributes[OFFSET] ?: 0
-    val limit = attributes[LIMIT] ?: throw LiquidRenderingException("Limit required")
-
     val block = tokens[4]
 
-    try {
-      val from:Int = tokens[2].execute(context)
-      val to:Int = tokens[3].execute(context)
+    val from:Int = tokens[2].executeOrNull<Int>(context) ?: return listOf<Any>()
+    val to:Int = tokens[3].execute(context)
 
-      val length = to - from
+    val length = to - from
 
-      context.startLoop(length, null)
-      var continueIndex = from + offset
+    context.startLoop(length, null)
+    var continueIndex = from + offset
 
-      var i = from + offset
-      var n = 0
-      outer@while (i <= to && n < limit) {
+    var i = from + offset
+    var n = 0
+    outer@while (i <= to && n < limit) {
 
-        context.incrementIterations()
-        continueIndex = i
-        context[id] = i
+      context.incrementIterations()
+      continueIndex = i
+      context[id] = i
 
-        val children = block.children
-        inner@for (node in children) {
+      val children = block.children
+      inner@for (node in children) {
 
-          val value = node.render(context) ?: continue@inner
+        val value = node.render(context) ?: continue@inner
 
-          if (value === CONTINUE) {
-            // break from this inner loop: equals continue outer loop!
-            break@inner
-          }
-
-          if (value === BREAK) {
-            // break from outer loop
-            break@outer
-          }
-
-          if (context.isIterable(value)) {
-            results.addAll(context.asIterable(value))
-          } else {
-            results.add(value)
-          }
+        if (value === CONTINUE) {
+          // break from this inner loop: equals continue outer loop!
+          break@inner
         }
-        i++
-        n++
-      }
 
-      context[CONTINUE.name] = continueIndex + 1
-    } catch (e: ExceededMaxIterationsException) {
-      throw e
-    } catch (e: Exception) {
-      /* just ignore incorrect expressions */
+        if (value === BREAK) {
+          // break from outer loop
+          break@outer
+        }
+
+        if (context.isIterable(value)) {
+          results.addAll(context.asIterable(value))
+        } else {
+          results.add(value)
+        }
+      }
+      i++
+      n++
     }
+
+    context[CONTINUE.name] = continueIndex + 1
+
 
     return results
-  }
-
-  private fun getAttributes(fromIndex: Int, context: LContext, vararg tokens: LNode): Map<String, Int> {
-
-    val attributes = mutableMapOf<String, Int>()
-
-    attributes[OFFSET] = 0
-    attributes[LIMIT] = Integer.MAX_VALUE
-
-    for (i in fromIndex until tokens.size) {
-
-      val attribute:List<Any?> = tokens[i].execute(context)
-
-      try {
-        val key = attribute[0].toString()
-        attributes[key] = context.asInteger(attribute[1])?:0
-      } catch (e: Exception) {
-        /* just ignore incorrect attributes */
-      }
-    }
-
-    return attributes
   }
 }

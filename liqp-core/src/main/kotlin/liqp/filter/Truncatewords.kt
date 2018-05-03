@@ -1,8 +1,14 @@
 package liqp.filter
 
+import com.google.common.base.Splitter
 import liqp.context.LContext
+import liqp.params.FilterParams
+import liqp.safeSlice
+
+val splitter = Splitter.onPattern("\\s++").omitEmptyStrings()
 
 class Truncatewords : LFilter() {
+
 
   /**
    * truncatewords(input, words = 15, truncate_string = "...")
@@ -12,13 +18,14 @@ class Truncatewords : LFilter() {
   override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
     context.run {
       val text = asString(value) ?: return null
-      val words = text.split(' ').filter { it.isNotBlank() }
-      val length = asInteger(params[0]) ?: return value
+      val words = splitter.splitToList(text)
+      //)text.split("\\s++".toPattern())
+      val wordCount:Int = params[0, 15]
       val truncateString = params[1] ?: "..."
 
       return when {
-        length >= words.size -> text
-        else -> words.subList(0, length).joinToString(separator = " ") + truncateString
+        wordCount >= words.size -> text
+        else -> words.safeSlice(0, wordCount).joinToString(separator = " ") + truncateString
       }
     }
   }

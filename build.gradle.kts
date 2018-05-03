@@ -25,6 +25,9 @@ allprojects {
     isDefaultDependencies = false
 
     coverageRequirement = 0.60
+    dependencies {
+      testCompile("assertk")
+    }
   }
 
   dependencyManagement {
@@ -32,10 +35,11 @@ allprojects {
       dependency("org.jsoup:jsoup:1.11.2")
       dependency("org.antlr:antlr4:4.7.1")
       dependency("org.antlr:antlr4-runtime:4.7.1")
+      dependency("com.willowtreeapps.assertk:assertk:0.10")
     }
   }
-  dependencies {
 
+  dependencies {
     compileOnly("com.google.code.findbugs:findbugs") {
       isTransitive = false
     }

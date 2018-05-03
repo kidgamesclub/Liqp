@@ -16,25 +16,37 @@ class Cycle : LTag() {
     // The group-name is either the first token-expression, or if that is
     // null (indicating there is no name), give it the name [CYCLE_PREPEND] followed
     // by the number of expressions in the cycle-group.
-    val groupName = nodes.firstOrNull()
+    val groupNameEnd = nodes.firstOrNull()
         ?.executeOrNull(context)
-        ?: CYCLE_PREPEND + (nodes.size -1)
+        ?: CYCLE_PREPEND+(nodes.size - 1)
 
-    val elements = nodes.map { it.render(context) }
-    val group = context[groupName, {CycleGroup(elements.size)}]
-    return group.next(elements)
+    val groupName = CYCLE_PREPEND + groupNameEnd
+    val elements = nodes
+        .slice(1..nodes.lastIndex)
+        .map { it.render(context) }
+    val existing:CycleGroup? = context[groupName]
+    val group = when  {
+      existing == null-> CycleGroup(elements)
+      existing.size != elements.size-> CycleGroup(elements)
+      else-> existing
+    }
+    context[groupName] = group
+    return group.next()
   }
 
-  private class CycleGroup internal constructor(private val sizeFirstCycle: Int) {
-    private var iterable:Iterable<out Any>
+  private class CycleGroup(internal val elements: List<Any?>) : Iterator<Any> {
+    private var iterator: Iterator<Any?> = elements.iterator()
 
-    internal fun next(elements: List<Any?>): Any {
-      val next = elements.getOrNull(idx++)
-      if (idx >= sizeFirstCycle) {
-        idx = 0
+    override fun hasNext(): Boolean = true
+
+    override fun next(): Any {
+      if (!iterator.hasNext()) {
+        iterator = elements.iterator()
       }
 
-      return next ?: ""
+      return iterator.next() ?: ""
     }
+
+    val size get() = elements.size
   }
 }

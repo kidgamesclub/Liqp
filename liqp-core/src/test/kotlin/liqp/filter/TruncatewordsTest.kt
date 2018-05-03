@@ -1,11 +1,9 @@
 package liqp.filter
 
 import junitparams.JUnitParamsRunner
-import liqp.LiquidDefaults
-import liqp.Mocks.Companion.mockRenderContext
+import junitparams.Parameters
+import liqp.assertThat
 import liqp.parameterized.LiquifyNoInputTest
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -24,28 +22,54 @@ class TruncatewordsTest : LiquifyNoInputTest("{ \"txt\" : \"a        b c d e f g
         arrayOf("{{ txt | truncatewords: 21, '===' }}", "a        b c d e f g h i j a b c d e f g h i j"))
   }
 
-  /*
-   * def test_truncatewords
-   *   assert_equal 'one two three', @filter.truncatewords('one two three', 4)
-   *   assert_equal 'one two...', @filter.truncatewords('one two three', 2)
-   *   assert_equal 'one two three', @filter.truncatewords('one two three')
-   *   assert_equal 'Two small (13&#8221; x 5.5&#8221; x 10&#8221; high) baskets fit inside one large basket
-   *   (13&#8221;...',
-   *                 @filter.truncatewords('Two small (13&#8221; x 5.5&#8221; x 10&#8221; high) baskets fit inside
-   *                 one large basket (13&#8221; x 16&#8221; x 10.5&#8221; high) with cover.', 15)
-   * end
-   */
   @Test
-  fun applyOriginalTest() {
+  @Parameters(method = "testParams")
+  override fun run(templateString: String?, expectedResult: String?) {
+    super.run(templateString, expectedResult)
+  }
 
-    val filter = LiquidDefaults.getDefaultFilters().getFilter<LFilter>("truncatewords")
+  @Test
+  fun testTruncatedBounds() {
+    Truncatewords().assertThat()
+        .filtering(inputData = "one two three")
+        .withParams(2)
+        .isEqualTo("one two...")
+  }
 
-    assertThat<Any>(filter.onFilterAction(mockRenderContext(), "one two three", ResolvedFilterParams(4)), `is`("one two three" as Any))
-    assertThat<Any>(filter.onFilterAction(mockRenderContext(), "one two three", ResolvedFilterParams(2)), `is`("one two..." as Any))
-    assertThat<Any>(filter.onFilterAction(mockRenderContext(), "one two three", ResolvedFilterParams(3)), `is`("one two three" as Any))
-    assertThat<Any>(filter.onFilterAction(mockRenderContext(), "Two small (13&#8221; x 5.5&#8221; x 10&#8221; high) baskets " +
+  @Test
+  fun testEqualsBounds() {
+
+    Truncatewords().assertThat()
+        .filtering(inputData = "one two three")
+        .withParams(3)
+        .isEqualTo("one two three")
+  }
+
+  @Test
+  fun testNoBoundParam() {
+    Truncatewords().assertThat()
+        .filtering(inputData = "one two three")
+        .withParams()
+        .isEqualTo("one two three")
+  }
+
+  @Test
+  fun testWithinBounds() {
+    Truncatewords().assertThat()
+        .filtering(inputData = "one two three")
+        .withParams(4).isEqualTo("one two three")
+  }
+
+  @Test
+  fun testUnicodeEscapeCharacters() {
+    val containsEscapes = "Two small (13&#8221; x 5.5&#8221; x 10&#8221; high) baskets " +
         "fit " +
-        "inside one large basket (13&#8221; x 16&#8221; x 10.5&#8221; high) with cover.", ResolvedFilterParams(15)),
-        `is`(("Two small (13&#8221; x 5.5&#8221; x 10&#8221; high) baskets fit inside one large basket " as Any).toString() + "(13&#8221;..."))
+        "inside one large basket (13&#8221; x 16&#8221; x 10.5&#8221; high) with cover."
+
+
+    Truncatewords().assertThat()
+        .filtering(containsEscapes)
+        .withParams(15)
+        .isEqualTo("Two small (13&#8221; x 5.5&#8221; x 10&#8221; high) baskets fit inside one large basket (13&#8221;...")
   }
 }

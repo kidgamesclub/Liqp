@@ -54,8 +54,9 @@ abstract class LNode {
   }
 
   inline fun <reified T:Any> executeOrNull(context: LContext): T? {
-    val rendered = render(context)
+    val rendered = render(context) ?: return null
     return when (T::class) {
+      List::class-> context.asIterable(rendered).toList() as T?
       String::class -> context.asString(rendered) as T?
       Boolean::class-> context.isTrue(rendered) as T?
       Int::class -> context.asInteger(rendered) as T?

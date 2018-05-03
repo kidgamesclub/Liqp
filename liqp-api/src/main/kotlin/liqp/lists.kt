@@ -3,11 +3,11 @@ package liqp
 /**
  * Creates a subList that adjusts from and to to boundaries of the list.
  */
-fun <T> List<T>.safeSubList(from: Int, to: Int): List<T> {
+fun <T> List<T>.safeSlice(from: Int, to: Int): Iterable<T> {
   val size = this.size
   val start = from.coerceIn(0, size)
   val end = to.coerceIn(start, size)
-  return this.subList(start, end)
+  return this.slice(start until end)
 }
 
 fun Collection<*>.asSingle(): Any? {

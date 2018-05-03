@@ -3,6 +3,7 @@ package liqp.filter
 import liqp.context.LContext
 import liqp.exceptions.LiquidRenderingException
 import liqp.isIntegral
+import liqp.params.FilterParams
 
 class Modulo : LFilter() {
 

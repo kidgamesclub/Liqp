@@ -3,6 +3,7 @@ package liqp.context
 import liqp.Getter
 import liqp.LLogic
 import liqp.PropertyContainer
+import liqp.TypeCoersion
 import liqp.config.MutableRenderSettings
 import liqp.config.ParseSettingsSpec
 import liqp.config.RenderSettingsSpec
@@ -14,6 +15,7 @@ import java.util.*
 import kotlin.reflect.KProperty
 
 interface LContext : LLogic, PropertyContainer, ParseSettingsSpec, RenderSettingsSpec {
+  val coersion: TypeCoersion
   var result: Any?
   val logs: MutableList<Any>
   var locale: Locale
@@ -26,7 +28,7 @@ interface LContext : LLogic, PropertyContainer, ParseSettingsSpec, RenderSetting
   fun withRenderSettings(configurer: (MutableRenderSettings) -> MutableRenderSettings): LContext
   fun pushFrame(): LFrame
   fun popFrame(): LFrame
-  fun withFrame(block: ()->Unit)
+  fun withFrame(block: ()->Any?):Any?
 
   operator fun set(varName: String, value: Any?)
   operator fun <T:Any> get(propName: String): T?
@@ -43,4 +45,5 @@ interface LContext : LLogic, PropertyContainer, ParseSettingsSpec, RenderSetting
   fun parseFile(file: File): LTemplate
   fun render(template: LTemplate): String
   fun getAccessor(container: Any, prop: String): Getter<Any>
+  fun reset(): LContext
 }

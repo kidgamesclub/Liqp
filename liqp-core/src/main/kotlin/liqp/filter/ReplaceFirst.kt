@@ -1,6 +1,7 @@
 package liqp.filter
 
 import liqp.context.LContext
+import liqp.params.FilterParams
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 

@@ -37,7 +37,8 @@ public class TruncateTest extends LiquifyNoInputTest {
   @Test
   public void truncateNumbers() {
     AssertsKt.assertThat(new Truncate())
-          .filtering("1234567890", 7)
+          .filtering("1234567890")
+          .withParams(7)
           .isEqualTo("1234...");
   }
 

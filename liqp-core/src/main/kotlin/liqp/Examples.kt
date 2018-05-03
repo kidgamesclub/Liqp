@@ -4,7 +4,7 @@ import java.util.Collections.singletonMap
 
 import com.google.common.collect.ImmutableList
 import liqp.context.LContext
-import liqp.filter.FilterParams
+import liqp.params.FilterParams
 import liqp.filter.LFilter
 
 /**

@@ -2,6 +2,7 @@ package liqp.filter
 
 import liqp.context.LContext
 import liqp.exceptions.LiquidRenderingException
+import liqp.params.FilterParams
 import liqp.swallow
 import java.time.Instant
 import java.time.LocalDate

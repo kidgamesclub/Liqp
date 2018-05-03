@@ -31,8 +31,8 @@ public class CycleTest extends LiquifyNoInputTest {
                       "one\n" +
                       "two\n" +
                       "1\n" +
-                      "\n" +
                       "one\n" +
+                      "two\n" +
                       "2\n" +
                       "1\n" +
                       "t\n" +

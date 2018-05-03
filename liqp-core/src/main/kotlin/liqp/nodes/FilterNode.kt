@@ -2,9 +2,8 @@ package liqp.nodes
 
 import liqp.context.LContext
 import liqp.filter.FilterInstance
-import liqp.filter.FilterParams
 import liqp.filter.LFilter
-import liqp.filter.ResolvableFilterParams
+import liqp.params.ResolvableFilterParams
 import liqp.node.LNode
 
 class FilterNode

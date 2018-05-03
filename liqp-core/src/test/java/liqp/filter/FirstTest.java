@@ -7,7 +7,8 @@ import static org.junit.Assert.assertThat;
 import com.google.common.collect.ImmutableList;
 import liqp.Template;
 import liqp.LiquidParser;
-import liqp.nodes.RenderContext;
+import liqp.params.FilterParams;
+import liqp.params.ResolvedFilterParams;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 

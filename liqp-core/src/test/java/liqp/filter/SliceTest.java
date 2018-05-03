@@ -1,13 +1,14 @@
 package liqp.filter;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
+import junitparams.JUnitParamsRunner;
+import liqp.AssertsKt;
 import liqp.LiquidParser;
-import liqp.Template;
+import liqp.parameterized.LiquifyWithInputTest;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class SliceTest {
+@RunWith(JUnitParamsRunner.class)
+public class SliceTest extends LiquifyWithInputTest {
 
     /*
         def test_slice
@@ -26,7 +27,7 @@ public class SliceTest {
         end
     */
 
-  public static Object[] testParams() {
+  public Object[] testParams() {
 
     String[][] tests = {
           {"{{ 'foobar' | slice: 1, 3 }}", "oob", "{}"},
@@ -52,23 +53,35 @@ public class SliceTest {
     return tests;
   }
 
-  @Test(expected = RuntimeException.class)
+  @Test
   public void noParamsThrowsException() {
-    LiquidParser.newInstance().parse("{{ 'mu' | slice }}").render();
+    AssertsKt.assertParser()
+          .withTemplateString("{{ 'mu' | slice }}")
+          .rendering()
+          .hasRenderError();
   }
 
-  @Test(expected = RuntimeException.class)
+  @Test
   public void noIntegerParamThrowsException() {
-    LiquidParser.newInstance().parse("{{ 'mu' | slice: false }}").render();
+    AssertsKt.assertParser()
+          .withTemplateString("{{ 'mu' | slice: false }}")
+          .rendering()
+          .hasRenderError();
   }
 
-  @Test(expected = RuntimeException.class)
+  @Test
   public void noIntegersParamThrowsException() {
-    LiquidParser.newInstance().parse("{{ 'mu' | slice: 1, 3.1415 }}").render();
+    AssertsKt.assertParser()
+          .withTemplateString("{{ 'mu' | slice: 1, 3.1415 }}")
+          .rendering()
+          .isEqualTo("u");
   }
 
-  @Test(expected = RuntimeException.class)
+  @Test
   public void threeParamsThrowsException() {
-    LiquidParser.newInstance().parse("{{ 'mu' | slice: 1, 2, 3 }}").render();
+    AssertsKt.assertParser()
+          .withTemplateString("{{ 'mu' | slice: 1, 2, 3 }}")
+          .rendering()
+          .isEqualTo("u");
   }
 }

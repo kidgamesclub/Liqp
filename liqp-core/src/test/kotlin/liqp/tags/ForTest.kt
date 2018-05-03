@@ -12,7 +12,7 @@ import org.junit.runner.RunWith
 import java.util.*
 
 @RunWith(JUnitParamsRunner::class)
-public class ForTest : LiquifyNoInputTest("{\"array\" : [1,2,3,4,5,6,7,8,9,10], \"item\" : {\"quantity\" : 5} }") {
+class ForTest : LiquifyNoInputTest("{\"array\" : [1,2,3,4,5,6,7,8,9,10], \"item\" : {\"quantity\" : 5} }") {
   override fun testParams(): Array<out Any> {
     return arrayOf(
         arrayOf("{% for item in array %}{{ item }}{% endfor %}", "12345678910"),
@@ -210,7 +210,6 @@ public class ForTest : LiquifyNoInputTest("{\"array\" : [1,2,3,4,5,6,7,8,9,10], 
   @Test
   fun dynamicVariableLimitingTest() {
 
-    val assigns = "{ \"array\":[], \"limit\":2, \"offset\":2 }"
     LiquidParser.newInstance()
         .assertThat()
         .withTemplateString("{%for i in array limit: limit offset: offset %}{{ i }}{%endfor%}")
@@ -318,21 +317,19 @@ public class ForTest : LiquifyNoInputTest("{\"array\" : [1,2,3,4,5,6,7,8,9,10], 
   @Throws(RecognitionException::class)
   fun pauseResumeLimitTest() {
 
-    val assigns = "{ \"array\": { \"items\":[1,2,3,4,5,6,7,8,9,0] } }"
-
-    val markup = "{%for i in array.items limit:3 %}{{i}}{%endfor%}\n" +
-        "next\n" +
-        "{%for i in array.items offset:continue limit:3 %}{{i}}{%endfor%}\n" +
-        "next\n" +
-        "{%for i in array.items offset:continue limit:1 %}{{i}}{%endfor%}"
-
-    val expected = "123\n" +
-        "next\n" +
-        "456\n" +
-        "next\n" +
-        "7"
-
-    assertThat(LiquidParser.newInstance().parse(markup).render(assigns), `is`(expected))
+    LiquidParser.newInstance()
+        .assertThat()
+        .withTemplateString("{%for i in array.items limit:3 %}{{i}}{%endfor%}\n" +
+            "next\n" +
+            "{%for i in array.items offset:continue limit:3 %}{{i}}{%endfor%}\n" +
+            "next\n" +
+            "{%for i in array.items offset:continue limit:1 %}{{i}}{%endfor%}")
+        .rendering("{ \"array\": { \"items\":[1,2,3,4,5,6,7,8,9,0] } }")
+        .isEqualTo("123\n" +
+            "next\n" +
+            "456\n" +
+            "next\n" +
+            "7")
   }
 
   /*
@@ -542,67 +539,56 @@ public class ForTest : LiquifyNoInputTest("{\"array\" : [1,2,3,4,5,6,7,8,9,10], 
   @Test
   fun forWithContinueTest() {
 
-    var assigns = "{ \"array\": { \"items\":[1,2,3,4,5] } }"
-
     var markup = "{% for i in array.items %}{% continue %}{% endfor %}"
     var expected = ""
     LiquidParser.newInstance().parse(markup)
         .assertThat()
-        .rendering(assigns)
+        .rendering("{ \"array\": { \"items\":[1,2,3,4,5] } }")
         .isEqualTo(expected)
 
     markup = "{% for i in array.items %}{{ i }}{% continue %}{% endfor %}"
     expected = "12345"
     LiquidParser.newInstance().parse(markup)
         .assertThat()
-        .rendering(assigns)
+        .rendering("{ \"array\": { \"items\":[1,2,3,4,5] } }")
         .isEqualTo(expected)
 
-    markup = "{% for i in array.items %}{% continue %}{{ i }}{% endfor %}"
-    expected = ""
-    LiquidParser.newInstance().parse(markup)
+    LiquidParser.newInstance().parse("{% for i in array.items %}{% continue %}{{ i }}{% endfor %}")
         .assertThat()
-        .rendering(assigns)
-        .isEqualTo(expected)
+        .rendering("{ \"array\": { \"items\":[1,2,3,4,5] } }")
+        .isEqualTo("")
 
     markup = "{% for i in array.items %}{% if i > 3 %}{% continue %}{% endif %}{{ i }}{% endfor %}"
     expected = "123"
     LiquidParser.newInstance().parse(markup)
         .assertThat()
-        .rendering(assigns)
+        .rendering("{ \"array\": { \"items\":[1,2,3,4,5] } }")
         .isEqualTo(expected)
 
     markup = "{% for i in array.items %}{% if i == 3 %}{% continue %}{% else %}{{ i }}{% endif %}{% endfor %}"
     expected = "1245"
     LiquidParser.newInstance().parse(markup)
         .assertThat()
-        .rendering(assigns)
+        .rendering("{ \"array\": { \"items\":[1,2,3,4,5] } }")
         .isEqualTo(expected)
 
-    assigns = "{ \"array\":[[1,2],[3,4],[5,6]] }"
-
-    markup = "{% for item in array %}" +
+    expected = "23456"
+    LiquidParser.newInstance().parse("{% for item in array %}" +
         "{% for i in item %}" +
         "{% if i == 1 %}" +
         "{% continue %}" +
         "{% endif %}" +
         "{{ i }}" +
         "{% endfor %}" +
-        "{% endfor %}"
-    expected = "23456"
-    LiquidParser.newInstance().parse(markup)
+        "{% endfor %}")
         .assertThat()
-        .rendering(assigns)
+        .rendering("{ \"array\":[[1,2],[3,4],[5,6]] }")
         .isEqualTo(expected)
 
-    assigns = "{ \"array\": { \"items\":[1,2,3,4,5] } }"
-
-    markup = "{% for i in array.items %}{% if i == 9999 %}{% continue %}{% endif %}{{ i }}{% endfor %}"
-    expected = "12345"
-    LiquidParser.newInstance().parse(markup)
+    LiquidParser.newInstance().parse("{% for i in array.items %}{% if i == 9999 %}{% continue %}{% endif %}{{ i }}{% endfor %}")
         .assertThat()
-        .rendering(assigns)
-        .isEqualTo(expected)
+        .rendering("{ \"array\": { \"items\":[1,2,3,4,5] } }")
+        .isEqualTo("12345")
   }
 
   /*

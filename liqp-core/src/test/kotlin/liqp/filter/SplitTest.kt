@@ -6,6 +6,7 @@ import liqp.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.regex.Pattern
+import assertk.assertions.*
 
 @RunWith(JUnitParamsRunner::class)
 class SplitTest : LiquifyNoInputTest() {
@@ -27,34 +28,33 @@ class SplitTest : LiquifyNoInputTest() {
    */
   @Test
   fun testSimple() {
-
     Split().assertThat()
         .filtering("12~34", "~")
-        .asList()
-        .contains("12", "34")
+        .results()
+        .containsExactly("12", "34")
   }
 
   @Test
   fun testBlankValues() {
     Split().assertThat()
         .filtering("A? ~ ~ ~ ,Z", "~ ~ ~")
-        .asList()
-        .contains("A? ", " ,Z")
+        .results()
+        .containsExactly("A? ", " ,Z")
   }
 
   @Test
   fun testNoSplit() {
     Split().assertThat()
         .filtering("A?Z", "~")
-        .asList()
-        .contains("A?Z")
+        .results()
+        .containsExactly("A?Z")
   }
 
   @Test
   fun testSplitX() {
     Split().assertThat()
         .filtering("AxZ", Pattern.compile("x"))
-        .asList()
-        .contains("A", "Z")
+        .results()
+        .containsExactly("A", "Z")
   }
 }

@@ -1,7 +1,7 @@
 package liqp.filter
 
 import liqp.context.LContext
-import liqp.sortAlphaNumeric
+import liqp.params.FilterParams
 
 class SortNatural : LFilter() {
 

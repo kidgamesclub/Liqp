@@ -169,7 +169,7 @@ Filter.registerFilter(new Filter("repeat"){
         String text = super.asString(value);
 
         // check if an optional parameter is provided
-        int times = params.length == 0 ? 1 : super.asNumber(params[0]).intValue();
+        int times = params.wordCount == 0 ? 1 : super.asNumber(params[0]).intValue();
 
         StringBuilder builder = new StringBuilder();
 

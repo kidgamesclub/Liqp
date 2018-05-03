@@ -80,7 +80,7 @@ class Tablerow : LTag() {
     }
   }
 
-  private fun getAttributes(collection: List<Any>,
+  private fun getAttributes(collection: List<Any?>,
                             fromIndex: Int,
                             context: LContext,
                             vararg tokens: LNode): Map<String, Int> {

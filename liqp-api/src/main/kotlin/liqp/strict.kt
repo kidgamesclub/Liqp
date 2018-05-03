@@ -8,7 +8,9 @@ import liqp.ComparisonResult.NULL
 import liqp.exceptions.LiquidRenderingException
 import kotlin.math.absoluteValue
 
-val strictLogic = object : LLogic {
+val strictLogic = StrictLogic()
+
+class StrictLogic: LLogic {
 
   override fun isTrue(t: Any?): Boolean {
     return when (t) {
@@ -181,11 +183,11 @@ val strictLogic = object : LLogic {
     }
   }
 
-  override fun asIterable(t: Any?): Iterable<Any> {
+  override fun asIterable(t: Any?): Iterable<Any?> {
     return when (t) {
       null -> emptyList()
-      is Iterable<*> -> t.filterNotNull()
-      is Array<*> -> t.filterNotNull()
+      is Array<*> -> listOf(*t)
+      is Iterable<*> -> t
       is Map<*, *> -> t.asIterable()
       else -> listOf(t)
     }

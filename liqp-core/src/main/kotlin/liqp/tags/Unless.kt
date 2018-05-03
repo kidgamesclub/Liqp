@@ -20,7 +20,6 @@ class Unless : LTag() {
       if (context.isFalse(exprNodeValue)) {
         return blockNode.render(context)
       }
-
     }
 
     return ControlResult.NO_CONTENT
