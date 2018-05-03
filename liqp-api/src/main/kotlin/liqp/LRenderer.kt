@@ -15,6 +15,7 @@ interface LRenderer {
   fun createRenderContext(inputData: Any?): LContext
   fun execute(template: LTemplate, inputData: Any? = null): Any?
   fun executeWithContext(template: LTemplate, context: LContext): Any?
+  fun renderWithContext(template: LTemplate, context: LContext): String
   fun render(template: LTemplate, context: LContext): String
   fun render(template: LTemplate, inputData: Any? = null): String
   fun getAccessor(prototype:Any, prop:String):Getter<Any>

@@ -1,7 +1,9 @@
 package liqp.tags;
 
 import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import liqp.parameterized.LiquifyWithInputTest;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitParamsRunner.class)
@@ -25,5 +27,11 @@ public class IfchangedTest extends LiquifyWithInputTest {
                 "",
                 "{}"}
     };
+  }
+
+  @Parameters(method = "testParams")
+  @Test
+  public void run(String templateString, String expectedResult, Object inputData) {
+    super.run(templateString, expectedResult, inputData);
   }
 }

@@ -3,7 +3,7 @@ package liqp.nodes
 import liqp.node.LNode
 import liqp.LiquidParser
 import liqp.context.LContext
-import liqp.rendering
+import liqp.executing
 import liqp.tag.LTag
 import org.antlr.runtime.RecognitionException
 import org.junit.Test
@@ -36,7 +36,7 @@ class BlockNodeTest {
   @Test
   fun testRenderNonString() {
     LiquidParser.newInstance().parse("{{0}}")
-        .rendering { }
+        .executing { }
         .isNotError()
         .isEqualTo(0L)
   }
@@ -44,7 +44,7 @@ class BlockNodeTest {
   @Test
   fun testRenderNonStringPadding() {
     LiquidParser.newInstance().parse(" {{0}}")
-        .rendering { }
+        .executing { }
         .isNotError()
         .isEqualTo(" 0")
   }
@@ -52,7 +52,7 @@ class BlockNodeTest {
   @Test
   fun testRenderNonStringNested() {
     LiquidParser.newInstance().parse("{%if true%}{{ 0 }}{%else%}{{1}}{%endif%}")
-        .rendering { }
+        .executing { }
         .isNotError()
         .isEqualTo(0L)
   }
@@ -60,7 +60,7 @@ class BlockNodeTest {
   @Test
   fun testRenderNonStringNested1() {
     LiquidParser.newInstance().parse("{%if true%}{{ 1 }}{%else%} {{1}} {%endif%}")
-        .rendering { }
+        .executing { }
         .isNotError()
         .isEqualTo(1L)
   }

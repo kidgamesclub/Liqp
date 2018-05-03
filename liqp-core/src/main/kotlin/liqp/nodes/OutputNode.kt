@@ -3,7 +3,6 @@ package liqp.nodes
 import liqp.context.LContext
 import liqp.filter.FilterChain
 import liqp.node.LNode
-import sun.jvm.hotspot.oops.CellTypeState.ref
 
 data class OutputNode(private val expr: Any?, val filters: List<FilterNode>) : LNode() {
 

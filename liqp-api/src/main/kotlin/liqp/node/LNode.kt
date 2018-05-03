@@ -72,7 +72,9 @@ abstract class LNode {
     }
   }
 
-  inline fun <reified T:Any> execute(context: LContext): T {
-    return executeOrNull(context) ?: throw LiquidRenderingException("Expected non-null render result")
+  inline fun <reified T:Any> execute(context: LContext, default:T? = null): T {
+    return executeOrNull(context)
+        ?: default
+        ?: throw LiquidRenderingException("Expected non-null render result")
   }
 }

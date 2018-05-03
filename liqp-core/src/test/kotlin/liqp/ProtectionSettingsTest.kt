@@ -13,7 +13,7 @@ class ProtectionSettingsTest {
     val template = LiquidParser()
         .parse("{% for i in (1..100) %}{{ i }}{% endfor %}")
 
-    template.rendering(
+    template.executing(
         data = "{\"abc\": \"abcdefghijklmnopqrstuvwxyz\"}",
         renderer = {
           maxRenderTimeMillis = 1000
@@ -27,7 +27,7 @@ class ProtectionSettingsTest {
   fun testExceedMaxRenderTimeMillis() {
     LiquidParser.newInstance()
         .parse("{% for i in (1..10000) %}{{ i }}{% endfor %}")
-        .rendering {
+        .executing {
           maxRenderTimeMillis = 1
           executor = Executors.newSingleThreadExecutor()
         }
@@ -39,7 +39,7 @@ class ProtectionSettingsTest {
     val template = LiquidParser.newInstance()
         .parse("{% for i in (1..100) %}{{ i }}{% endfor %}")
 
-    template.rendering { maxIterations = 1000 }
+    template.executing { maxIterations = 1000 }
         .contains("234")
         .isNotError()
   }
@@ -48,7 +48,7 @@ class ProtectionSettingsTest {
   fun testExceedMaxIterationsRange() {
     LiquidParser.newInstance()
         .parse("{% for i in (1..100) %}{{ i }}{% endfor %}")
-        .rendering {
+        .executing {
           maxIterations = 10
         }
         .hasRenderError(ExceededMaxIterationsException::class.java)
@@ -126,7 +126,7 @@ class ProtectionSettingsTest {
     LiquidParser.newBuilder()
         .toParser()
         .parse("{% for i in (1..100) %}{{ abc }}{% endfor %}")
-        .rendering(
+        .executing(
             data = "{\"abc\": \"abcdefghijklmnopqrstuvwxyz\"}",
             renderer = { maxSizeRenderedString = 2700 })
         .isNotError()

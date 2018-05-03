@@ -45,20 +45,22 @@ class For : LTag() {
     }
   }
 
-  private fun renderArray(id: String, context: LContext, offset:Int, limit:Int, vararg tokens: LNode): Any? {
+  private fun renderArray(id: String, context: LContext,
+                          offset:Int, limit:Int,
+                          vararg tokens: LNode): Any? {
 
     val results = mutableListOf<Any?>()
 
-    val iterated:List<Any>? = tokens[2].executeOrNull(context)
+    val iterated:List<Any> = tokens[2].executeOrNull(context) ?: emptyList()
 
     val block = tokens[3]
     val blockIfEmptyOrNull = tokens[4]
 
-    if (iterated?.isEmpty() == true) {
+    if (iterated.isEmpty()) {
       return blockIfEmptyOrNull.render(context)
     }
 
-    val length = Math.min(limit, iterated!!.size)
+    val length = Math.min(limit, iterated.size)
 
     val loopName = id + "-" + tokens[2].toString()
     context.startLoop(length, loopName)
@@ -106,7 +108,7 @@ class For : LTag() {
     val block = tokens[4]
 
     val from:Int = tokens[2].executeOrNull<Int>(context) ?: return listOf<Any>()
-    val to:Int = tokens[3].execute(context)
+    val to:Int = tokens[3].execute(context, 0)
 
     val length = to - from
 

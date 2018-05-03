@@ -84,6 +84,7 @@ data class LiquidRenderer
 
   override fun execute(template: LTemplate, inputData: Any?): Any? = executeTemplate(template, createRenderContext(inputData))
   override fun executeWithContext(template: LTemplate, context: LContext): Any? = executeTemplate(template, context)
+  override fun renderWithContext(template: LTemplate, context: LContext): String = executeTemplate(template, context).liquify(context)
   override fun render(template: LTemplate, context: LContext): String = executeTemplate(template, context).liquify(context)
 
   override fun render(template: LTemplate, inputData: Any?): String {

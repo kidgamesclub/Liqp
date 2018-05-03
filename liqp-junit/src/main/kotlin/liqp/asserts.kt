@@ -20,7 +20,8 @@ fun assertParser(): LiquidParserAssert = LiquidParser.newInstance().assertThat()
  * configurers for the renderer and/or parser
  */
 @JvmOverloads
-fun assertStringTemplate(templateString: String, data: Any? = null,
+fun assertStringTemplate(templateString: String,
+                         data: Any? = null,
                          renderer: RenderConfigurer = { this },
                          parser: ParseConfigurer = { this }): TemplateRenderAssert {
   return createTemplateAssert({ parse(templateString) }, data, parser, renderer)
@@ -51,14 +52,35 @@ fun executeTemplateAndAssert(template: LTemplate, engine: LRenderer, data: Any? 
   return try {
     val context = engine.createRenderContext(data)
     val results = engine.executeWithContext(template, context)
-    TemplateRenderAssert(template = template, renderResult = results, context=context)
+
+
+    TemplateRenderAssert(template = template,
+        renderResult = results,
+        context=context)
   } catch (e: Exception) {
     TemplateRenderAssert(template = template, error = e)
   }
 }
 
-fun LTemplate.rendering(data: Any? = null, renderer: MutableRenderSettings.() -> Unit = {}): TemplateRenderAssert {
+fun renderTemplateAndAssert(template: LTemplate, engine: LRenderer, data: Any? = null): TemplateRenderAssert {
+  return try {
+    val context = engine.createRenderContext(data)
+    val results = engine.renderWithContext(template, context)
+
+    TemplateRenderAssert(template = template,
+        renderResult = results,
+        context=context)
+  } catch (e: Exception) {
+    TemplateRenderAssert(template = template, error = e)
+  }
+}
+
+fun LTemplate.executing(data: Any? = null, renderer: MutableRenderSettings.() -> Unit = {}): TemplateRenderAssert {
   return executeTemplateAndAssert(this, LiquidRenderer.newInstance(renderer), data)
+}
+
+fun LTemplate.rendering(data: Any? = null, renderer: MutableRenderSettings.() -> Unit = {}): TemplateRenderAssert {
+  return renderTemplateAndAssert(this, LiquidRenderer.newInstance(renderer), data)
 }
 
 fun LTemplate.assertThat(): TemplateAssert {
