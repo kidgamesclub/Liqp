@@ -1,5 +1,5 @@
+import io.mverse.gradle.task.CoverageReportTask
 import io.spring.gradle.dependencymanagement.dsl.DependenciesHandler
-import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -8,6 +8,8 @@ plugins {
   id("io.mverse.project")
   id("io.mverse.multi-module")
 }
+
+
 
 allprojects {
   mverse {
@@ -45,6 +47,10 @@ allprojects {
       freeCompilerArgs += listOf("-Xjsr305=strict", "-Xuse-experimental=kotlin.Experimental")
     }
   }
+}
+
+tasks.withType<CoverageReportTask> {
+  this.sourceFilter = { exclude("**/liquid/parser/v4/*") }
 }
 
 fun DependenciesHandler.installKotlinDeps() {
