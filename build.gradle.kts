@@ -52,7 +52,7 @@ allprojects {
 }
 
 tasks.withType<CoverageReportTask> {
-  this.sourceFilter = { exclude("**/liquid/parser/v4/*") }
+  this.sourceFilter = { exclude("**/Examples*","**/liquid/parser/v4/*") }
 }
 
 fun DependenciesHandler.installKotlinDeps() {
