@@ -1,5 +1,4 @@
 plugins {
-  id("findbugs")
   kotlin("jvm")
   java
 }

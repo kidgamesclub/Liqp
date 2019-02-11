@@ -26,6 +26,7 @@ abstract class LNode {
   /**
    * Usable in java.
    */
+  @Suppress("unchecked_cast")
   operator fun <T:Any> invoke(context: LContext, type: Class<T>): T? {
     val rendered = render(context)
     return when (type) {
