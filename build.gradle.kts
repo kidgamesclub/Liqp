@@ -4,14 +4,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   java
+  findbugs
   kotlin("jvm")
   id("io.mverse.project")
   id("io.mverse.multi-module")
 }
 
-
-
 allprojects {
+  plugins.apply("findbugs")
   mverse {
     groupId = "io.mverse"
     isDefaultDependencies = false
@@ -23,6 +23,8 @@ allprojects {
       testCompile("assertk-jvm")
     }
   }
+
+  findbugs { isIgnoreFailures = true }
 
   dependencyManagement {
     dependencies {
