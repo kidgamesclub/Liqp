@@ -1,5 +1,4 @@
 package liqp
 
-typealias PropertyContainer = (String)-> Any?
-
+typealias PropertyGetter = (String)-> Any?
 typealias Getter<T> = (T)-> Any?

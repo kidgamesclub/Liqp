@@ -1,10 +1,10 @@
 plugins {
-  id("org.gradle.kotlin.kotlin-dsl")
+  java
   id("findbugs")
 }
 
 mverse {
-  groupId = "club.kidgames"
+  groupId = "io.mverse"
   isDefaultDependencies = false
   coverageRequirement = 0.00
   dependencies {
@@ -20,6 +20,3 @@ dependencies {
   testCompile(project(":liqp-junit"))
 }
 
-findbugs {
-  isIgnoreFailures = true
-}

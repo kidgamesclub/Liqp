@@ -2,7 +2,6 @@ package liqp.tags;
 
 
 
-import liqp.Template;
 import liqp.LiquidParser;
 import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;

@@ -4,7 +4,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.LiquidParser;
-import liqp.Template;
 import liqp.context.LContext;
 import liqp.node.LNode;
 import liqp.node.LTemplate;

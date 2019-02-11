@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import liqp.LiquidParser;
-import liqp.Template;
+import liqp.LiquidTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +30,7 @@ public class GtNodeTest {
   @Parameters(method = "getParams")
   public void applyTest(String templateString, String expected) throws RecognitionException {
 
-    Template template = LiquidParser.newInstance().parse(templateString);
+    LiquidTemplate template = LiquidParser.newInstance().parse(templateString);
     String rendered = String.valueOf(template.render());
 
     assertThat(rendered, is(expected));

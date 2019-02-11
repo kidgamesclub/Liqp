@@ -7,10 +7,10 @@ import org.antlr.v4.runtime.tree.ParseTree
 /**
  * This class holds the state of a parsed template
  */
-class Template(override val rootNode: LNode,
-               private val parseTree: ParseTree?,
-               private val parser: LiquidParser,
-               override val renderer: LiquidRenderer = LiquidRenderer.newInstance(parser.toRenderSettings())) : LTemplate {
+class LiquidTemplate(override val rootNode: LNode,
+                     private val parseTree: ParseTree?,
+                     private val parser: LiquidParser,
+                     val renderer: LiquidRenderer = LiquidRenderer.newInstance(parser.toRenderSettings())) : LTemplate {
 
   override fun render(inputData: Any?): String = renderer.render(this, inputData)
   override fun render(key: String, value: Any?): String = renderer.render(this, key to value)

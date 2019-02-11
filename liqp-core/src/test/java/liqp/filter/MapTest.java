@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import liqp.LiquidDefaults;
 import liqp.Mocks;
-import liqp.Template;
+import liqp.LiquidTemplate;
 import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
@@ -34,7 +34,7 @@ public class MapTest {
 
         for (String[] test : tests) {
 
-            Template template = LiquidParser.newInstance().parse(test[0]);
+            LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
             String rendered = String.valueOf(template.render(json));
 
             assertThat(rendered, is(test[1]));

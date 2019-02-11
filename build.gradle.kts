@@ -1,41 +1,34 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import io.mverse.gradle.sourceSets
-import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
-import org.gradle.api.internal.HasConvention
-import org.gradle.api.internal.file.pattern.PatternMatcherFactory.compile
-import org.gradle.internal.impldep.bsh.commands.dir
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.include
-import org.gradle.internal.nativeintegration.filesystem.DefaultFileMetadata.file
+import io.spring.gradle.dependencymanagement.dsl.DependenciesHandler
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.maven
-import org.gradle.kotlin.dsl.repositories
-import org.gradle.kotlin.dsl.the
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallArgument.DefaultArgument.arguments
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("org.gradle.kotlin.kotlin-dsl").version("0.17.0")
-  id("io.mverse.project").version("0.5.23")
-  id("io.mverse.multi-module").version("0.5.23")
+  java
+  kotlin("jvm")
+  id("io.mverse.project")
+  id("io.mverse.multi-module")
 }
 
 allprojects {
   mverse {
-    groupId = "club.kidgames"
+    groupId = "io.mverse"
     isDefaultDependencies = false
 
     coverageRequirement = 0.60
     dependencies {
-      testCompile("assertk")
+      compileOnly(kotlinStdlib())
+      compileOnly("kotlin-reflect")
+      testCompile("assertk-jvm")
     }
   }
 
   dependencyManagement {
     dependencies {
+      installKotlinDeps()
       dependency("org.jsoup:jsoup:1.11.2")
       dependency("org.antlr:antlr4:4.7.1")
       dependency("org.antlr:antlr4-runtime:4.7.1")
-      dependency("com.willowtreeapps.assertk:assertk:0.10")
+      dependency("com.willowtreeapps.assertk:assertk-jvm:0.11")
     }
   }
 
@@ -44,4 +37,51 @@ allprojects {
       isTransitive = false
     }
   }
+
+  tasks.withType<KotlinCompile> {
+    kotlinOptions {
+      jvmTarget = "1.8"
+      suppressWarnings = false
+      freeCompilerArgs += listOf("-Xjsr305=strict", "-Xuse-experimental=kotlin.Experimental")
+    }
+  }
 }
+
+fun DependenciesHandler.installKotlinDeps() {
+  val kotlinCoroutines: String by project
+  val kotlin: String by project
+  val kotlinSerialization: String by project
+  val kotlinIO: String by project
+  // None
+  dependencySet("org.jetbrains.kotlin:$kotlin") {
+    entry("kotlin-stdlib")
+    entry("kotlin-runtime")
+    entry("kotlin-stdlib-common")
+    entry("kotlin-stdlib-jdk7")
+    entry("kotlin-stdlib-jdk8")
+    entry("kotlin-reflect")
+    entry("kotlin-test-annotations-common")
+    entry("kotlin-test")
+    entry("kotlin-test-junit")
+  }
+
+  dependencySet("org.jetbrains.kotlinx:$kotlinCoroutines") {
+    entry("kotlinx-coroutines-core")
+    entry("kotlinx-coroutines-core-common")
+    entry("kotlinx-coroutines-jdk8")
+  }
+
+  dependencySet("org.jetbrains.kotlinx:$kotlinIO") {
+    entry("kotlinx-io")
+    entry("kotlinx-io-jvm")
+    entry("kotlinx-coroutines-io")
+    entry("kotlinx-coroutines-io-jvm")
+  }
+
+  dependencySet("org.jetbrains.kotlinx:$kotlinSerialization") {
+    entry("kotlinx-serialization-runtime")
+    entry("kotlinx-serialization-runtime-common")
+    entry("kotlinx-serialization-runtime-jsonparser")
+  }
+}
+

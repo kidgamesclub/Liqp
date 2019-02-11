@@ -4,7 +4,7 @@ import liqp.node.LTemplate
 import org.assertj.core.api.Assertions.assertThat
 
 class TemplateAssert(val template: LTemplate? = null,
-                     private val engine:LRenderer = template?.renderer ?: LiquidRenderer.newInstance(),
+                     private val engine:LRenderer = (template as? LiquidTemplate)?.renderer ?: LiquidRenderer.newInstance(),
                      val error:Exception? = null) {
 
   fun parsedWithoutError():TemplateAssert {

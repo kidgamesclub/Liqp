@@ -1,23 +1,15 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-
 plugins {
-  id("org.gradle.kotlin.kotlin-dsl")
   id("findbugs")
+  kotlin("jvm")
+  java
 }
 
 mverse {
-  groupId = "club.kidgames"
-
   dependencies {
     compile(guava())
-    compile("assertk")
+    compile("assertk-jvm")
   }
   coverageRequirement = 0.00
-}
-
-findbugs {
-  isIgnoreFailures = true
 }
 
 dependencies {

@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import liqp.LiquidParser;
-import liqp.Template;
+import liqp.LiquidTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,7 +69,7 @@ public class OutputNodeTest {
 
     for (String[] test : tests) {
 
-      Template template = LiquidParser.newInstance().parse(test[0]);
+      LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
       String rendered = String.valueOf(template.render("{\"X\" : \"mu\"}"));
 
       assertThat(rendered, is(test[1]));
@@ -83,7 +83,7 @@ public class OutputNodeTest {
     String test = "{{" + keyword + "}}";
     String expected = keyword + "_" + Integer.toString(keyword.length());
     String json = "{\"" + keyword + "\" : \"" + expected + "\" }";
-    Template template = LiquidParser.newInstance().parse(test);
+    LiquidTemplate template = LiquidParser.newInstance().parse(test);
     String rendered = template.render(json);
 
     assertThat(rendered, is(expected));
@@ -94,7 +94,7 @@ public class OutputNodeTest {
   public void badKeywordAsVariableTest(String keyword, String expected) {
     String test = "{{" + keyword + "}}";
     String json = "{\"" + keyword + "\" : \"bad\" }";
-    Template template = LiquidParser.newInstance().parse(test);
+    LiquidTemplate template = LiquidParser.newInstance().parse(test);
     String rendered = template.render(json);
 
     assertThat(rendered, is(expected));

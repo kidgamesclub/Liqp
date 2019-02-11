@@ -12,7 +12,7 @@ enum class ControlResult {
   NO_CONTENT
 }
 
-val EMPTY_NODE = object : LNode() {
+object EmptyNode: LNode() {
   override val children: Iterable<LNode> = emptyList()
   override fun render(context: LContext): Any? = EMPTY
 }

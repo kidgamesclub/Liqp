@@ -4,13 +4,14 @@ import liqp.Getter
 import liqp.LLogic
 import liqp.LParser
 import liqp.LRenderer
-import liqp.PropertyContainer
+import liqp.PropertyGetter
 import liqp.RenderFrame
 import liqp.TypeCoersion
+import liqp.child
+import liqp.config.LParseSettings
+import liqp.config.LRenderSettings
 import liqp.config.MutableRenderSettings
-import liqp.config.ParseSettingsSpec
 import liqp.config.RenderSettings
-import liqp.config.RenderSettingsSpec
 import liqp.context.LContext
 import liqp.context.LoopState
 import liqp.exceptions.ExceededMaxIterationsException
@@ -28,34 +29,33 @@ import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-val FORLOOP = "forloop"
+const val FORLOOP = "forloop"
 
 @Suppress("UNCHECKED_CAST")
-data class RenderContext
-@JvmOverloads constructor(private val rawInputData: Any?,
-                          override var result:Any? = null,
-                          val logic:LLogic,
-                          val parser: LParser,
-                          val renderer: LRenderer,
-                          val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
-                          val settings: RenderSettings = renderer.settings)
-  : RenderSettingsSpec by settings,
-    ParseSettingsSpec by parser,
+data class RenderContext @JvmOverloads constructor(private val rawInputData: Any?,
+                                                   override var result: Any? = null,
+                                                   val logic: LLogic,
+                                                   val parser: LParser,
+                                                   val renderer: LRenderer,
+                                                   val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
+                                                   val settings: RenderSettings = renderer.settings)
+  : LRenderSettings by settings,
+    LParseSettings by parser,
     LContext, LLogic by logic {
 
   override val coersion: TypeCoersion = TypeCoersion(logic, logic)
   override val includesDir = settings.includesDir
-  override val isStrictVariables = settings.isStrictVariables
   override val baseDir = settings.baseDir
+  override val includeFile: File get() = settings.baseDir.child(settings.includesDir)
   private var iterationCount: Int = 0
-
-
+  override val isStrictVariables = settings.isStrictVariables
+  override val isStrictIncludes = settings.isStrictIncludes
   override val logs = mutableListOf<Any>()
   override var locale: Locale by delegated(Locale.US)
   override var zoneId: ZoneId by delegated(ZoneId.systemDefault())
   private val stack: Deque<RenderFrame> by lazy { ArrayDeque<RenderFrame>() }
 
-  private val inputData: PropertyContainer by lazy {
+  private val inputData: PropertyGetter by lazy {
     when (rawInputData) {
       is String -> rawInputData.parseJSON()::get
       is HasProperties -> { prop -> rawInputData.get(prop) }
@@ -145,7 +145,7 @@ data class RenderContext
     }
   }
 
-  fun <T:Any> delegated(default: T?): ReadWriteProperty<RenderContext, T> {
+  fun <T : Any> delegated(default: T?): ReadWriteProperty<RenderContext, T> {
     return object : ReadWriteProperty<RenderContext, T> {
       override fun getValue(thisRef: RenderContext, property: KProperty<*>): T {
         val value: T? = thisRef[property.name]
@@ -160,11 +160,11 @@ data class RenderContext
     }
   }
 
-  override operator fun <T:Any> get(propName: String, supplier: () -> T): T {
+  override operator fun <T : Any> get(propName: String, supplier: () -> T): T {
     return current[propName, supplier] as T
   }
 
-  override operator fun <T:Any> get(propName: String): T? {
+  override operator fun <T : Any> get(propName: String): T? {
     if (FORLOOP == propName) {
       return current.loop as T
     }
@@ -213,7 +213,7 @@ data class RenderContext
   override val root: RenderFrame get() = stack.last()
 
   override fun endLoop() = current.endLoop()
-  override fun <T:Any> getValue(ctx: LContext, prop: KProperty<*>): T? = ctx[prop.name]
+  override fun <T : Any> getValue(ctx: LContext, prop: KProperty<*>): T? = ctx[prop.name]
   override fun hasVar(name: String): Boolean = current.hasVar(name) || current.hasScopedVar(name)
   override fun remove(varName: String): Any? = current.remove(varName)
   override fun parseFile(file: File): LTemplate = parser.parseFile(file)
@@ -221,7 +221,7 @@ data class RenderContext
   override fun invoke(propName: String): Any? = get(propName)
   override fun getAccessor(container: Any, prop: String): Getter<Any> = renderer.getAccessor(container, prop)
 
-  override fun withFrame(block: () -> Any?):Any? {
+  override fun withFrame(block: () -> Any?): Any? {
     pushFrame()
     try {
       return block()

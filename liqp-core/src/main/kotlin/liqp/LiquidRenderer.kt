@@ -2,7 +2,7 @@ package liqp
 
 import liqp.config.MutableRenderSettings
 import liqp.config.RenderSettings
-import liqp.config.RenderSettingsSpec
+import liqp.config.LRenderSettings
 import liqp.context.LContext
 import liqp.exceptions.LiquidRenderingException
 import liqp.lookup.PropertyAccessors
@@ -14,14 +14,13 @@ import java.util.concurrent.TimeUnit
 
 typealias executeTemplate = (LTemplate, LContext) -> Any?
 
-val defaultRenderSettings = RenderSettings(defaultParseSettings.baseDir, defaultParseSettings.includesDir)
+val DefaultRenderSettings = RenderSettings(defaultParseSettings)
 
-data class LiquidRenderer
-@JvmOverloads constructor(val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
+data class LiquidRenderer @JvmOverloads constructor(val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
                           val parser: LParser = LiquidParser(),
-                          override val settings: RenderSettings = defaultRenderSettings,
+                          override val settings: RenderSettings = DefaultRenderSettings,
                           val logic: LLogic = strictLogic) :
-    RenderSettingsSpec by settings,
+    LRenderSettings by settings,
     LRenderer {
 
   init {
@@ -35,7 +34,7 @@ data class LiquidRenderer
     val defaultInstance = newInstance()
 
     @JvmStatic
-    fun newInstance(settings: RenderSettings = defaultRenderSettings): LiquidRenderer {
+    fun newInstance(settings: RenderSettings = DefaultRenderSettings): LiquidRenderer {
       return LiquidRenderer(settings = settings)
     }
 

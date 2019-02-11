@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import liqp.LiquidDefaults;
 import liqp.Mocks;
-import liqp.Template;
+import liqp.LiquidTemplate;
 import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
@@ -15,7 +15,7 @@ public class LastTest {
     @Test
     public void applyTest() throws RecognitionException {
 
-        Template template = LiquidParser.newInstance().parse("{{values | last}}");
+        LiquidTemplate template = LiquidParser.newInstance().parse("{{values | last}}");
 
         String rendered = String.valueOf(template.render("{\"values\" : [\"Mu\", \"foo\", \"bar\"]}"));
 

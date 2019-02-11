@@ -5,12 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import junitparams.JUnitParamsRunner;
 import liqp.AssertsKt;
-import liqp.LiquidDefaults;
-import liqp.LiquidParser;
-import liqp.Mocks;
-import liqp.Template;
 import liqp.parameterized.LiquifyNoInputTest;
-import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

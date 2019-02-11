@@ -5,7 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import com.google.common.collect.ImmutableList;
-import liqp.Template;
+import liqp.LiquidTemplate;
 import liqp.LiquidParser;
 import liqp.params.FilterParams;
 import liqp.params.ResolvedFilterParams;
@@ -17,7 +17,7 @@ public class FirstTest {
   @Test
   public void applyTest() throws RecognitionException {
 
-    Template template = LiquidParser.newInstance().parse("{{values | first}}");
+    LiquidTemplate template = LiquidParser.newInstance().parse("{{values | first}}");
 
     String rendered = String.valueOf(template.render("{\"values\" : [\"Mu\", \"foo\", \"bar\"]}"));
 

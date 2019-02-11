@@ -2,19 +2,18 @@ package liqp.context
 
 import liqp.Getter
 import liqp.LLogic
-import liqp.PropertyContainer
+import liqp.PropertyGetter
 import liqp.TypeCoersion
 import liqp.config.MutableRenderSettings
-import liqp.config.ParseSettingsSpec
-import liqp.config.RenderSettingsSpec
+import liqp.config.LParseSettings
+import liqp.config.LRenderSettings
 import liqp.node.LTemplate
-import java.awt.image.renderable.RenderContext
 import java.io.File
 import java.time.ZoneId
 import java.util.*
 import kotlin.reflect.KProperty
 
-interface LContext : LLogic, PropertyContainer, ParseSettingsSpec, RenderSettingsSpec {
+interface LContext : LLogic, PropertyGetter, LParseSettings, LRenderSettings {
   val coersion: TypeCoersion
   var result: Any?
   val logs: MutableList<Any>
@@ -23,6 +22,7 @@ interface LContext : LLogic, PropertyContainer, ParseSettingsSpec, RenderSetting
   val current: LFrame
   val loopState: LoopState
   val root: LFrame
+  val includeFile: File
 
   fun applyRenderSettings(configure: MutableRenderSettings.() -> Unit): LContext
   fun withRenderSettings(configurer: (MutableRenderSettings) -> MutableRenderSettings): LContext

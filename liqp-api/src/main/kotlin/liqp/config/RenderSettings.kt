@@ -1,33 +1,39 @@
 package liqp.config
 
+import liqp.parser.Flavor.LIQUID
 import java.io.File
 import java.util.concurrent.ExecutorService
 
-interface RenderSettingsSpec {
+interface LRenderSettings {
   val isStrictVariables: Boolean
+  val isStrictIncludes: Boolean
   val maxIterations: Int
   val maxStackSize: Int
   val isUseTruthyChecks: Boolean
   val baseDir: File
-  val includesDir:File
+  val includesDir: String
   val maxSizeRenderedString: Int
   val maxRenderTimeMillis: Long
-  val defaultDateFormat:Char
+  val defaultDateFormat: Char
   val executor: ExecutorService?
 
   fun toMutableRenderSettings(): MutableRenderSettings
 }
 
 data class RenderSettings(override val baseDir: File,
-                          override val includesDir: File,
+                          override val includesDir: String,
                           override val isStrictVariables: Boolean = false,
+                          override val isStrictIncludes: Boolean,
                           override val maxIterations: Int = Integer.MAX_VALUE,
                           override val maxStackSize: Int = 100,
                           override val isUseTruthyChecks: Boolean = false,
                           override val maxSizeRenderedString: Int = Integer.MAX_VALUE,
                           override val maxRenderTimeMillis: Long = Long.MAX_VALUE,
                           override val defaultDateFormat: Char = 'c',
-                          override val executor: ExecutorService? = null) : RenderSettingsSpec {
+                          override val executor: ExecutorService? = null) : LRenderSettings {
+
+  constructor(parseSettings: ParseSettings): this(baseDir = parseSettings.baseDir, includesDir = parseSettings.includesDir,
+      isStrictVariables = parseSettings.isStrictVariables, isStrictIncludes = parseSettings.isStrictIncludes)
 
   override fun toMutableRenderSettings(): MutableRenderSettings {
     return MutableRenderSettings(this)
@@ -36,9 +42,11 @@ data class RenderSettings(override val baseDir: File,
 
 data class MutableRenderSettings(internal var settings: RenderSettings = RenderSettings(
     baseDir = File("./"),
-    includesDir = File("./snippets"))) : RenderSettingsSpec {
+    includesDir = LIQUID.includesDirName,
+    isStrictIncludes = false)) : LRenderSettings {
 
   override var isStrictVariables by delegate(settings::isStrictVariables, this::withStrictVariables)
+  override var isStrictIncludes by delegate(settings::isStrictIncludes, this::withStrictIncludes)
   override var baseDir by delegate(settings::baseDir, this::withBaseDir)
   override var includesDir by delegate(settings::includesDir, this::withIncludesDir)
   override var maxIterations by delegate(settings::maxIterations, this::withMaxIterations)
@@ -51,6 +59,11 @@ data class MutableRenderSettings(internal var settings: RenderSettings = RenderS
 
   fun withStrictVariables(strictVariables: Boolean): MutableRenderSettings {
     settings = settings.copy(isStrictVariables = strictVariables)
+    return this
+  }
+
+  fun withStrictIncludes(strictIncludes: Boolean): MutableRenderSettings {
+    settings = settings.copy(isStrictIncludes = strictIncludes)
     return this
   }
 
@@ -74,7 +87,7 @@ data class MutableRenderSettings(internal var settings: RenderSettings = RenderS
     return this
   }
 
-  fun withIncludesDir(includesDir: File): MutableRenderSettings {
+  fun withIncludesDir(includesDir: String): MutableRenderSettings {
     settings = settings.copy(includesDir = includesDir)
     return this
   }

@@ -1,19 +1,19 @@
 package liqp.lookup
 
-import liqp.PropertyContainer
+import liqp.PropertyGetter
 import liqp.context.LAccessors
 import liqp.exceptions.MissingVariableException
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.function.Function
+import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
 /**
  * Class that assists with looking up properties in a container object.
  */
-data class PropertyAccessors
-constructor(
+data class PropertyAccessors(
     val lookups: List<AccessorResolutionStrategy>,
     val cache: MutableMap<String, Getter<Any>>,
     val typeGetCache: MutableMap<String, Method?>) : LAccessors {
@@ -34,7 +34,7 @@ constructor(
     // 1. First, look for cached accessor.  This should be cheap... the cost of the hash lookup
     //
     val key = "${type.jvmName}.$propertyName"
-    return cache.getOrPut(key, cache@{
+    return cache.getOrPut(key) cache@{
       //
       // 1. Look in the synthetic methods.  These can be overridden at runtime, so we're
       //    looking for the first non-null instance
@@ -54,6 +54,7 @@ constructor(
       // -- Reflection (no-args methods)
       // -- Null
       //
+      @Suppress("unchecked_cast")
       val accessor: Getter<Any> = when (sample) {
         is HasProperties -> { i -> (i as HasProperties).get(propertyName) }
         is Map<*, *> -> { i -> (i as Map<*, *>)[propertyName] }
@@ -62,17 +63,17 @@ constructor(
         else -> {
           findField(type.java, propertyName)
               ?: findGetter(type.java, propertyName)
-              ?: findNoArgMethod(type.java, propertyName)
+              ?: type.findNoArgMethod(propertyName)
               ?: findGetMethod(type.java, propertyName)
               ?: nullAccessor
         }
       }
       return@cache accessor
-    })
+    }
   }
 
-  fun <T> findGetMethod(type: Class<T>, prop: String): Getter<Any>? {
-    return typeGetCache.getOrPut(type.name, { findGetMethodForClass(type) })
+  private fun <T> findGetMethod(type: Class<T>, prop: String): Getter<Any>? {
+    return typeGetCache.getOrPut(type.name) { findGetMethodForClass(type) }
         ?.let { method -> { instance -> method.invoke(instance, prop) } }
   }
 
@@ -82,7 +83,7 @@ constructor(
 
   companion object {
     @JvmStatic
-    val defaultInstance = PropertyAccessors()
+    val DefaultPropertyAccessors = PropertyAccessors()
 
     @JvmStatic
     fun newInstance(): PropertyAccessors {
@@ -96,7 +97,7 @@ constructor(
           .filter { it.name == name && Modifier.isPublic(it.modifiers) }
           .map { field ->
             field.isAccessible = true
-            PropertyAccessors.ofField(field)
+            field.toGetter()
           }
           .firstOrNull()
     }
@@ -131,8 +132,8 @@ constructor(
     }
 
     @JvmStatic
-    fun <T> findNoArgMethod(type: Class<T>, name: String): Getter<Any>? {
-      return type.declaredMethods
+    fun <T:Any> KClass<T>.findNoArgMethod(name: String): Getter<Any>? = let { type->
+      return type.java.declaredMethods
           .filter {
             it.name == name
                 && it.parameterCount == 0
@@ -147,22 +148,21 @@ constructor(
     }
 
     @JvmStatic
-    fun <P, R> ofFunction(function: Function<P, R?>): Getter<P> {
-      return { p: P -> function.apply(p) }
-    }
+    fun <P, R> Function<P, R?>.toGetter(): Getter<P> = { p: P -> this.apply(p) }
 
     @JvmStatic
-    fun ofField(field: Field): Getter<Any> {
+    fun Field.toGetter(): Getter<Any> = let { field ->
       field.isAccessible = true
       return { instance -> field.get(instance) }
     }
 
     @JvmStatic
-    fun ofMethod(method: Method): Getter<Any> {
+    fun Method.toGetter(): Getter<Any> = let{method->
       method.isAccessible = true
       return { instance -> method.invoke(instance) }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun ofPair(prop: String): Getter<Any> {
       return { instance ->
         instance as Pair<String, Any?>
@@ -177,7 +177,7 @@ constructor(
     val nullAccessor: Getter<Any> = { _: Any -> null }
   }
 
-  fun propertyContainer(isStrictVariables: Boolean, instance: Any?): PropertyContainer {
+  fun propertyContainer(isStrictVariables: Boolean, instance: Any?): PropertyGetter {
     return when (instance) {
       null -> { _ -> null }
       else -> { propertyName: String ->

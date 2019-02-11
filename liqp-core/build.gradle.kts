@@ -1,14 +1,13 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import io.mverse.gradle.main
+import io.mverse.gradle.sourceSets
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
-  id("org.gradle.kotlin.kotlin-dsl")
+  java
   id("com.github.johnrengelman.shadow")
   id("antlr")
-}
-
-findbugs {
-  isIgnoreFailures = true
+  kotlin("jvm")
 }
 
 dependencies {
@@ -25,7 +24,6 @@ mverse {
     testCompile(assertj())
     fatJar(guava())
     fatJar(streamEx())
-    compileOnly(lombok())
     fatJar("jackson-databind")
     fatJar("jackson-annotations")
     fatJar("jackson-core")
@@ -36,7 +34,7 @@ mverse {
   dependencies["antlr"]("antlr4")
   dependencies["testRuntime"]("jsoup")
 
-  java.sourceSets["main"].withConvention(KotlinSourceSet::class) {
+  sourceSets.main?.withConvention(KotlinSourceSet::class) {
     kotlin.srcDir(file("build/classes/generated-src/antlr/main"))
   }
 }
@@ -55,7 +53,7 @@ tasks["assemble"].dependsOn(shadowJar)
 
 // #### Configure antlr ##### //
 // ########################## //
-java.sourceSets["main"].withConvention(KotlinSourceSet::class) {
+sourceSets.main?.withConvention(KotlinSourceSet::class) {
   kotlin.srcDir(file("build/generated-src/antlr/main"))
 }
 

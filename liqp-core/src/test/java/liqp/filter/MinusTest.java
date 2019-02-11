@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 import liqp.LiquidDefaults;
 import liqp.LiquidParser;
 import liqp.Mocks;
-import liqp.Template;
+import liqp.LiquidTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class MinusTest {
 
     for (String[] test : tests) {
 
-      Template template = LiquidParser.newInstance().parse(test[0]);
+      LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
       String rendered = String.valueOf(template.render());
 
       assertThat(rendered, is(test[1]));

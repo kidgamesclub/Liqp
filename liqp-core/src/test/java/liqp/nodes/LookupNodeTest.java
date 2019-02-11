@@ -7,7 +7,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.HashMap;
 import java.util.Map;
-import liqp.Template;
+import liqp.LiquidTemplate;
 import liqp.LiquidRenderer;
 import liqp.LiquidParser;
 import org.antlr.runtime.RecognitionException;
@@ -37,7 +37,7 @@ public class LookupNodeTest {
 
     for (String[] test : tests) {
 
-      Template template = LiquidParser.newInstance().parse(test[0]);
+      LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
       String rendered = String.valueOf(template.render(json));
 
       assertThat(rendered, is(test[1]));

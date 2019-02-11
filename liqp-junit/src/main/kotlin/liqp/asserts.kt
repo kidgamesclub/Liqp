@@ -56,7 +56,7 @@ fun executeTemplateAndAssert(template: LTemplate, engine: LRenderer, data: Any? 
 
     TemplateRenderAssert(template = template,
         renderResult = results,
-        context=context)
+        context = context)
   } catch (e: Exception) {
     TemplateRenderAssert(template = template, error = e)
   }
@@ -69,7 +69,7 @@ fun renderTemplateAndAssert(template: LTemplate, engine: LRenderer, data: Any? =
 
     TemplateRenderAssert(template = template,
         renderResult = results,
-        context=context)
+        context = context)
   } catch (e: Exception) {
     TemplateRenderAssert(template = template, error = e)
   }
@@ -84,36 +84,34 @@ fun LTemplate.rendering(data: Any? = null, renderer: MutableRenderSettings.() ->
 }
 
 fun LTemplate.assertThat(): TemplateAssert {
-  return TemplateAssert(this, this.renderer)
+  return TemplateAssert(this)
 }
-
 
 fun LFilter.assertThat(): FilterAssert {
   return FilterAssert(this)
 }
 
-inline fun <reified T:Any> T?.asserting(): Assert<T> {
+inline fun <reified T : Any> T?.asserting(): Assert<T> {
   return when (this) {
-    null-> {
+    null -> {
       fail("Expected non-null value for ${T::class.qualifiedName}")
       TODO()
     }
-    else-> assertk.assert(this)
+    else -> assertk.assert(this)
   }
 }
 
-fun <T:Any> assertThat(subject:T?): Assert<T> {
+fun <T : Any> assertThat(subject: T?): Assert<T> {
   return when (subject) {
-    null-> {
+    null -> {
       fail("Expected non-null value")
       TODO()
     }
-    else-> assertk.assert(subject)
+    else -> assertk.assert(subject)
   }
 }
 
-
-inline fun <reified T:Any> T?.assertNullable(): Assert<T?> {
+inline fun <reified T : Any> T?.assertNullable(): Assert<T?> {
   return assertk.assert(this)
 }
 

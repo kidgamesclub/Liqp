@@ -6,6 +6,7 @@ import org.junit.Test
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeoutException
 
+
 class ProtectionSettingsTest {
 
   @Test

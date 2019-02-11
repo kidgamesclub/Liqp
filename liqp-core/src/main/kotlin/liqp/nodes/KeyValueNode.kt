@@ -2,7 +2,6 @@ package liqp.nodes
 
 import liqp.context.LContext
 import liqp.node.LNode
-import lombok.Getter
 
 class KeyValueNode(val key: String, val value: LNode) : LNode() {
 

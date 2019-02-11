@@ -3,14 +3,15 @@ package liqp
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
+import liqp.config.LParseSettings
 import liqp.config.MutableParseSettings
 import liqp.config.ParseSettings
-import liqp.config.ParseSettingsSpec
 import liqp.config.RenderSettings
 import liqp.config.withSettings
 import liqp.exceptions.InvalidTemplateException
 import liqp.filter.LFilter
 import liqp.node.LTemplate
+import liqp.parser.Flavor.LIQUID
 import liqp.parser.v4.NodeVisitor
 import liqp.tag.LTag
 import liquid.parser.v4.LiquidLexer
@@ -29,11 +30,10 @@ val defaultParseSettings = ParseSettings(
     defaultTags,
     defaultFilters,
     baseDir = File("./"),
-    includesDir = File("./includes"))
+    includesDir = LIQUID.includesDirName)
 
-data class LiquidParser
-@JvmOverloads constructor(val settings: ParseSettings = defaultParseSettings) :
-    ParseSettingsSpec by settings,
+data class LiquidParser @JvmOverloads constructor(val settings: ParseSettings = defaultParseSettings) :
+    LParseSettings by settings,
     LParser {
 
   companion object {
@@ -51,20 +51,16 @@ data class LiquidParser
     }
 
     @JvmStatic
-    fun newBuilder(configurer: MutableParseSettings.() -> Unit = {}): liqp.LiquidParser {
-      val settings = newBuilder()
-      settings.configurer()
-      return LiquidParser(settings.build())
+    fun build(configurer: MutableParseSettings.() -> Unit = {}): liqp.LiquidParser {
+      return LiquidParser(newBuilder().apply(configurer).build())
     }
   }
 
   override fun toRenderSettings(): RenderSettings {
-    return RenderSettings(baseDir = baseDir,
-        includesDir = includesDir,
-        isStrictVariables = this.isStrictVariables)
+    return RenderSettings(this.settings)
   }
 
-  override fun parse(template: String): Template {
+  override fun parse(template: String): LiquidTemplate {
     return cache.get(template)!!
   }
 
@@ -75,13 +71,13 @@ data class LiquidParser
     return parse(file.readText(UTF_8))
   }
 
-  private val cache: LoadingCache<String?, Template> = CacheBuilder.newBuilder()
+  private val cache: LoadingCache<String?, LiquidTemplate> = CacheBuilder.newBuilder()
       .withSettings(cacheSettings)
       .build(CacheLoader.from { template: String? ->
         internalCreateTemplate(template!!)
       })
 
-  private fun internalCreateTemplate(template: String): Template {
+  private fun internalCreateTemplate(template: String): LiquidTemplate {
     if (maxTemplateSize != null && template.length.toLong() > maxTemplateSize) {
       throw InvalidTemplateException("template exceeds $maxTemplateSize")
     }
@@ -97,7 +93,7 @@ data class LiquidParser
       true -> tree
     }
     val renderer = LiquidRenderer(parser = this, settings = this.toRenderSettings())
-    return Template(rootNode, parseTree, this, renderer)
+    return LiquidTemplate(rootNode, parseTree, this, renderer)
   }
 
   fun createLexer(template: String): LiquidLexer {
@@ -124,18 +120,18 @@ data class LiquidParser
     return this.copy(settings = this.settings.withTags(*tags))
   }
 
-  override fun configure(): MutableParseSettings {
+  override fun toMutableSettings(): MutableParseSettings {
     return MutableParseSettings(settings)
   }
 }
 
 val errorHandler = object : BaseErrorListener() {
   override fun syntaxError(recognizer: Recognizer<*, *>?,
-                           offendingSymbol: Any?,
+                           offendingSymbol: Any,
                            line: Int,
                            charPositionInLine: Int,
                            msg: String?,
-                           e: RecognitionException?) {
+                           e: RecognitionException) {
     throw InvalidTemplateException(String.format("parser error on line %s, index %s", line,
         charPositionInLine), e)
   }

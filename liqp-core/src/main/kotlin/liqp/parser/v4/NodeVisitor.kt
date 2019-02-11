@@ -1,6 +1,6 @@
 package liqp.parser.v4
 
-import liqp.EMPTY_NODE
+import liqp.EmptyNode
 import liqp.filter.Filters
 import liqp.filter.LFilter
 import liqp.lookup.Index
@@ -292,7 +292,7 @@ class NodeVisitor(val tags: Tags,
     expressions.add(visit(ctx.lookup()))
 
     expressions.add(visitBlock(ctx.for_block().a))
-    expressions.add(if (ctx.for_block().Else() == null) EMPTY_NODE else visitBlock(ctx.for_block().b))
+    expressions.add(if (ctx.for_block().Else() == null) EmptyNode else visitBlock(ctx.for_block().b))
 
     for (attribute in ctx.attribute()) {
       expressions.add(visit(attribute))
@@ -599,7 +599,7 @@ class NodeVisitor(val tags: Tags,
   //  | ...
   //  ;
   override fun visitTerm_Empty(ctx: Term_EmptyContext): LNode {
-    return EMPTY_NODE
+    return EmptyNode
   }
 
   // term

@@ -19,7 +19,7 @@ data class Tags(val tags: List<LTag> = listOf()) : List<LTag> by tags {
 
   operator fun get(name: String): LTag = mapped[name]!!
 
-  operator fun plus(tags:List<LTag>):Tags = this.copy(tags = this.tags + tags)
+  operator fun plus(tags:Iterable<LTag>):Tags = this.copy(tags = this.tags + tags)
   operator fun plus(tag:LTag):Tags = this.copy(tags = this.tags + tag)
   operator fun plus(tags:Tags):Tags = this.copy(tags = this.tags + tags.tags)
 
