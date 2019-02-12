@@ -14,12 +14,12 @@ import kotlin.reflect.jvm.jvmName
  * Class that assists with looking up properties in a container object.
  */
 data class PropertyAccessors(
-    val lookups: List<AccessorResolutionStrategy>,
+    val lookups: Map<out Any, AccessorResolutionStrategy>,
     val cache: MutableMap<String, Getter<Any>>,
     val typeGetCache: MutableMap<String, Method?>) : LAccessors {
 
   constructor(vararg vlookups: AccessorResolutionStrategy) : this(
-      listOf(*vlookups),
+      vlookups.toList().toAccessorMap(),
       mutableMapOf(),
       mutableMapOf())
 
@@ -39,7 +39,7 @@ data class PropertyAccessors(
       // 1. Look in the synthetic methods.  These can be overridden at runtime, so we're
       //    looking for the first non-null instance
       //
-      for (lookup in lookups) {
+      for (lookup in lookups.values) {
         val lookupFn = lookup.getAccessor(sample, propertyName)
         if (lookupFn != null) {
           return@cache lookupFn
@@ -78,12 +78,15 @@ data class PropertyAccessors(
   }
 
   fun withAccessorStrategies(vararg strategy: AccessorResolutionStrategy): PropertyAccessors {
-    return this.copy(lookups = listOf(*strategy, *lookups.toTypedArray()))
+    return this.copy(lookups = lookups + strategy.toList().toAccessorMap())
   }
 
   companion object {
     @JvmStatic
     val DefaultPropertyAccessors = PropertyAccessors()
+
+    private fun Iterable<AccessorResolutionStrategy>.toAccessorMap(): Map<Any, AccessorResolutionStrategy> =
+        map { it::class to it }.toMap()
 
     @JvmStatic
     fun newInstance(): PropertyAccessors {
@@ -132,7 +135,7 @@ data class PropertyAccessors(
     }
 
     @JvmStatic
-    fun <T:Any> KClass<T>.findNoArgMethod(name: String): Getter<Any>? = let { type->
+    fun <T : Any> KClass<T>.findNoArgMethod(name: String): Getter<Any>? = let { type ->
       return type.java.declaredMethods
           .filter {
             it.name == name
@@ -157,7 +160,7 @@ data class PropertyAccessors(
     }
 
     @JvmStatic
-    fun Method.toGetter(): Getter<Any> = let{method->
+    fun Method.toGetter(): Getter<Any> = let { method ->
       method.isAccessible = true
       return { instance -> method.invoke(instance) }
     }
