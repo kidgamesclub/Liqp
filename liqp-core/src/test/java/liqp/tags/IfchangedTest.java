@@ -1,15 +1,15 @@
 package liqp.tags;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import liqp.parameterized.LiquifyWithInputTest;
-import org.junit.Test;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-@RunWith(JUnitParamsRunner.class)
+@RunWith(Parameterized.class)
 public class IfchangedTest extends LiquifyWithInputTest {
-  @Override
-  public Object[] testParams() {
+  @Parameterized.Parameters(name = "{0}={1}")
+  public static Object[] testParams() {
     return new String[][]{
           {"{%for item in array%}{%ifchanged%}{{item}}{% endifchanged %}{%endfor%}",
                 "1",
@@ -29,9 +29,9 @@ public class IfchangedTest extends LiquifyWithInputTest {
     };
   }
 
-  @Parameters(method = "testParams")
-  @Test
-  public void run(String templateString, String expectedResult, Object inputData) {
-    super.run(templateString, expectedResult, inputData);
+  public IfchangedTest(@NotNull String templateString,
+                       @Nullable String expectedResult,
+                       @Nullable Object inputData) {
+    super(templateString, expectedResult, inputData);
   }
 }

@@ -26,7 +26,7 @@ class Include : LTag() {
       val template: LTemplate = try {
         context.parseFile(includeResourceFile)
       } catch (e: Exception) {
-        if (context.isStrictIncludes) {
+        if (context.parseSettings.isStrictIncludes) {
           throw InvalidIncludeException(includeResourceFile, e)
         }
         EmptyTemplate

@@ -91,7 +91,7 @@ data class LiquidRenderer @JvmOverloads constructor(val accessors: PropertyAcces
     return executeTemplate(template, context).liquify(context)
   }
 
-  override fun getAccessor(prototype: Any, prop: String): Getter<Any> = accessors.getAccessor(prototype, prop)
+  override fun getAccessor(lContext: LContext, prototype: Any, prop: String): Getter<Any> = accessors.getAccessor(lContext, prototype, prop)
 }
 
 fun String.checkSize(maxSize: Int): String {
@@ -102,7 +102,7 @@ fun String.checkSize(maxSize: Int): String {
 }
 
 private fun Any?.liquify(context: LContext): String {
-  return context.asString(this)?.checkSize(context.maxSizeRenderedString) ?: ""
+  return context.asString(this)?.checkSize(context.renderSettings.maxSizeRenderedString) ?: ""
 }
 
 

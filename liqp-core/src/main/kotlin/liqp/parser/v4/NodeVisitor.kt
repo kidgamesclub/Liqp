@@ -430,10 +430,10 @@ class NodeVisitor(val tags: Tags,
   //  ;
   override fun visitFilter(ctx: FilterContext): FilterNode {
     val filterName = ctx.Id().text
-    val filter: LFilter = filters[filterName]
-        ?: throw IllegalArgumentException("error on line " + ctx.start.line + ", " +
-            "index " + ctx.start.charPositionInLine + ": " +
-            "no filter available named: " + ctx.text)
+    val filter = filters.getOrNull(filterName)
+        ?: throw IllegalArgumentException("error on line ${ctx.start.line}, " +
+            "index ${ctx.start.charPositionInLine}: " +
+            "no filter available named: ${ctx.text}")
     val params = ctx.params()?.param_expr()
         ?.map { visit(it) }
     return FilterNode(filter, params ?: emptyList())

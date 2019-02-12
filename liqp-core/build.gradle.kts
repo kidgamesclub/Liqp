@@ -22,6 +22,7 @@ mverse {
     testCompile(junitParams())
     testCompile(mockito())
     testCompile(assertj())
+    testCompile(assertK())
     fatJar(guava())
     fatJar(streamEx())
     fatJar("jackson-databind")

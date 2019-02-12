@@ -1,5 +1,7 @@
 package liqp.nodes
 
+import lang.exception.illegalState
+import lang.json.JsrObject
 import liqp.Getter
 import liqp.LLogic
 import liqp.LParser
@@ -8,9 +10,8 @@ import liqp.PropertyGetter
 import liqp.RenderFrame
 import liqp.TypeCoersion
 import liqp.child
-import liqp.config.LParseSettings
-import liqp.config.LRenderSettings
 import liqp.config.MutableRenderSettings
+import liqp.config.ParseSettings
 import liqp.config.RenderSettings
 import liqp.context.LContext
 import liqp.context.LoopState
@@ -18,7 +19,8 @@ import liqp.exceptions.ExceededMaxIterationsException
 import liqp.exceptions.LiquidRenderingException
 import liqp.isFalsy
 import liqp.isTruthy
-import liqp.lookup.HasProperties
+import liqp.lookup.JsonPropertyGetter
+import liqp.lookup.MapPropertyGetter
 import liqp.lookup.PropertyAccessors
 import liqp.lookup.propertyContainer
 import liqp.node.LTemplate
@@ -38,30 +40,33 @@ data class RenderContext @JvmOverloads constructor(private val rawInputData: Any
                                                    val parser: LParser,
                                                    val renderer: LRenderer,
                                                    val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
-                                                   val settings: RenderSettings = renderer.settings)
-  : LRenderSettings by settings,
-    LParseSettings by parser,
-    LContext, LLogic by logic {
+                                                   override val renderSettings: RenderSettings = renderer.settings)
+  : LContext, LLogic by logic {
 
+  override val parseSettings: ParseSettings = parser.settings
   override val coersion: TypeCoersion = TypeCoersion(logic, logic)
-  override val includesDir = settings.includesDir
-  override val baseDir = settings.baseDir
-  override val includeFile: File get() = settings.baseDir.child(settings.includesDir)
+  override val includeFile = parseSettings.baseDir.child(parseSettings.includesDir)
   private var iterationCount: Int = 0
-  override val isStrictVariables = settings.isStrictVariables
-  override val isStrictIncludes = settings.isStrictIncludes
   override val logs = mutableListOf<Any>()
   override var locale: Locale by delegated(Locale.US)
   override var zoneId: ZoneId by delegated(ZoneId.systemDefault())
   private val stack: Deque<RenderFrame> by lazy { ArrayDeque<RenderFrame>() }
 
-  private val inputData: PropertyGetter by lazy {
+  private val inputData: Any? by lazy {
     when (rawInputData) {
-      is String -> rawInputData.parseJSON()::get
-      is HasProperties -> { prop -> rawInputData.get(prop) }
-      is Map<*, *> -> (rawInputData as Map<String, Any>)::get
-      is Pair<*, *> -> propertyContainer(rawInputData.first, rawInputData.second)
-      else -> accessors.propertyContainer(isStrictVariables, rawInputData)
+      null -> null
+      is String -> rawInputData.parseJSON()
+      else -> rawInputData
+    }
+  }
+
+  private val inputProperties: PropertyGetter by lazy {
+    when (val input = inputData) {
+      is PropertyGetter -> input
+      is JsrObject -> JsonPropertyGetter
+      is Map<*, *> -> MapPropertyGetter
+      is Pair<*, *> -> propertyContainer(input.first.toString(), input.second)
+      else -> accessors.propertyContainer(this, input)
     }
   }
 
@@ -79,41 +84,41 @@ data class RenderContext @JvmOverloads constructor(private val rawInputData: Any
     }
 
   override fun incrementIterations() {
-    if (++iterationCount > maxIterations) {
-      throw ExceededMaxIterationsException(maxIterations)
+    if (++iterationCount > renderSettings.maxIterations) {
+      throw ExceededMaxIterationsException(renderSettings.maxIterations)
     }
     loopState.increment()
   }
 
   override fun isTrue(t: Any?): Boolean {
     return when {
-      isUseTruthyChecks -> t.isTruthy()
+      renderSettings.isUseTruthyChecks -> t.isTruthy()
       else -> logic.isTrue(t)
     }
   }
 
   override fun isFalse(t: Any?): Boolean {
     return when {
-      isUseTruthyChecks -> t.isFalsy()
+      renderSettings.isUseTruthyChecks -> t.isFalsy()
       else -> logic.isFalse(t)
     }
   }
 
   override fun applyRenderSettings(configure: MutableRenderSettings.() -> Unit): LContext {
-    val renderSettings = settings.toMutableRenderSettings().apply(configure).build()
+    val renderSettings = renderSettings.toMutableRenderSettings().apply(configure).build()
     return this.copy(renderer = renderer.withRenderSettings(renderSettings),
-        settings = renderSettings)
+        renderSettings = renderSettings)
   }
 
   override fun withRenderSettings(configurer: (MutableRenderSettings) -> MutableRenderSettings): LContext {
-    val renderSettings = configurer(settings.toMutableRenderSettings()).build()
+    val renderSettings = configurer(renderSettings.toMutableRenderSettings()).build()
     return this.copy(renderer = renderer.withRenderSettings(renderSettings),
-        settings = renderSettings)
+        renderSettings = renderSettings)
   }
 
   override fun pushFrame(): RenderFrame {
-    if (stack.size + 1 > maxStackSize) {
-      throw LiquidRenderingException("Stack limit exceeded: $maxStackSize")
+    if (stack.size + 1 > renderSettings.maxStackSize) {
+      throw LiquidRenderingException("Stack limit exceeded: ${renderSettings.maxStackSize}")
     }
     val frame = RenderFrame(current.allVars)
     this.current = frame
@@ -129,19 +134,19 @@ data class RenderContext @JvmOverloads constructor(private val rawInputData: Any
 
   override operator fun set(varName: String, value: Any?) {
     when {
-      current.hasVar(varName) -> current.set(varName, value)
+      current.hasVar(varName) -> current[varName] = value
       current.hasScopedVar(varName) -> {
         val frames = stack.iterator()
         frames.next() //Already looked at the head frame
         while (frames.hasNext()) {
           val frame = frames.next()
           if (frame.hasVar(varName)) {
-            frame.set(varName, value)
+            frame[varName] = value
             return
           }
         }
       }
-      else -> current.set(varName, value)
+      else -> current[varName] = value
     }
   }
 
@@ -164,6 +169,10 @@ data class RenderContext @JvmOverloads constructor(private val rawInputData: Any
     return current[propName, supplier] as T
   }
 
+  override fun <T : Any> getValue(propName: String): T? {
+    return this[propName]
+  }
+
   override operator fun <T : Any> get(propName: String): T? {
     if (FORLOOP == propName) {
       return current.loop as T
@@ -180,17 +189,14 @@ data class RenderContext @JvmOverloads constructor(private val rawInputData: Any
       while (frames.hasNext()) {
         val frame = frames.next()
         if (frame.hasVar(propName)) {
-          return frame.get(propName) as T
+          return frame[propName] as T
         }
       }
     }
-
-    val inputVal = inputData.invoke(propName)
-    if (inputVal != null) {
-      return inputVal as T
+    return when (val input = inputData) {
+      null -> null
+      else -> inputProperties.getterOrNull(propName)?.invoke(input) as T?
     }
-
-    return null
   }
 
   override fun startLoop(length: Int, name: String?) {
@@ -206,7 +212,7 @@ data class RenderContext @JvmOverloads constructor(private val rawInputData: Any
         frame.addScopedVar(varName)
       }
     }
-    frame.set(varName, value)
+    frame[varName] = value
   }
 
   override val loopState: LoopState get() = current.loop
@@ -218,8 +224,7 @@ data class RenderContext @JvmOverloads constructor(private val rawInputData: Any
   override fun remove(varName: String): Any? = current.remove(varName)
   override fun parseFile(file: File): LTemplate = parser.parseFile(file)
   override fun render(template: LTemplate): String = renderer.render(template, this)
-  override fun invoke(propName: String): Any? = get(propName)
-  override fun getAccessor(container: Any, prop: String): Getter<Any> = renderer.getAccessor(container, prop)
+  override fun getAccessor(container: Any, prop: String): Getter<Any> = renderer.getAccessor(this, container, prop)
 
   override fun withFrame(block: () -> Any?): Any? {
     pushFrame()
@@ -230,9 +235,7 @@ data class RenderContext @JvmOverloads constructor(private val rawInputData: Any
     }
   }
 
-  override fun reset(): LContext {
-    return this.copy(result = null)
-  }
+  override fun reset(): LContext = this.copy(result = null)
 }
 
 

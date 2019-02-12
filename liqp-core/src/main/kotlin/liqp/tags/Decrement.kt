@@ -42,7 +42,7 @@ class Decrement : LTag() {
         context[variableExistsFlag] = context.hasVar(variable)
       }
 
-      val varExists = context.get<Boolean>(variableExistsFlag)
+      val varExists = context.getValue<Boolean>(variableExistsFlag)
       if (varExists != true) {
         // Set the 'variable' to the next value, only if it was flagged as not being defined in the outer scope
         //todo:ericm Shouldn't this variable shadow the outer scope variable?

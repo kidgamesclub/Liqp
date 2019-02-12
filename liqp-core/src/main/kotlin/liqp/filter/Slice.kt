@@ -1,5 +1,6 @@
 package liqp.filter
 
+import lang.exception.illegalArgument
 import liqp.context.LContext
 import liqp.params.FilterParams
 import liqp.safeSlice
@@ -12,32 +13,29 @@ typealias Slicer = (Int) -> Any
  */
 class Slice : LFilter() {
 
-  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
+  override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? = context {
+    val p1:Int = params[0] ?: illegalArgument("liquid error: Invalid integer")
+    val length: Int = params[1, 1]
 
-    context.run {
-      val p1: Int = params[0] ?: throw IllegalArgumentException("liquid error: Invalid integer")
-      val length: Int = params[1, 1]
+    val totalLength: Int
 
-      val totalLength: Int
-
-      val slicer: Slicer = when (isIterable(value)) {
-        true -> {
-          val iterable = asIterable(value).toList()
-          totalLength = iterable.size
-          { offset: Int -> iterable.safeSlice(offset, offset+length) }
-        }
-        false -> {
-          val string = asString(value) ?: return null
-          totalLength = string.length
-          { offset: Int -> string.safeSubstring(offset, offset+length) }
-        }
+    val slicer: Slicer = when (isIterable(value)) {
+      true -> {
+        val iterable = asIterable(value).toList()
+        totalLength = iterable.size
+        { offset: Int -> iterable.safeSlice(offset, offset + length) }
       }
-      val offset: Int = when {
-        p1 < 0 -> totalLength + p1
-        else -> p1
+      false -> {
+        val string = asString(value) ?: return@context null
+        totalLength = string.length
+        { offset: Int -> string.safeSubstring(offset, offset + length) }
       }
-
-      return slicer(offset)
     }
+    val offset: Int = when {
+      p1 < 0 -> totalLength + p1
+      else -> p1
+    }
+
+    return@context slicer(offset)
   }
 }

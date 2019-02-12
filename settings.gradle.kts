@@ -1,10 +1,10 @@
 pluginManagement {
   repositories {
-    mavenLocal()
     jcenter()
     gradlePluginPortal()
     google()
 
+//    mavenLocal()
     maven("https://dl.bintray.com/mverse-io/mverse-public")
     maven("https://kotlin.bintray.com/kotlinx")
   }

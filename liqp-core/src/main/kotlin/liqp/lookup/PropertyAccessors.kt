@@ -1,7 +1,13 @@
 package liqp.lookup
 
+import lang.json.JsrObject
+import lang.json.unbox
+import lang.json.unboxAsAny
+import liqp.Getter
+import liqp.HasProperties
 import liqp.PropertyGetter
 import liqp.context.LAccessors
+import liqp.context.LContext
 import liqp.exceptions.MissingVariableException
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -28,7 +34,7 @@ data class PropertyAccessors(
    * @param value The value that has children properties
    * @return A valid property container, or null if no property accessor could be created
    */
-  override fun getAccessor(sample: Any, propertyName: String): Getter<Any> {
+  override fun getAccessor(lcontext: LContext, sample: Any, propertyName: String): Getter<Any> {
     val type = sample::class
     //
     // 1. First, look for cached accessor.  This should be cheap... the cost of the hash lookup
@@ -40,7 +46,7 @@ data class PropertyAccessors(
       //    looking for the first non-null instance
       //
       for (lookup in lookups.values) {
-        val lookupFn = lookup.getAccessor(sample, propertyName)
+        val lookupFn = lookup.getAccessor(lcontext, sample, propertyName)
         if (lookupFn != null) {
           return@cache lookupFn
         }
@@ -56,16 +62,18 @@ data class PropertyAccessors(
       //
       @Suppress("unchecked_cast")
       val accessor: Getter<Any> = when (sample) {
-        is HasProperties -> { i -> (i as HasProperties).get(propertyName) }
-        is Map<*, *> -> { i -> (i as Map<*, *>)[propertyName] }
+        is PropertyGetter -> sample.getter(propertyName)
+        is Getter<*> -> sample as Getter<Any>
+        is JsrObject-> {json-> (json as JsrObject).get(propertyName)?.unboxAsAny()}
+        is Map<*, *> -> { map -> (map as Map<*, *>)[propertyName] }
         is Pair<*, *> -> ofPair(propertyName)
-        is Function1<*, *> -> { i -> (i as Function1<String, Any?>)(propertyName) }
+        is Function1<*, *> -> { i -> (i as Function1<String, Any?>).invoke(propertyName) }
         else -> {
           findField(type.java, propertyName)
               ?: findGetter(type.java, propertyName)
               ?: type.findNoArgMethod(propertyName)
               ?: findGetMethod(type.java, propertyName)
-              ?: nullAccessor
+              ?: NullGetter
         }
       }
       return@cache accessor
@@ -175,23 +183,43 @@ data class PropertyAccessors(
         }
       }
     }
-
-    @JvmStatic
-    val nullAccessor: Getter<Any> = { _: Any -> null }
   }
 
-  fun propertyContainer(isStrictVariables: Boolean, instance: Any?): PropertyGetter {
+  fun propertyContainer(lcontext: LContext, instance: Any?): PropertyGetter {
+    val type = if (instance != null) instance::class else null
     return when (instance) {
-      null -> { _ -> null }
-      else -> { propertyName: String ->
-        {
-          val getter = getAccessor(instance, propertyName)
-          when {
-            isStrictVariables && getter.isNullAccessor() -> throw MissingVariableException(propertyName)
-            else -> getter.invoke(instance)
-          }
-        }
+      null -> NullPropertyContainer
+      else -> LContextPropertyContainer(lcontext, type)
+    }
+  }
+
+  object NullPropertyContainer : PropertyGetter {
+    override fun getterOrNull(property: String): Getter<Any>? = NullGetter
+  }
+
+  object NullGetter : Getter<Any> {
+    override fun invoke(instance: Any): Any? = null
+  }
+
+  data class LContextPropertyContainer(val lcontext: LContext, val type: KClass<*>?) : PropertyGetter {
+    override fun getterOrNull(property: String): Getter<Any>? = LContextGetter(lcontext, type, property)
+
+    override fun toString(): String {
+      return "Container for [${(type?.qualifiedName ?: "Unknown")}]"
+    }
+  }
+
+  data class LContextGetter(val lcontext: LContext, val type: KClass<*>?, val propertyName: String) : Getter<Any> {
+    override fun invoke(instance: Any): Any? {
+      val getter = lcontext.getAccessor(instance, propertyName)
+      return when {
+        lcontext.renderSettings.isStrictVariables && getter.isNullAccessor() -> throw MissingVariableException(propertyName)
+        else -> getter.invoke(instance)
       }
+    }
+
+    override fun toString(): String {
+      return "Getter for [${(type?.qualifiedName ?: "Unknown")}].$propertyName"
     }
   }
 }

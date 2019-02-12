@@ -3,11 +3,11 @@ import io.spring.gradle.dependencymanagement.dsl.DependenciesHandler
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  java
-  findbugs
   kotlin("jvm")
   id("io.mverse.project")
   id("io.mverse.multi-module")
+  findbugs
+  java
 }
 
 allprojects {
@@ -18,10 +18,16 @@ allprojects {
 
     coverageRequirement = 0.60
     dependencies {
-      compileOnly(kotlinStdlib())
+      compile("kotlin-stdlib-jdk8")
       compileOnly("kotlin-reflect")
       testCompile("assertk-jvm")
+      compile("kotlinx-serialization-runtime")
+      compile("kotlinx-collections-immutable")
     }
+  }
+
+  repositories {
+    maven ("https://kotlin.bintray.com/kotlinx" )
   }
 
   findbugs { isIgnoreFailures = true }
@@ -29,10 +35,12 @@ allprojects {
   dependencyManagement {
     dependencies {
       installKotlinDeps()
+      installMverseShared()
       dependency("org.jsoup:jsoup:1.11.2")
       dependency("org.antlr:antlr4:4.7.1")
       dependency("org.antlr:antlr4-runtime:4.7.1")
       dependency("com.willowtreeapps.assertk:assertk-jvm:0.11")
+      dependency("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.1")
     }
   }
 
@@ -92,4 +100,25 @@ fun DependenciesHandler.installKotlinDeps() {
     entry("kotlinx-serialization-runtime-jsonparser")
   }
 }
+
+fun DependenciesHandler.installMverseShared() {
+  val mverseShared: String by project
+
+  dependencySet("io.mverse:$mverseShared") {
+    entry("mverse-json")
+    entry("mverse-extensions")
+    entry("mverse-i18n")
+    entry("mverse-lang-jvm")
+    entry("mverse-lang-common")
+    entry("mverse-log-common")
+    entry("mverse-log-jvm")
+    entry("mverse-test-common")
+    entry("mverse-test-jvm")
+    entry("mverse-coroutines-common")
+    entry("mverse-coroutines-jvm")
+    entry("mverse-events-common")
+    entry("mverse-events-jvm")
+  }
+}
+
 

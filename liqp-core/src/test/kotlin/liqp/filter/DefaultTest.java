@@ -1,8 +1,18 @@
 package liqp.filter;
 
 import liqp.parameterized.LiquifyWithInputTest;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+@RunWith(Parameterized.class)
 public class DefaultTest extends LiquifyWithInputTest {
+  public DefaultTest(@NotNull String templateString,
+                     @Nullable String expectedResult,
+                     @Nullable Object inputData) {
+    super(templateString, expectedResult, inputData);
+  }
   /*
         def test_default
           assert_equal "foo", @filter.default("foo", "bar")
@@ -14,8 +24,8 @@ public class DefaultTest extends LiquifyWithInputTest {
         end
     */
 
-  @Override
-  public Object[] testParams() {
+  @Parameterized.Parameters(name="{0}={1}")
+  public static  Object[] testParams() {
     return new String[][]{
           {"{{ a | default: b }}", "foo", "{ \"a\": \"foo\", \"b\": \"bar\" }"},
           {"{{ a | default: b }}", "bar", "{ \"a\": null, \"b\": \"bar\" }"},

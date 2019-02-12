@@ -52,7 +52,7 @@ class Increment : LTag() {
         context[variableExistsFlag] = context.hasVar(variable)
       }
 
-      val varExists = context.get<Boolean>(variableExistsFlag)
+      val varExists = context.getValue<Boolean>(variableExistsFlag)
       if (varExists == null || varExists == false) {
         // Set the 'variable' to the next value, only if it was flagged as not being defined in the outer scope
         //todo:Ericm This seems really odd - a weird side effect

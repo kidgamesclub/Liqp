@@ -1,18 +1,19 @@
 package liqp.filter;
 
-import junitparams.JUnitParamsRunner;
 import liqp.parameterized.LiquifyWithInputTest;
-import org.junit.runner.RunWith;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.junit.runners.Parameterized;
 
-@RunWith(JUnitParamsRunner.class)
 public class SortNaturalTest extends LiquifyWithInputTest {
 
   /*
-      def test_sort_natural_empty_array
-        assert_equal [], @filter.sort_natural([], "a")
-      end
-  */
-  public Object[] testParams() {
+        def test_sort_natural_empty_array
+          assert_equal [], @filter.sort_natural([], "a")
+        end
+    */
+  @Parameterized.Parameters(name = "{0}={1}")
+  public static Object[] testParams() {
 
     String[][] tests = {
           {"{{ nil | sort_natural }}", "", "{ \"x\": [] }"},
@@ -26,5 +27,11 @@ public class SortNaturalTest extends LiquifyWithInputTest {
     };
 
     return tests;
+  }
+
+  public SortNaturalTest(@NotNull String templateString,
+                         @Nullable String expectedResult,
+                         @Nullable Object inputData) {
+    super(templateString, expectedResult, inputData);
   }
 }

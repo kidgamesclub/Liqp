@@ -3,7 +3,6 @@ package liqp
 import liqp.ComparisonResult.EQUAL
 import liqp.ComparisonResult.GREATER
 import liqp.ComparisonResult.LESS
-import kotlin.reflect.full.isSubclassOf
 
 interface InstanceFacts {
   fun isIterable(t: Any?): Boolean
@@ -38,6 +37,7 @@ class TypeCoersion(private val facts: InstanceFacts,
         ?: throw NullPointerException("Unexpected null value for ${type.name}")
   }
 
+  @Suppress("unchecked_cast")
   fun <T : Any> coerceOrNull(from: Any?, type: Class<T>): T? {
     val value = from ?: return null
     return when (type) {
@@ -74,10 +74,8 @@ interface Combiners {
   fun div(a: Any?, b: Any?): Any?
   fun mult(a: Any?, b: Any?): Any?
   fun subtract(a: Any?, b: Any?): Any?
-  fun range(from: Any?, to: Any?): Any?
   fun min(a: Any?, b: Any?): Number?
   fun max(a: Any?, b: Any?): Number?
-  fun contains(t: Any?): LogicResult
 }
 
 enum class ComparisonResult {
@@ -119,15 +117,6 @@ enum class LogicResult {
   override fun toString() = str
 }
 
-enum class DynamicType {
-  TEXT,
-  DATE,
-  NUMBER,
-  BOOLEAN,
-  ARRAY,
-  MAP
-}
-
 fun Int.toComparisonResult(): ComparisonResult {
   return when (this) {
     0 -> EQUAL
@@ -138,10 +127,3 @@ fun Int.toComparisonResult(): ComparisonResult {
 }
 
 interface LLogic : InstanceFacts, Truth, Comparisons, Combiners
-
-data class LiquidLogic(val types: InstanceFacts,
-                       val truth: Truth,
-                       val comparisons: Comparisons,
-                       val combiners: Combiners) : LLogic, InstanceFacts by types,
-    Truth by truth, Comparisons by comparisons, Combiners by combiners
-

@@ -8,7 +8,7 @@ class Property(private val propertyName: String) : Indexable {
   var getter: Getter<Any>? = null
 
   override fun get(value: Any?, context: LContext): Any? {
-    if (value == null && context.isStrictVariables) {
+    if (value == null && context.parseSettings.isStrictVariables) {
       throw MissingVariableException(propertyName)
     } else if (value == null) {
       return null
@@ -23,7 +23,7 @@ class Property(private val propertyName: String) : Indexable {
     }
 
     val getter = getter!!
-    if (context.isStrictVariables && getter.isNullAccessor()) {
+    if (context.parseSettings.isStrictVariables && getter.isNullAccessor()) {
       throw MissingVariableException(propertyName)
     }
 

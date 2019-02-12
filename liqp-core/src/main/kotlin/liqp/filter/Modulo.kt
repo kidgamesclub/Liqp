@@ -1,8 +1,9 @@
 package liqp.filter
 
+import lang.isIntegral
 import liqp.context.LContext
 import liqp.exceptions.LiquidRenderingException
-import liqp.isIntegral
+import liqp.isIntegralType
 import liqp.params.FilterParams
 
 class Modulo : LFilter() {
@@ -23,6 +24,6 @@ class Modulo : LFilter() {
     }
 
     val mod = num % rhsObj
-    return if (value.isIntegral() && param1.isIntegral()) mod.toLong() else mod
+    return if (num.isIntegral() && param1.isIntegralType()) mod.toLong() else mod
   }
 }

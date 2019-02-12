@@ -3,11 +3,21 @@ package liqp.filter;
 import junitparams.JUnitParamsRunner;
 import liqp.parameterized.LiquifyNoInputTest;
 import liqp.parameterized.LiquifyWithInputTest;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-@RunWith(JUnitParamsRunner.class)
+@RunWith(Parameterized.class)
 public class AtLeastTest extends LiquifyWithInputTest {
-  public Object[] testParams() {
+  public AtLeastTest(@NotNull String templateString,
+                     @Nullable String expectedResult,
+                     @Nullable Object inputData) {
+    super(templateString, expectedResult, inputData);
+  }
+
+  @Parameterized.Parameters(name="{0}={1}")
+  public static Object[] testParams() {
     return new String[][]{
 
     /*

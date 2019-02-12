@@ -26,7 +26,7 @@ inline fun <reified T : Any> swallow(block: () -> T): T? {
   }
 }
 
-fun Any?.isIntegral(): Boolean {
+fun Any?.isIntegralType(): Boolean {
   return when (this) {
     is Long -> true
     is Int -> true

@@ -71,7 +71,7 @@ class Date : LFilter() {
       val outputFormat = asString(params[0])
       if (outputFormat?.isNotBlank() != true) {
         //Default format
-        val formatter = findNamedFormat(locale, context.defaultDateFormat)!!
+        val formatter = findNamedFormat(locale, context.renderSettings.defaultDateFormat)!!
         //Ensure we have a zonedDateTime because the default format accesses HOUR, etc
         return formatter.format(date)
       }

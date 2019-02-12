@@ -1,17 +1,19 @@
 package liqp
 
+import lang.isIntegral
 import liqp.ComparisonResult.EQUAL
 import liqp.ComparisonResult.GREATER
 import liqp.ComparisonResult.LESS
 import liqp.ComparisonResult.NOOP
 import liqp.ComparisonResult.NULL
+import liqp.coersion.ToIterable
+import liqp.coersion.ToNumberOrNull
 import liqp.exceptions.LiquidRenderingException
 import kotlin.math.absoluteValue
 
 val strictLogic = StrictLogic()
 
-class StrictLogic: LLogic {
-
+class StrictLogic : LLogic {
   override fun isTrue(t: Any?): Boolean {
     return when (t) {
       is LogicResult -> t == LogicResult.TRUE
@@ -39,7 +41,7 @@ class StrictLogic: LLogic {
       isIterable(a) && isIterable(b) -> size(a).compareNumbers(size(b)).and { a == b }
       a is Map<*, *> && b is Map<*, *> -> a.size.compareNumbers(b.size).and { a == b }
       // If same type
-      a is Comparable<*> && a::class.isInstance(b)-> (a as Comparable<Any>).compareTo(b).toComparisonResult()
+      a is Comparable<*> && a::class.isInstance(b) -> (a as Comparable<Any>).compareTo(b).toComparisonResult()
       else -> (a == b).asComparison()
     }
   }
@@ -97,7 +99,7 @@ class StrictLogic: LLogic {
         throw LiquidRenderingException("Div by 0")
       }
       val result = aDbl / bDbl
-      return if (a.isIntegral() && b.isIntegral()) {
+      return if (a.isIntegralType() && b.isIntegralType()) {
         result.toLong()
       } else {
         result
@@ -124,7 +126,6 @@ class StrictLogic: LLogic {
   }
 
   override fun max(a: Any?, b: Any?): Number? {
-
     val numA = asNumber(a)
     val numB = asNumber(b)
     if (numA == null || numB == null) {
@@ -160,43 +161,30 @@ class StrictLogic: LLogic {
     return NOOP
   }
 
-  override fun range(from: Any?, to: Any?): Any? {
-    TODO()
-  }
-
-  override fun contains(t: Any?): LogicResult {
-    TODO()
-  }
-
   override fun isIterable(t: Any?): Boolean {
     return t is Iterable<*> || t is Array<*>
   }
 
   override fun asLong(t: Any?): Long? {
-    return when (t) {
-      null -> 0
-      is Double-> if(t.isIntegral()) t.toLong() else null
-      is Long -> t
-      is Int -> t.toLong()
-      is String -> t.toLongOrNull()
+    val number = asNumber(t) ?: return null
+    return when (number) {
+      is Double -> if (t.isIntegralType()) number.toLong() else null
+      is Float -> if (t.isIntegralType()) number.toLong() else null
+      is Long -> number
+      is Int -> number.toLong()
+      is Short -> number.toLong()
       else -> null
     }
   }
 
   override fun asIterable(t: Any?): Iterable<Any?> {
-    return when (t) {
-      null -> emptyList()
-      is Array<*> -> listOf(*t)
-      is Iterable<*> -> t
-      is Map<*, *> -> t.asIterable()
-      else -> listOf(t)
-    }
+    return ToIterable.convert(t)
   }
 
   override fun asString(t: Any?): String? {
     return when {
       t == null -> null
-      t is ControlResult-> null
+      t is ControlResult -> null
       t is String -> t
       isIterable(t) -> {
         val builder = StringBuilder()
@@ -210,28 +198,17 @@ class StrictLogic: LLogic {
     }
   }
 
-  override fun asDouble(t: Any?): Double? {
-    return when (t) {
-      null -> 0.0
-      is Number -> t.toDouble()
-      is Boolean -> if (t) 1.0 else 0.0
-      is String -> t.toDoubleOrNull()
-      else -> null
-    }
-  }
+  override fun asDouble(t: Any?): Double? = asNumber(t)?.toDouble()
 
   override fun asNumber(t: Any?): Number? {
-    return when (t) {
-      is Long->t
-      is Double->t
-      is Short->t.toLong()
-      is Int-> t.toInt()
-      is Float-> t.toDouble()
-      is Byte-> t.toLong()
-      is Char-> t.toLong()
-      is Number -> if(t.isIntegral()) t.toLong() else t.toDouble()
-      is Boolean -> if (t) 1L else 0L
-      is CharSequence -> t.toString().toNumberOrNull()
+    val number = ToNumberOrNull.convert(t)
+    return when (number) {
+      is Long -> number
+      is Double -> number
+      is Short -> number.toLong()
+      is Int -> number.toInt()
+      is Float -> number.toDouble()
+      is Byte -> number.toLong()
       else -> null
     }
   }
@@ -244,9 +221,9 @@ class StrictLogic: LLogic {
     return when (t) {
       null -> 0
       is Boolean -> if (t) 1 else 0
-      is Long-> {
+      is Long -> {
         val len = t.toString().length / 2
-        len + len%2
+        len + len % 2
       }
       is Collection<*> -> t.size
       is Array<*> -> t.size

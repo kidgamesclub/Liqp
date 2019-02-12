@@ -3,6 +3,8 @@ package liqp
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
+import liqp.LiquidDefaults.defaultFilters
+import liqp.LiquidDefaults.defaultTags
 import liqp.config.LParseSettings
 import liqp.config.MutableParseSettings
 import liqp.config.ParseSettings
@@ -32,7 +34,7 @@ val defaultParseSettings = ParseSettings(
     baseDir = File("./"),
     includesDir = LIQUID.includesDirName)
 
-data class LiquidParser @JvmOverloads constructor(val settings: ParseSettings = defaultParseSettings) :
+data class LiquidParser @JvmOverloads constructor(override val settings: ParseSettings = defaultParseSettings) :
     LParseSettings by settings,
     LParser {
 

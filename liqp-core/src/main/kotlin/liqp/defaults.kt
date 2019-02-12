@@ -66,81 +66,75 @@ import liqp.tags.Raw
 import liqp.tags.Tablerow
 import liqp.tags.Unless
 
-val defaultFilters: Filters by lazy {
-  // Register all standard filter.
-  Filters(ImmutableList.of(
-      Abs(),
-      Append(),
-      AtLeast(),
-      AtMost(),
-      Capitalize(),
-      Ceil(),
-      Compact(),
-      Concat(),
-      Date(),
-      Default(),
-      DividedBy(),
-      Downcase(),
-      Escape(),
-      EscapeOnce(),
-      First(),
-      Floor(),
-      H(),
-      Join(),
-      Last(),
-      Lstrip(),
-      liqp.filter.Map(),
-      Minus(),
-      Modulo(),
-      NewlineToBr(),
-      Plus(),
-      Prepend(),
-      Remove(),
-      RemoveFirst(),
-      Replace(),
-      ReplaceFirst(),
-      Reverse(),
-      Round(),
-      Rstrip(),
-      Size(),
-      Slice(),
-      Sort(),
-      SortNatural(),
-      Split(),
-      Strip(),
-      StripNewlines(),
-      Times(),
-      Truncate(),
-      Truncatewords(),
-      Uniq(),
-      Upcase(),
-      UrlDecode(),
-      UrlEncode()))
-}
-
-val defaultTags = Tags(ImmutableList.of(
-    Assign(),
-    Break(),
-    Capture(),
-    Case(),
-    Comment(),
-    Continue(),
-    Cycle(),
-    Decrement(),
-    For(),
-    If(),
-    Ifchanged(),
-    Include(),
-    Increment(),
-    Raw(),
-    Tablerow(), Unless()))
-
-class LiquidDefaults {
-  companion object {
-    @JvmStatic
-    fun getDefaultTags(): Tags = defaultTags
-
-    @JvmStatic
-    fun getDefaultFilters(): Filters = defaultFilters
+object LiquidDefaults {
+  @JvmStatic
+  val defaultFilters: Filters by lazy {
+    // Register all standard filter.
+    Filters(ImmutableList.of(
+        Abs(),
+        Append(),
+        AtLeast(),
+        AtMost(),
+        Capitalize(),
+        Ceil(),
+        Compact(),
+        Concat(),
+        Date(),
+        Default(),
+        DividedBy(),
+        Downcase(),
+        Escape(),
+        EscapeOnce(),
+        First(),
+        Floor(),
+        H(),
+        Join(),
+        Last(),
+        Lstrip(),
+        liqp.filter.Map(),
+        Minus(),
+        Modulo(),
+        NewlineToBr(),
+        Plus(),
+        Prepend(),
+        Remove(),
+        RemoveFirst(),
+        Replace(),
+        ReplaceFirst(),
+        Reverse(),
+        Round(),
+        Rstrip(),
+        Size(),
+        Slice(),
+        Sort(),
+        SortNatural(),
+        Split(),
+        Strip(),
+        StripNewlines(),
+        Times(),
+        Truncate(),
+        Truncatewords(),
+        Uniq(),
+        Upcase(),
+        UrlDecode(),
+        UrlEncode()))
   }
+
+  @JvmStatic
+  val defaultTags = Tags(ImmutableList.of(
+      Assign(),
+      Break(),
+      Capture(),
+      Case(),
+      Comment(),
+      Continue(),
+      Cycle(),
+      Decrement(),
+      For(),
+      If(),
+      Ifchanged(),
+      Include(),
+      Increment(),
+      Raw(),
+      Tablerow(), Unless()))
 }

@@ -44,11 +44,11 @@ abstract class FilterParams : Iterable<Any?> {
   }
 
   inline operator fun <reified T : Any> get(index: Int, default: T): T {
-
     val param = params.getOrNull(index)
     return when {
+      param == null-> default
       param is T -> param
-      coersion != null -> coersion!!.coerceOrNull(param) ?: default
+      coersion != null -> coersion!!.coerceOrNull(param) ?: throw java.lang.ClassCastException("Unable to coerce $param to ${T::class}")
       else -> throw ClassCastException("Unable to convert $param to ${T::class.java}")
     }
   }

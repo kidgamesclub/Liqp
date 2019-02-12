@@ -23,20 +23,20 @@ class LookupNode(val id: String,
 
     // Check if there's a [var] lookup, AST: ^(LOOKUP Id["@var"])
     value = if (id.startsWith("@")) {
-      val existing: Any? = context.get(id.substring(1))
+      val existing: Any? = context[id.substring(1)]
       val varName = existing.toString()
       context[varName]
     } else {
       context[id]
     }
 
-    if (value == null && context.isStrictVariables) {
+    if (value == null && context.parseSettings.isStrictVariables) {
       throw MissingVariableException(variableName)
     }
 
     try {
       for (index in indexes) {
-        value = index[value, context]
+        value = index.get(value, context)
       }
     } catch (e: MissingVariableException) {
       throw MissingVariableException(this.variableName, e.variableName)
