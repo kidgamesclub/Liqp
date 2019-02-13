@@ -1,17 +1,15 @@
 package liqp.filter
 
-import junitparams.JUnitParamsRunner
-import junitparams.Parameters
 import liqp.assertThat
 import liqp.parameterized.LiquifyNoInputTest
 import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.runners.Parameterized.Parameters
 
-@RunWith(JUnitParamsRunner::class)
-class TruncatewordsTest : LiquifyNoInputTest("{ \"txt\" : \"a        b c d e f g h i j a b c d e f g h i j\" }") {
+class TruncatewordsTests(template: String, result: String) : LiquifyNoInputTest(template, result, "{ \"txt\" : \"a        b c d e f g h i j a b c d e f g h i j\" }") {
 
-  override fun testParams(): Array<out Any> {
-    return arrayOf(
+  companion object {
+    @JvmStatic @Parameters(name = "{0}")
+    fun testParams(): Array<out Any> = arrayOf(
         arrayOf("{{ nil | truncatewords }}", ""),
         arrayOf("{{ txt | truncatewords }}", "a b c d e f g h i j a b c d e..."),
         arrayOf("{{ txt | truncatewords: 5 }}", "a b c d e..."),
@@ -21,13 +19,9 @@ class TruncatewordsTest : LiquifyNoInputTest("{ \"txt\" : \"a        b c d e f g
         arrayOf("{{ txt | truncatewords: 20, '===' }}", "a        b c d e f g h i j a b c d e f g h i j"),
         arrayOf("{{ txt | truncatewords: 21, '===' }}", "a        b c d e f g h i j a b c d e f g h i j"))
   }
+}
 
-  @Test
-  @Parameters(method = "testParams")
-  override fun run(templateString: String?, expectedResult: String?) {
-    super.run(templateString, expectedResult)
-  }
-
+class TruncatewordsTest {
   @Test
   fun testTruncatedBounds() {
     Truncatewords().assertThat()

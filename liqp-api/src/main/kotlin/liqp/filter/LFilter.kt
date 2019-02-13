@@ -20,7 +20,7 @@ import liqp.toSnakeCase
  */
 abstract class LFilter(name: String? = null) {
 
-  open val name = name ?: this.toSnakeCase()
+  open val name = name ?: this.toSnakeCase().removeSuffix("_filter")
 
   open fun doFilter(params: FilterParams,
                     chain: FilterChainPointer,

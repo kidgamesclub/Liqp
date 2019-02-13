@@ -3,18 +3,17 @@ package liqp.tags;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import junitparams.JUnitParamsRunner;
 import liqp.AssertsKt;
 import liqp.LiquidParser;
 import liqp.parameterized.LiquifyNoInputTest;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-@RunWith(JUnitParamsRunner.class)
 public class CycleTest extends LiquifyNoInputTest {
 
-  @Override
-  public Object[] testParams() {
+  @Parameterized.Parameters
+  public static Object[] testParams() {
     String[][] tests = {
           {
                 "{% cycle 'o', 't' %}\n" +
@@ -64,6 +63,11 @@ public class CycleTest extends LiquifyNoInputTest {
           }
     };
     return tests;
+  }
+
+  public CycleTest(@NotNull String templateString,
+                   @NotNull String expectedResult) {
+    super(templateString, expectedResult, null);
   }
 
   /*

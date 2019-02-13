@@ -3,18 +3,19 @@ package liqp.filter;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.runners.Parameterized.Parameters;
 
-import junitparams.JUnitParamsRunner;
 import liqp.LiquidDefaults;
 import liqp.Mocks;
 import liqp.parameterized.LiquifyNoInputTest;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(JUnitParamsRunner.class)
 public class DowncaseTest extends LiquifyNoInputTest {
 
-  public Object[] testParams() {
+  @Parameters
+  public static Object[] testParams() {
     return new String[][]{
 
           {"{{ '' | downcase }}", ""},
@@ -22,6 +23,10 @@ public class DowncaseTest extends LiquifyNoInputTest {
           {"{{ 'Abc' | downcase }}", "abc"},
           {"{{ 'abc' | downcase }}", "abc"},
     };
+  }
+
+  public DowncaseTest(@NotNull String templateString, @NotNull String expectedResult) {
+    super(templateString, expectedResult);
   }
 
   /*

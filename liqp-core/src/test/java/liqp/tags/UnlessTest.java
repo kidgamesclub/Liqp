@@ -3,29 +3,29 @@ package liqp.tags;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import junitparams.JUnitParamsRunner;
 import liqp.AssertsKt;
 import liqp.LiquidParser;
-import liqp.node.LTemplate;
 import liqp.parameterized.LiquifyNoInputTest;
 import org.antlr.runtime.RecognitionException;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-@RunWith(JUnitParamsRunner.class)
 public class UnlessTest extends LiquifyNoInputTest {
-  public UnlessTest() {
-    super("{\"user\" : {\"name\" : \"tobi\", \"age\" : 42} }");
-  }
 
-  @Override
-  public Object[] testParams() {
+  @Parameterized.Parameters
+  public static Object[] testParams() {
 
     return new String[][]{
           {"{% unless user.name == 'tobi' %}X{% endunless %}", ""},
           {"{% unless user.name == 'bob' %}X{% endunless %}", "X"},
           {"{% unless user.name == 'tobi' %}X{% else %}Y{% endunless %}", "Y"},
     };
+  }
+
+  public UnlessTest(@NotNull String templateString,
+                    @NotNull String expectedResult) {
+    super(templateString, expectedResult, "{\"user\" : {\"name\" : \"tobi\", \"age\" : 42} }");
   }
 
   /*

@@ -87,8 +87,8 @@ fun LTemplate.assertThat(): TemplateAssert {
   return TemplateAssert(this)
 }
 
-fun LFilter.assertThat(): FilterAssert {
-  return FilterAssert(this)
+fun LFilter.assertThat(name:String? = null): FilterAssert {
+  return FilterAssert(name=name, filter = this)
 }
 
 inline fun <reified T : Any> T?.asserting(): Assert<T> {

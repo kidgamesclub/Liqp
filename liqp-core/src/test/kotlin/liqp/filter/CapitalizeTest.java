@@ -4,21 +4,26 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-import junitparams.JUnitParamsRunner;
 import liqp.Mocks;
 import liqp.parameterized.LiquifyNoInputTest;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-@RunWith(JUnitParamsRunner.class)
 public class CapitalizeTest extends LiquifyNoInputTest {
 
-  public Object[] testParams() {
+  @Parameterized.Parameters
+  public static Object[] testParams() {
     return new String[][]{
           {"{{'a' | capitalize}}", "A"},
           {"{{'' | capitalize}}", ""},
           {"{{1 | capitalize}}", "1"},
     };
+  }
+
+  public CapitalizeTest(@NotNull String templateString,
+                        @NotNull String expectedResult) {
+    super(templateString, expectedResult, null);
   }
 
   /*

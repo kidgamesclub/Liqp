@@ -5,21 +5,18 @@ import static liqp.Mocks.mockRenderContext;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.stream.Collectors;
-import junitparams.JUnitParamsRunner;
 import liqp.LiquidDefaults;
 import liqp.exceptions.LiquidRenderingException;
 import liqp.parameterized.LiquifyNoInputTest;
 import org.assertj.core.api.Assertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-@RunWith(JUnitParamsRunner.class)
 public class SortTest extends LiquifyNoInputTest {
-  public SortTest() {
-    super("{ \"words\"   : [\"2\", \"13\", \"1\"],  \"numbers\" : [2, 13, 1] }");
-  }
 
-  public Object[] testParams() {
+  @Parameterized.Parameters
+  public static Object[] testParams() {
     String[][] tests = {
           {"{{ x | sort }}", ""},
           {"{{ words | sort }}", "1132"},
@@ -28,6 +25,11 @@ public class SortTest extends LiquifyNoInputTest {
           {"{{ numbers | sort | first }}", "1"},
     };
     return tests;
+  }
+
+  public SortTest(@NotNull String templateString,
+                  @NotNull String expectedResult) {
+    super(templateString, expectedResult, "{ \"words\"   : [\"2\", \"13\", \"1\"],  \"numbers\" : [2, 13, 1] }");
   }
 
   /*

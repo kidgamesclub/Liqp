@@ -19,7 +19,6 @@ dependencies {
 mverse {
   dependencies {
     testCompile(junit())
-    testCompile(junitParams())
     testCompile(mockito())
     testCompile(assertj())
     testCompile(assertK())

@@ -1,14 +1,13 @@
 package liqp.nodes;
 
-import junitparams.JUnitParamsRunner;
 import liqp.parameterized.LiquifyNoInputTest;
-import org.junit.runner.RunWith;
+import org.jetbrains.annotations.NotNull;
+import org.junit.runners.Parameterized;
 
-@RunWith(JUnitParamsRunner.class)
 public class LtNodeTest extends LiquifyNoInputTest {
 
-  @Override
-  public Object[] testParams() {
+  @Parameterized.Parameters(name = "{0}={1}")
+  public static Object[] testParams() {
 
     String[][] tests = {
           {"{% if nil < 42.09 %}yes{% else %}no{% endif %}", "no"},
@@ -19,5 +18,10 @@ public class LtNodeTest extends LiquifyNoInputTest {
           {"{% if 42.1 < 42.1000001 %}yes{% else %}no{% endif %}", "yes"},
     };
     return tests;
+  }
+
+  public LtNodeTest(@NotNull String templateString,
+                    @NotNull String expectedResult) {
+    super(templateString, expectedResult);
   }
 }

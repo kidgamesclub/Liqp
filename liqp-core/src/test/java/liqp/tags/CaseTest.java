@@ -3,24 +3,18 @@ package liqp.tags;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import junitparams.JUnitParamsRunner;
 import liqp.LiquidParser;
 import liqp.node.LTemplate;
 import liqp.parameterized.LiquifyNoInputTest;
 import org.antlr.runtime.RecognitionException;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-@RunWith(JUnitParamsRunner.class)
 public class CaseTest extends LiquifyNoInputTest {
 
-  public CaseTest() {
-    super("{\"x\" : 2, \"y\" : null, \"template\" : \"product\" }");
-  }
-
-  @Override
-  public Object[] testParams() {
-
+  @Parameterized.Parameters
+  public static Object[] testParams() {
     String[][] tests = {
           {"{% case x %}{% when 2 %}a{% endcase %}", "a"},
           {"{% case x %}{% when 1 %}a{% when 2 %}b{% else %}c{% endcase %}", "b"},
@@ -29,6 +23,11 @@ public class CaseTest extends LiquifyNoInputTest {
     };
 
     return tests;
+  }
+
+  public CaseTest(@NotNull String templateString,
+                  @NotNull String expectedResult) {
+    super(templateString, expectedResult, "{\"x\" : 2, \"y\" : null, \"template\" : \"product\" }");
   }
 
   /*
@@ -60,7 +59,7 @@ public class CaseTest extends LiquifyNoInputTest {
    * end
    */
   @Test
-  public void caseTest() throws RecognitionException {
+  public void caseTest() {
 
     assertThat(
           LiquidParser.newInstance().parse("{% case condition %}{% when 1 %} its 1 {% when 2 %} its 2 {% endcase %}")

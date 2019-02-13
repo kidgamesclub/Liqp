@@ -14,8 +14,9 @@ import liqp.nodes.OutputNode
 import liqp.nodes.RenderContext
 import org.assertj.core.api.Assertions.assertThat
 
-data class FilterAssert(val filter: LFilter,
-                        val parser: LiquidParser = LiquidParser(),
+data class FilterAssert(val name: String? = null,
+                        val filter: LFilter,
+                        val parser: LiquidParser = LiquidParser().withFilters(filter),
                         val inputData: Any? = null,
                         val result: Any? = null,
                         val error: Exception? = null,
@@ -102,7 +103,9 @@ data class FilterAssert(val filter: LFilter,
 
   fun isEqualTo(eq: Any?): FilterAssert {
     assertThat(error).describedAs("Should not have thrown an error but threw $error")
-    assertThat(result).describedAs("There is no result.  Did you call the filtering() method?").isNotNull()
+    if (eq == null && result != null) {
+      assertThat(result).describedAs("There is no result.  Did you call the filtering() method?").isNotNull()
+    }
     assertThat(result).isEqualTo(eq)
     return this
   }

@@ -1,22 +1,24 @@
 package liqp.filter
 
-import junitparams.JUnitParamsRunner
-import liqp.parameterized.LiquifyNoInputTest
+import assertk.assertions.containsExactly
 import liqp.assertThat
+import liqp.parameterized.LiquifyNoInputTest
 import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.runners.Parameterized.Parameters
 import java.util.regex.Pattern
-import assertk.assertions.*
 
-@RunWith(JUnitParamsRunner::class)
-class SplitTest : LiquifyNoInputTest() {
+class SplitTestParameterized(template: String, result: String) : LiquifyNoInputTest(template, result) {
 
-  override fun testParams() = arrayOf(
-      arrayOf("{{ 'a-b-c' | split:'-' }}", "abc"),
-      arrayOf("{{ 'a-b-c' | split:'' }}", "a-b-c"),
-      arrayOf("{{ 'a-b-c' | split:'?' }}", "a-b-c"),
-      arrayOf("{{ 'a-b-c' | split:nil }}", "a-b-c"))
+  companion object {
+    @JvmStatic @Parameters(name = "{0}={1}") fun testParams() = arrayOf(
+        arrayOf("{{ 'a-b-c' | split:'-' }}", "abc"),
+        arrayOf("{{ 'a-b-c' | split:'' }}", "a-b-c"),
+        arrayOf("{{ 'a-b-c' | split:'?' }}", "a-b-c"),
+        arrayOf("{{ 'a-b-c' | split:nil }}", "a-b-c"))
+  }
+}
 
+class SplitTest {
   /*
    * def test_strip
    *   assert_equal ['12','34'], @filter.split('12~34', '~')

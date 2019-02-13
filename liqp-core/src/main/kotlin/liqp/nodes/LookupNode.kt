@@ -36,7 +36,7 @@ class LookupNode(val id: String,
 
     try {
       for (index in indexes) {
-        value = index.get(value, context)
+        value = index[value, context]
       }
     } catch (e: MissingVariableException) {
       throw MissingVariableException(this.variableName, e.variableName)

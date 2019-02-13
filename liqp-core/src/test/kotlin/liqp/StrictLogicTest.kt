@@ -1,42 +1,48 @@
 package liqp
 
-import junitparams.JUnitParamsRunner
-import junitparams.Parameters
 import org.assertj.core.api.Assertions
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 
-@RunWith(JUnitParamsRunner::class)
-class StrictLogicTest {
+@RunWith(Parameterized::class)
+class StrictLogicTestIsTrue(val input:Any?, val expected:Boolean) {
 
   @Test
-  @Parameters(method = "isTrueParams")
-  fun testIsTrue(input: Any?, expected: Boolean) {
+  fun testIsTrue() {
     val found = strictLogic.isTrue(input)
     Assertions.assertThat(found).isEqualTo(expected)
   }
 
-  fun isTrueParams(): Array<out Any> {
-    return arrayOf(
-        arrayOf(true, true),
-        arrayOf(null, false),
-        arrayOf(1, true)
-    )
+  companion object {
+    @JvmStatic   @Parameterized.Parameters(name = "{1}")
+     fun isTrueParams(): Array<out Any> {
+      return arrayOf(
+          arrayOf(true, true),
+          arrayOf(null, false),
+          arrayOf(1, true)
+      )
+    }
   }
+}
 
+@RunWith(Parameterized::class)
+class StrictLogicTestIsFalse(val input: Any?, val expected: Boolean) {
   @Test
-  @Parameters(method = "isFalseParams")
-  fun testIsFalse(input: Any?, expected: Boolean) {
+  fun testIsFalse() {
     val found = strictLogic.isFalse(input)
     Assertions.assertThat(found).isEqualTo(expected)
   }
 
-  fun isFalseParams(): Array<out Any> {
-    return arrayOf(
-        arrayOf(true, false),
-        arrayOf(false, true),
-        arrayOf(null, true),
-        arrayOf(1, false)
-    )
+  companion object {
+    @JvmStatic @Parameterized.Parameters
+    fun isFalseParams(): Array<out Any> {
+      return arrayOf(
+          arrayOf(true, false),
+          arrayOf(false, true),
+          arrayOf(null, true),
+          arrayOf(1, false)
+      )
+    }
   }
 }

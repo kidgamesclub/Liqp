@@ -4,15 +4,15 @@ import static liqp.Mocks.mockRenderContext;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import junitparams.JUnitParamsRunner;
 import liqp.LiquidDefaults;
 import liqp.parameterized.LiquifyNoInputTest;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-@RunWith(JUnitParamsRunner.class)
 public class EscapeOnceTest extends LiquifyNoInputTest {
-  public Object[] testParams() {
+  @Parameterized.Parameters
+  public static Object[] testParams() {
     return new String[][]{
           {"{{ nil | escape_once }}", ""},
           {"{{ 42 | escape_once }}", "42"},
@@ -23,8 +23,9 @@ public class EscapeOnceTest extends LiquifyNoInputTest {
     };
   }
 
-  public EscapeOnceTest() {
-    super("{ \"n\" : [1,2,3,4,5] }");
+  public EscapeOnceTest(@NotNull String templateString,
+                        @NotNull String expectedResult) {
+    super(templateString, expectedResult, "{ \"n\" : [1,2,3,4,5] }");
   }
 
   /*
@@ -37,7 +38,8 @@ public class EscapeOnceTest extends LiquifyNoInputTest {
 
     final LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("escape_once");
 
-    assertThat(filter.onFilterAction(mockRenderContext(), LiquidDefaults.getDefaultFilters().getFilter("escape").onFilterAction
+    assertThat(filter.onFilterAction(mockRenderContext(),
+          LiquidDefaults.getDefaultFilters().getFilter("escape").onFilterAction
           (mockRenderContext(), "<strong>")), is((Object) "&lt;" +
           "strong&gt;"));
 

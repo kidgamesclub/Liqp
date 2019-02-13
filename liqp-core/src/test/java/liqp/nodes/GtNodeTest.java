@@ -3,17 +3,20 @@ package liqp.nodes;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import liqp.LiquidParser;
 import liqp.LiquidTemplate;
+import liqp.parameterized.LiquifyNoInputTest;
 import org.antlr.runtime.RecognitionException;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(JUnitParamsRunner.class)
-public class GtNodeTest {
+@RunWith(Parameterized.class)
+public class GtNodeTest extends LiquifyNoInputTest {
 
+  @Parameters(name = "getParams")
   public static String[][] getParams() {
     String[][] tests = {
           {"{% if nil > 42.09 %}yes{% else %}no{% endif %}", "no"},
@@ -26,13 +29,16 @@ public class GtNodeTest {
     return tests;
   }
 
-  @Test
-  @Parameters(method = "getParams")
-  public void applyTest(String templateString, String expected) throws RecognitionException {
+  public GtNodeTest(@NotNull String templateString,
+                    @NotNull String expectedResult) {
+    super(templateString, expectedResult);
+  }
 
-    LiquidTemplate template = LiquidParser.newInstance().parse(templateString);
+  @Test
+  public void applyTest() throws RecognitionException {
+    LiquidTemplate template = LiquidParser.newInstance().parse(getTemplateString());
     String rendered = String.valueOf(template.render());
 
-    assertThat(rendered, is(expected));
+    assertThat(rendered, is(getExpectedResult()));
   }
 }

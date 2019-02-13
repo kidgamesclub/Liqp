@@ -4,25 +4,30 @@ import static liqp.LiquidParser.newInstance;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import junitparams.JUnitParamsRunner;
 import liqp.LiquidDefaults;
 import liqp.Mocks;
 import liqp.parameterized.LiquifyNoInputTest;
 import org.antlr.runtime.RecognitionException;
 import org.assertj.core.api.Assertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-@RunWith(JUnitParamsRunner.class)
 public class ReplaceFirstTest extends LiquifyNoInputTest {
 
-  public Object[] testParams() {
+  @Parameterized.Parameters
+  public static Object[] testParams() {
     return new String[][]{
           {"{{ '' | replace_first:'a', 'A' }}", ""},
           {"{{ nil | replace_first:'a', 'A' }}", ""},
           {"{{ 'aabbabab' | replace_first:'ab', 'A' }}", "aAbabab"},
           {"{{ 'ababab' | replace_first:'a', 'A' }}", "Ababab"},
     };
+  }
+
+  public ReplaceFirstTest(@NotNull String templateString,
+                          @NotNull String expectedResult) {
+    super(templateString, expectedResult, null);
   }
 
   @Test
@@ -32,7 +37,7 @@ public class ReplaceFirstTest extends LiquifyNoInputTest {
   }
 
   @Test
-  public void applyTestInvalidPattern2() throws RecognitionException {
+  public void applyTestInvalidPattern2() {
     final String render = newInstance().parse("{{ 'ababab' | replace_first:'a', nil }}").render();
     Assertions.assertThat(render).isEqualTo("babab");
   }

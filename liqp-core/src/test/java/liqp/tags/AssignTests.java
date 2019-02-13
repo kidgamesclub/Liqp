@@ -1,16 +1,21 @@
 package liqp.tags;
 
-import junitparams.JUnitParamsRunner;
 import liqp.parameterized.LiquifyNoInputTest;
-import org.junit.runner.RunWith;
+import org.jetbrains.annotations.NotNull;
+import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(JUnitParamsRunner.class)
 public class AssignTests extends LiquifyNoInputTest {
 
-  public Object[] testParams() {
+  @Parameters
+  public static Object[] testParams() {
     return new String[][]{
           {"{% assign name = 'freestyle' %}{{ name }}", "freestyle"},
           {"{% assign age = 42 %}{{ age }}", "42"},
     };
+  }
+
+  public AssignTests(@NotNull String templateString,
+                     @NotNull String expectedResult) {
+    super(templateString, expectedResult, null);
   }
 }

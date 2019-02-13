@@ -3,16 +3,20 @@ package liqp.filter;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import junitparams.JUnitParamsRunner;
 import liqp.LiquidDefaults;
 import liqp.Mocks;
 import liqp.parameterized.LiquifyNoInputTest;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-@RunWith(JUnitParamsRunner.class)
 public class HTest extends LiquifyNoInputTest {
-  public Object[] testParams() {
+  public HTest(@NotNull String templateString,
+               @NotNull String expectedResult) {
+    super(templateString, expectedResult, "{ \"n\" : [1,2,3,4,5] }");
+  }
+
+  @Parameterized.Parameters public static Object[] testParams() {
     return new String[][]{
 
           {"{{ nil | h }}", ""},
@@ -21,10 +25,6 @@ public class HTest extends LiquifyNoInputTest {
           {"{{ '<foo>&\"' | h }}", "&lt;foo&gt;&amp;&quot;"},
           {"{{ false | h }}", "false"},
     };
-  }
-
-  public HTest() {
-    super("{ \"n\" : [1,2,3,4,5] }");
   }
 
   /*

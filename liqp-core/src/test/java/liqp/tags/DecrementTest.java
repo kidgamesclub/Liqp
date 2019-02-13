@@ -1,13 +1,12 @@
 package liqp.tags;
 
-import junitparams.JUnitParamsRunner;
 import liqp.parameterized.LiquifyNoInputTest;
-import org.junit.runner.RunWith;
+import org.jetbrains.annotations.NotNull;
+import org.junit.runners.Parameterized;
 
-@RunWith(JUnitParamsRunner.class)
 public class DecrementTest extends LiquifyNoInputTest {
-  @Override
-  public Object[] testParams() {
+  @Parameterized.Parameters
+  public static Object[] testParams() {
     String[][] tests = {
           {"{%decrement port %}", "-1"},
           {"{%decrement port %} {%decrement port%}", "-1 -2"},
@@ -18,5 +17,10 @@ public class DecrementTest extends LiquifyNoInputTest {
     };
 
     return tests;
+  }
+
+  public DecrementTest(@NotNull String templateString,
+                       @NotNull String expectedResult) {
+    super(templateString, expectedResult, null);
   }
 }
