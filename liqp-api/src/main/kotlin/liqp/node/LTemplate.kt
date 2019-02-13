@@ -1,11 +1,13 @@
 package liqp.node
 
 import liqp.EmptyNode
+import liqp.parseJSON
 
 interface LTemplate {
   val rootNode: LNode
   fun render(): String
   fun render(inputData: Any?): String
+  fun renderJson(inputData: String): String = render(inputData.parseJSON())
   fun render(key: String, value: Any?): String
   fun render(pair: Pair<String, Any?>): String
 }

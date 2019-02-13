@@ -74,7 +74,7 @@ data class LiquidRenderer @JvmOverloads constructor(val accessors: PropertyAcces
 
   override fun createRenderContext(inputData: Any?): RenderContext {
     return RenderContext(
-        rawInputData = inputData,
+        inputData = inputData,
         accessors = this.accessors,
         parser = this.parser,
         renderer = this,

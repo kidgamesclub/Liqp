@@ -2,12 +2,18 @@ package liqp
 
 import com.google.common.base.CaseFormat.LOWER_UNDERSCORE
 import com.google.common.base.CaseFormat.UPPER_CAMEL
+import lang.json.parseJsrValue
+import lang.json.unbox
 import liqp.filter.LFilter
 import liqp.tag.LTag
 import java.math.BigInteger
 
 val SnakeCaseConverter = UPPER_CAMEL.converterTo(LOWER_UNDERSCORE)
 fun String.toSnakeCase() = SnakeCaseConverter.convert(this)!!
+
+fun String.parseJSON(): Map<String, Any?> {
+  return parseJsrValue(this).unbox()
+}
 
 fun LTag.toSnakeCase(): String {
   return this::class.simpleName!!.replace("Tag$", "").toSnakeCase()

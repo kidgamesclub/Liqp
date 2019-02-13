@@ -86,7 +86,7 @@ public class UnlessTest extends LiquifyNoInputTest {
     assertThat(
           LiquidParser.newInstance().parse("{% for i in choices %}{% unless i %}{{ forloop.index }}{% endunless %}{% " +
                 "endfor %}")
-                .render("{ \"choices\" : [1, null, false] }"),
+                .renderJson("{ \"choices\" : [1, null, false] }"),
           is("23"));
   }
 
@@ -102,7 +102,7 @@ public class UnlessTest extends LiquifyNoInputTest {
     assertThat(
           LiquidParser.newInstance().parse("{% for i in choices %}{% unless i %} {{ forloop.index }} {% else %} TRUE " +
                 "{% endunless %}{% endfor %}")
-                .render("{ \"choices\" : [1, null, false] }"),
+                .renderJson("{ \"choices\" : [1, null, false] }"),
           is(" TRUE  2  3 "));
   }
 }

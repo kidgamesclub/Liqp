@@ -42,7 +42,7 @@ public class PrependTest {
 
         final String json = "{ \"a\":\"bc\", \"b\":\"a\" }";
 
-        assertThat(LiquidParser.newInstance().parse("{{ a | prepend: 'a'}}").render(json), is("abc"));
-        assertThat(LiquidParser.newInstance().parse("{{ a | prepend: b}}").render(json), is("abc"));
+        assertThat(LiquidParser.newInstance().parse("{{ a | prepend: 'a'}}").renderJson(json), is("abc"));
+        assertThat(LiquidParser.newInstance().parse("{{ a | prepend: b}}").renderJson(json), is("abc"));
     }
 }

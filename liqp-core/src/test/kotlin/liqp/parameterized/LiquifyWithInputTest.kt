@@ -3,6 +3,7 @@ package liqp.parameterized
 import assertk.assert
 import assertk.assertions.isEqualTo
 import liqp.LiquidParser
+import liqp.parseIfNecessary
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -12,7 +13,12 @@ abstract class LiquifyWithInputTest(val templateString: String, val expectedResu
   @Test
   open fun run() {
     val template = LiquidParser.newInstance().parse(templateString)
-    val rendered = template.render(inputData)
+    val input = try {
+      inputData.parseIfNecessary()
+    } catch (e: Exception) {
+      inputData
+    }
+    val rendered = template.render(input)
     assert(rendered).isEqualTo(expectedResult)
   }
 }

@@ -168,7 +168,7 @@ public class CycleTest extends LiquifyNoInputTest {
           LiquidParser.newInstance().parse(
                 "{%cycle var1: \"one\", \"two\" %} {%cycle var2: \"one\", \"two\" %} " +
                       "{%cycle var1: \"one\", \"two\" %} {%cycle var2: \"one\", \"two\" %} " +
-                      "{%cycle var1: \"one\", \"two\" %} {%cycle var2: \"one\", \"two\" %}").render(assigns),
+                      "{%cycle var1: \"one\", \"two\" %} {%cycle var2: \"one\", \"two\" %}").renderJson(assigns),
           is("one one two two one one"));
   }
 }

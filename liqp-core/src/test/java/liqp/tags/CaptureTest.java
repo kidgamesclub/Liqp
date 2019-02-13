@@ -115,7 +115,7 @@ public class CaptureTest {
 
         assertThat(
                 LiquidParser.newInstance().parse("{{ var2 }}{% capture var2 %}{{ var }} foo {% endcapture %}{{ var2 }}{{ var2 }}")
-                        .render(assigns),
+                        .renderJson(assigns),
                 is("content foo content foo "));
     }
 

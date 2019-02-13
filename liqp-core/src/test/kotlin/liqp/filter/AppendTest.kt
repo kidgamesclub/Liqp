@@ -33,7 +33,7 @@ class AppendTest {
 
     val assigns = "{\"a\":\"bc\", \"b\":\"d\" }"
 
-    assertThat(LiquidParser.newInstance().parse("{{ a | append: 'd'}}").render(assigns), `is`("bcd"))
-    assertThat(LiquidParser.newInstance().parse("{{ a | append: b}}").render(assigns), `is`("bcd"))
+    assertThat(LiquidParser.newInstance().parse("{{ a | append: 'd'}}").renderJson(assigns), `is`("bcd"))
+    assertThat(LiquidParser.newInstance().parse("{{ a | append: b}}").renderJson(assigns), `is`("bcd"))
   }
 }

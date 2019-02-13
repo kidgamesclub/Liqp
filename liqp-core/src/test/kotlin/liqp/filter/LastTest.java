@@ -17,7 +17,7 @@ public class LastTest {
 
         LiquidTemplate template = LiquidParser.newInstance().parse("{{values | last}}");
 
-        String rendered = String.valueOf(template.render("{\"values\" : [\"Mu\", \"foo\", \"bar\"]}"));
+        String rendered = String.valueOf(template.renderJson("{\"values\" : [\"Mu\", \"foo\", \"bar\"]}"));
 
         assertThat(rendered, is("bar"));
     }

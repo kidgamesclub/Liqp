@@ -45,7 +45,7 @@ data class MinusTest(val test: String, val expected: String) {
   fun originalTest() {
 
     assert(LiquidParser.newInstance().parse("{{ input | minus:operand }}")
-        .render("{\"input\":5, \"operand\":1}")).isEqualTo("4")
+        .renderJson("{\"input\":5, \"operand\":1}")).isEqualTo("4")
     assert(LiquidParser.newInstance().parse("{{ '4.3' | minus:'2' }}")
         .render()).isEqualTo("2.3")
   }

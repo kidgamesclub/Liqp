@@ -18,16 +18,15 @@ class LookupNode(val id: String,
 
   override val children: List<LNode> = emptyList()
   override fun render(context: LContext): Any? {
-
-    var value: Any?
-
     // Check if there's a [var] lookup, AST: ^(LOOKUP Id["@var"])
-    value = if (id.startsWith("@")) {
-      val existing: Any? = context[id.substring(1)]
-      val varName = existing.toString()
-      context[varName]
-    } else {
-      context[id]
+    var value: Any? = when {
+      id == "this" -> context
+      id.startsWith("@") -> {
+        val existing: Any? = context[id.substring(1)]
+        val varName = existing.toString()
+        context.get<Any>(varName)
+      }
+      else -> context[id]
     }
 
     if (value == null && context.parseSettings.isStrictVariables) {

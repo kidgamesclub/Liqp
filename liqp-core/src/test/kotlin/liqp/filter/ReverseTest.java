@@ -25,7 +25,7 @@ public class ReverseTest {
         for (String[] test : tests) {
 
             LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
-            String rendered = String.valueOf(template.render(test[2]));
+            String rendered = String.valueOf(template.renderJson(test[2]));
 
             assertThat(rendered, is(test[1]));
         }

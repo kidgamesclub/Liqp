@@ -24,7 +24,12 @@ fun assertStringTemplate(templateString: String,
                          data: Any? = null,
                          renderer: RenderConfigurer = { this },
                          parser: ParseConfigurer = { this }): TemplateRenderAssert {
-  return createTemplateAssert({ parse(templateString) }, data, parser, renderer)
+  return createTemplateAssert({ parse(templateString) }, data.parseIfNecessary(), parser, renderer)
+}
+
+fun Any?.parseIfNecessary(): Any? = when (this) {
+  is String -> this.parseJSON()
+  else -> this
 }
 
 fun assertFileTemplate(templateFile: File, data: Any? = null,
@@ -80,15 +85,15 @@ fun LTemplate.executing(data: Any? = null, renderer: MutableRenderSettings.() ->
 }
 
 fun LTemplate.rendering(data: Any? = null, renderer: MutableRenderSettings.() -> Unit = {}): TemplateRenderAssert {
-  return renderTemplateAndAssert(this, LiquidRenderer.newInstance(renderer), data)
+  return renderTemplateAndAssert(this, LiquidRenderer.newInstance(renderer), data.parseIfNecessary())
 }
 
 fun LTemplate.assertThat(): TemplateAssert {
   return TemplateAssert(this)
 }
 
-fun LFilter.assertThat(name:String? = null): FilterAssert {
-  return FilterAssert(name=name, filter = this)
+fun LFilter.assertThat(name: String? = null): FilterAssert {
+  return FilterAssert(name = name, filter = this)
 }
 
 inline fun <reified T : Any> T?.asserting(): Assert<T> {

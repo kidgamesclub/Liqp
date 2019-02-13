@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.google.common.collect.ImmutableMap;
+import javax.json.stream.JsonParsingException;
 import org.junit.Test;
 
 public class TemplateTest {
@@ -28,20 +29,20 @@ public class TemplateTest {
 
     final String expected = "Hey";
 
-    String rendered = LiquidParser.newInstance().parse("{{mu}}").render("{\"mu\" : \"" + expected + "\"}");
+    String rendered = LiquidParser.newInstance().parse("{{mu}}").renderJson("{\"mu\" : \"" + expected + "\"}");
     assertThat(rendered, is(expected));
   }
 
   @Test
   public void renderJSONStringTestInvalidJSON_NotAccessed() {
-    assertThatCode(() -> LiquidParser.newInstance().parse("mu").render("{\"key : \"value\"}"))
-          .doesNotThrowAnyException();
+    assertThatCode(() -> LiquidParser.newInstance().parse("mu").renderJson("{\"key : \"value\"}"))
+          .isInstanceOf(JsonParsingException.class);
   }
 
   @Test
   public void renderJSONStringTestInvalidJSON_Accessed() {
-    assertThatCode(() -> LiquidParser.newInstance().parse("{{ key }}").render("{\"key : \"value\"}"))
-          .isInstanceOf(JsonParseException.class);
+    assertThatCode(() -> LiquidParser.newInstance().parse("{{ key }}").renderJson("{\"key : \"value\"}"))
+          .isInstanceOf(JsonParsingException.class);
   }
 
   @Test

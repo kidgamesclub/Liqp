@@ -35,7 +35,7 @@ public class MapTest {
         for (String[] test : tests) {
 
             LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
-            String rendered = String.valueOf(template.render(json));
+            String rendered = String.valueOf(template.renderJson(json));
 
             assertThat(rendered, is(test[1]));
         }
@@ -68,6 +68,6 @@ public class MapTest {
 
         final String json = "{\"ary\":[{\"foo\":{\"bar\":\"a\"}}, {\"foo\":{\"bar\":\"b\"}}, {\"foo\":{\"bar\":\"c\"}}]}";
 
-        assertThat(LiquidParser.newInstance().parse("{{ ary | map:'foo' | map:'bar' }}").render(json), is("abc"));
+        assertThat(LiquidParser.newInstance().parse("{{ ary | map:'foo' | map:'bar' }}").renderJson(json), is("abc"));
     }
 }

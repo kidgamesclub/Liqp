@@ -19,7 +19,7 @@ public class FirstTest {
 
     LiquidTemplate template = LiquidParser.newInstance().parse("{{values | first}}");
 
-    String rendered = String.valueOf(template.render("{\"values\" : [\"Mu\", \"foo\", \"bar\"]}"));
+    String rendered = String.valueOf(template.renderJson("{\"values\" : [\"Mu\", \"foo\", \"bar\"]}"));
 
     assertThat(rendered, is("Mu"));
   }

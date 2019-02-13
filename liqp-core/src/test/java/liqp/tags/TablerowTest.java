@@ -306,7 +306,7 @@ public class TablerowTest {
         for (String[] test : tests) {
 
             LTemplate template = LiquidParser.newInstance().parse(test[0]);
-            String rendered = String.valueOf(template.render(json));
+            String rendered = String.valueOf(template.renderJson(json));
             assertThat(rendered, is(test[1]));
         }
     }
@@ -328,12 +328,12 @@ public class TablerowTest {
 
         assertThat(
                 LiquidParser.newInstance().parse("{% tablerow n in numbers cols:3%} {{n}} {% endtablerow %}")
-                        .render("{ \"numbers\":[1,2,3,4,5,6] }"),
+                        .renderJson("{ \"numbers\":[1,2,3,4,5,6] }"),
                 is("<tr class=\"row1\">\n<td class=\"col1\"> 1 </td><td class=\"col2\"> 2 </td><td class=\"col3\"> 3 </td></tr>\n<tr class=\"row2\"><td class=\"col1\"> 4 </td><td class=\"col2\"> 5 </td><td class=\"col3\"> 6 </td></tr>\n"));
 
         assertThat(
                 LiquidParser.newInstance().parse("{% tablerow n in numbers cols:3%} {{n}} {% endtablerow %}")
-                        .render("{ \"numbers\":[] }"),
+                        .renderJson("{ \"numbers\":[] }"),
                 is("<tr class=\"row1\">\n</tr>\n"));
     }
 
@@ -350,7 +350,7 @@ public class TablerowTest {
 
         assertThat(
                 LiquidParser.newInstance().parse("{% tablerow n in numbers cols:5%} {{n}} {% endtablerow %}")
-                        .render("{ \"numbers\":[1,2,3,4,5,6] }"),
+                        .renderJson("{ \"numbers\":[1,2,3,4,5,6] }"),
                 is("<tr class=\"row1\">\n<td class=\"col1\"> 1 </td><td class=\"col2\"> 2 </td><td class=\"col3\"> 3 </td><td class=\"col4\"> 4 </td><td class=\"col5\"> 5 </td></tr>\n<tr class=\"row2\"><td class=\"col1\"> 6 </td></tr>\n"));
     }
 
@@ -366,7 +366,7 @@ public class TablerowTest {
 
         assertThat(
                 LiquidParser.newInstance().parse("{% tablerow n in numbers cols:2%}{{tablerowloop.col}}{% endtablerow %}")
-                        .render("{ \"numbers\":[1,2,3,4,5,6] }"),
+                        .renderJson("{ \"numbers\":[1,2,3,4,5,6] }"),
                 is("<tr class=\"row1\">\n<td class=\"col1\">1</td><td class=\"col2\">2</td></tr>\n<tr class=\"row2\"><td class=\"col1\">1</td><td class=\"col2\">2</td></tr>\n<tr class=\"row3\"><td class=\"col1\">1</td><td class=\"col2\">2</td></tr>\n"));
     }
 
@@ -386,12 +386,12 @@ public class TablerowTest {
 
         assertThat(
                 LiquidParser.newInstance().parse("{% tablerow n in collections.frontpage cols:3%} {{n}} {% endtablerow %}")
-                        .render("{ \"collections\" : { \"frontpage\" : [1,2,3,4,5,6] } }"),
+                        .renderJson("{ \"collections\" : { \"frontpage\" : [1,2,3,4,5,6] } }"),
                 is("<tr class=\"row1\">\n<td class=\"col1\"> 1 </td><td class=\"col2\"> 2 </td><td class=\"col3\"> 3 </td></tr>\n<tr class=\"row2\"><td class=\"col1\"> 4 </td><td class=\"col2\"> 5 </td><td class=\"col3\"> 6 </td></tr>\n"));
 
         assertThat(
                 LiquidParser.newInstance().parse("{% tablerow n in collections['frontpage'] cols:3%} {{n}} {% endtablerow %}")
-                        .render("{ \"collections\" : { \"frontpage\" : [1,2,3,4,5,6] } }"),
+                        .renderJson("{ \"collections\" : { \"frontpage\" : [1,2,3,4,5,6] } }"),
                 is("<tr class=\"row1\">\n<td class=\"col1\"> 1 </td><td class=\"col2\"> 2 </td><td class=\"col3\"> 3 </td></tr>\n<tr class=\"row2\"><td class=\"col1\"> 4 </td><td class=\"col2\"> 5 </td><td class=\"col3\"> 6 </td></tr>\n"));
     }
 
@@ -407,7 +407,7 @@ public class TablerowTest {
 
         assertThat(
                 LiquidParser.newInstance().parse("{% tablerow n in numbers cols:3%} {{n}} {% endtablerow %}")
-                        .render("{ \"numbers\" : [1,2,3,4,5,6] }"),
+                        .renderJson("{ \"numbers\" : [1,2,3,4,5,6] }"),
                 is("<tr class=\"row1\">\n<td class=\"col1\"> 1 </td><td class=\"col2\"> 2 </td><td class=\"col3\"> 3 </td></tr>\n<tr class=\"row2\"><td class=\"col1\"> 4 </td><td class=\"col2\"> 5 </td><td class=\"col3\"> 6 </td></tr>\n"));
     }
 
@@ -423,7 +423,7 @@ public class TablerowTest {
 
         assertThat(
                 LiquidParser.newInstance().parse("{% tablerow n in numbers cols:3 offset:1 limit:6%} {{n}} {% endtablerow %}")
-                        .render("{ \"numbers\" : [1,2,3,4,5,6] }"),
+                        .renderJson("{ \"numbers\" : [1,2,3,4,5,6] }"),
                 is("<tr class=\"row1\">\n<td class=\"col1\"> 1 </td><td class=\"col2\"> 2 </td><td class=\"col3\"> 3 </td></tr>\n<tr class=\"row2\"><td class=\"col1\"> 4 </td><td class=\"col2\"> 5 </td><td class=\"col3\"> 6 </td></tr>\n"));
     }
 }

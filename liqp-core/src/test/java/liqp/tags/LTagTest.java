@@ -61,7 +61,7 @@ public class LTagTest {
           "{{ item }}" +
           "{% endfor %}";
 
-    assertThat(LiquidParser.newInstance().parse(markup).render(context), is("112233"));
+    assertThat(LiquidParser.newInstance().parse(markup).renderJson(context), is("112233"));
   }
 
   /*
@@ -89,7 +89,7 @@ public class LTagTest {
           "{{ item }}" +
           "{% endfor %}";
 
-    assertThat(LiquidParser.newInstance().parse(markup).render(context), is("4455"));
+    assertThat(LiquidParser.newInstance().parse(markup).renderJson(context), is("4455"));
   }
 
   /*

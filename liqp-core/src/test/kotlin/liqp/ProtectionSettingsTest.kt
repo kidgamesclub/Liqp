@@ -110,7 +110,7 @@ class ProtectionSettingsTest {
         .maxTemplateSize(3000)
         .toParser()
         .parse("{% tablerow n in collections.frontpage cols:3%} {{n}} {% endtablerow %}")
-        .render("{ \"collections\" : { \"frontpage\" : [1,2,3,4,5,6] } }")
+        .renderJson("{ \"collections\" : { \"frontpage\" : [1,2,3,4,5,6] } }")
   }
 
   @Test(expected = RuntimeException::class)
@@ -119,7 +119,7 @@ class ProtectionSettingsTest {
         .maxTemplateSize(30)
         .toParser()
         .parse("{% tablerow n in collections.frontpage cols:3%} {{n}} {% endtablerow %}")
-        .render("{ \"collections\" : { \"frontpage\" : [1,2,3,4,5,6] } }")
+        .renderJson("{ \"collections\" : { \"frontpage\" : [1,2,3,4,5,6] } }")
   }
 
   @Test

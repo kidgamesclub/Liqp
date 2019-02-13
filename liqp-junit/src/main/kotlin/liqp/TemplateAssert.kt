@@ -23,6 +23,6 @@ class TemplateAssert(val template: LTemplate? = null,
   }
 
   @JvmOverloads fun rendering(inputData:Any? = null): TemplateRenderAssert {
-    return executeTemplateAndAssert(template!!, engine, inputData)
+    return executeTemplateAndAssert(template!!, engine, inputData.parseIfNecessary())
   }
 }

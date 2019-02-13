@@ -36,7 +36,7 @@ public class IfTest {
         for (String[] test : tests) {
 
             LTemplate template = LiquidParser.newInstance().parse(test[0]);
-            String rendered = String.valueOf(template.render(json));
+            String rendered = String.valueOf(template.renderJson(json));
 
             assertThat(rendered, is(test[1]));
         }
@@ -81,7 +81,7 @@ public class IfTest {
     @Test
     public void if_booleanTest() throws RecognitionException {
 
-        assertThat(LiquidParser.newInstance().parse("{% if var %} YES {% endif %}").render("{ \"var\":true }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if var %} YES {% endif %}").renderJson("{ \"var\":true }"), is(" YES "));
     }
 
     /*
@@ -98,13 +98,13 @@ public class IfTest {
     @Test
     public void if_orTest() throws RecognitionException {
 
-        assertThat(LiquidParser.newInstance().parse("{% if a or b %} YES {% endif %}").render("{ \"a\":true, \"b\":true }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if a or b %} YES {% endif %}").render("{ \"a\":true, \"b\":false }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if a or b %} YES {% endif %}").render("{ \"a\":false, \"b\":true }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if a or b %} YES {% endif %}").render("{ \"a\":false, \"b\":false }"), is(""));
+        assertThat(LiquidParser.newInstance().parse("{% if a or b %} YES {% endif %}").renderJson("{ \"a\":true, \"b\":true }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if a or b %} YES {% endif %}").renderJson("{ \"a\":true, \"b\":false }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if a or b %} YES {% endif %}").renderJson("{ \"a\":false, \"b\":true }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if a or b %} YES {% endif %}").renderJson("{ \"a\":false, \"b\":false }"), is(""));
 
-        assertThat(LiquidParser.newInstance().parse("{% if a or b or c %} YES {% endif %}").render("{ \"a\":false, \"b\":false, \"c\":true }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if a or b or c %} YES {% endif %}").render("{ \"a\":false, \"b\":false, \"c\":false }"), is(""));
+        assertThat(LiquidParser.newInstance().parse("{% if a or b or c %} YES {% endif %}").renderJson("{ \"a\":false, \"b\":false, \"c\":true }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if a or b or c %} YES {% endif %}").renderJson("{ \"a\":false, \"b\":false, \"c\":false }"), is(""));
     }
 
     /*
@@ -117,9 +117,9 @@ public class IfTest {
     @Test
     public void if_or_with_operatorsTest() throws RecognitionException {
 
-        assertThat(LiquidParser.newInstance().parse("{% if a == true or b == true %} YES {% endif %}").render("{ \"a\":true, \"b\":true }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if a == true or b == false %} YES {% endif %}").render("{ \"a\":true, \"b\":true }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if a == false or b == false %} YES {% endif %}").render("{ \"a\":true, \"b\":true }"), is(""));
+        assertThat(LiquidParser.newInstance().parse("{% if a == true or b == true %} YES {% endif %}").renderJson("{ \"a\":true, \"b\":true }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if a == true or b == false %} YES {% endif %}").renderJson("{ \"a\":true, \"b\":true }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if a == false or b == false %} YES {% endif %}").renderJson("{ \"a\":true, \"b\":true }"), is(""));
     }
 
     /*
@@ -140,7 +140,7 @@ public class IfTest {
                 .replace("'", "\"")
                 .replace("=>", ":");
 
-        assertThat(LiquidParser.newInstance().parse("{% if " + awfulMarkup + " %} YES {% endif %}").render(assigns), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if " + awfulMarkup + " %} YES {% endif %}").renderJson(assigns), is(" YES "));
     }
 
     /*
@@ -165,8 +165,8 @@ public class IfTest {
                 .replace("'", "\"")
                 .replace("=>", ":");
 
-        assertThat(LiquidParser.newInstance().parse("{% if android.name == 'Roy' %}YES{% endif %}").render(assigns), is("YES"));
-        assertThat(LiquidParser.newInstance().parse("{% if order.items_count == 0 %}YES{% endif %}").render(assigns), is("YES"));
+        assertThat(LiquidParser.newInstance().parse("{% if android.name == 'Roy' %}YES{% endif %}").renderJson(assigns), is("YES"));
+        assertThat(LiquidParser.newInstance().parse("{% if order.items_count == 0 %}YES{% endif %}").renderJson(assigns), is("YES"));
     }
 
     /*
@@ -192,7 +192,7 @@ public class IfTest {
     @Test
     public void hash_miss_generates_falseTest() throws RecognitionException {
 
-        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% endif %}").render("{ \"foo\" : {} }"), is(""));
+        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% endif %}").renderJson("{ \"foo\" : {} }"), is(""));
     }
 
     /*
@@ -232,36 +232,36 @@ public class IfTest {
     @Test
     public void if_from_variableTest() throws RecognitionException {
 
-        assertThat(LiquidParser.newInstance().parse("{% if var %} NO {% endif %}").render("{ \"var\" : false }"), is(""));
-        assertThat(LiquidParser.newInstance().parse("{% if var %} NO {% endif %}").render("{ \"var\" : null }"), is(""));
-        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% endif %}").render("{ \"foo\" : {\"bar\" : false} }"), is(""));
-        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% endif %}").render("{ \"foo\" : {} }"), is(""));
-        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% endif %}").render("{ \"foo\" : null }"), is(""));
-        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% endif %}").render("{ \"foo\" : true }"), is(""));
+        assertThat(LiquidParser.newInstance().parse("{% if var %} NO {% endif %}").renderJson("{ \"var\" : false }"), is(""));
+        assertThat(LiquidParser.newInstance().parse("{% if var %} NO {% endif %}").renderJson("{ \"var\" : null }"), is(""));
+        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% endif %}").renderJson("{ \"foo\" : {\"bar\" : false} }"), is(""));
+        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% endif %}").renderJson("{ \"foo\" : {} }"), is(""));
+        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% endif %}").renderJson("{ \"foo\" : null }"), is(""));
+        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% endif %}").renderJson("{ \"foo\" : true }"), is(""));
 
-        assertThat(LiquidParser.newInstance().parse("{% if var %} YES {% endif %}").render("{ \"var\" : \"text\" }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if var %} YES {% endif %}").render("{ \"var\" : true }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if var %} YES {% endif %}").render("{ \"var\" : 1 }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if var %} YES {% endif %}").render("{ \"var\" : {} }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if var %} YES {% endif %}").render("{ \"var\" : [] }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if var %} YES {% endif %}").renderJson("{ \"var\" : \"text\" }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if var %} YES {% endif %}").renderJson("{ \"var\" : true }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if var %} YES {% endif %}").renderJson("{ \"var\" : 1 }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if var %} YES {% endif %}").renderJson("{ \"var\" : {} }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if var %} YES {% endif %}").renderJson("{ \"var\" : [] }"), is(" YES "));
         assertThat(LiquidParser.newInstance().parse("{% if \"foo\" %} YES {% endif %}").render(), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} YES {% endif %}").render("{ \"foo\" : {\"bar\" : true} }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} YES {% endif %}").render("{ \"foo\" : {\"bar\" : \"text\"} }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} YES {% endif %}").render("{ \"foo\" : {\"bar\" : 1 } }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} YES {% endif %}").render("{ \"foo\" : {\"bar\" : {} } }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} YES {% endif %}").render("{ \"foo\" : {\"bar\" : [] } }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} YES {% endif %}").renderJson("{ \"foo\" : {\"bar\" : true} }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} YES {% endif %}").renderJson("{ \"foo\" : {\"bar\" : \"text\"} }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} YES {% endif %}").renderJson("{ \"foo\" : {\"bar\" : 1 } }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} YES {% endif %}").renderJson("{ \"foo\" : {\"bar\" : {} } }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} YES {% endif %}").renderJson("{ \"foo\" : {\"bar\" : [] } }"), is(" YES "));
 
-        assertThat(LiquidParser.newInstance().parse("{% if var %} NO {% else %} YES {% endif %}").render("{ \"var\" : false }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if var %} NO {% else %} YES {% endif %}").render("{ \"var\" : null }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if var %} YES {% else %} NO {% endif %}").render("{ \"var\" : true }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if \"foo\" %} YES {% else %} NO {% endif %}").render("{ \"var\" : \"text\" }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if var %} NO {% else %} YES {% endif %}").renderJson("{ \"var\" : false }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if var %} NO {% else %} YES {% endif %}").renderJson("{ \"var\" : null }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if var %} YES {% else %} NO {% endif %}").renderJson("{ \"var\" : true }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if \"foo\" %} YES {% else %} NO {% endif %}").renderJson("{ \"var\" : \"text\" }"), is(" YES "));
 
-        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% else %} YES {% endif %}").render("{ \"foo\" : {\"bar\" : false} }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} YES {% else %} NO {% endif %}").render("{ \"foo\" : {\"bar\" : true} }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} YES {% else %} NO {% endif %}").render("{ \"foo\" : {\"bar\" : \"text\"} }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% else %} YES {% endif %}").render("{ \"foo\" : {\"notbar\" : true} }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% else %} YES {% endif %}").render("{ \"foo\" : {} }"), is(" YES "));
-        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% else %} YES {% endif %}").render("{ \"notfoo\" : {\"bar\" : true} }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% else %} YES {% endif %}").renderJson("{ \"foo\" : {\"bar\" : false} }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} YES {% else %} NO {% endif %}").renderJson("{ \"foo\" : {\"bar\" : true} }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} YES {% else %} NO {% endif %}").renderJson("{ \"foo\" : {\"bar\" : \"text\"} }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% else %} YES {% endif %}").renderJson("{ \"foo\" : {\"notbar\" : true} }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% else %} YES {% endif %}").renderJson("{ \"foo\" : {} }"), is(" YES "));
+        assertThat(LiquidParser.newInstance().parse("{% if foo.bar %} NO {% else %} YES {% endif %}").renderJson("{ \"notfoo\" : {\"bar\" : true} }"), is(" YES "));
     }
 
     /*

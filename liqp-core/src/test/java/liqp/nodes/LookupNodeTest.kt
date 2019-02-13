@@ -31,7 +31,7 @@ class LookupNodeTest {
     for (test in tests) {
 
       val template = LiquidParser.newInstance().parse(test[0])
-      val rendered = template.render(json)
+      val rendered = template.renderJson(json)
 
       assert(rendered).isEqualTo(test[1])
     }
@@ -299,7 +299,7 @@ class LookupNodeTest {
         .strictVariables(true)
         .toParser()
         .parse("array has {{ array.size }} elements")
-        .render(assigns)).isEqualTo("array has 4 elements")
+        .renderJson(assigns)).isEqualTo("array has 4 elements")
   }
 
   /*
@@ -314,7 +314,7 @@ class LookupNodeTest {
 
     val assigns = "{ \"hash\" : { \"a\" : 1, \"b\" : 2, \"c\" : 3, \"d\" : 4 } }"
 
-    assert(LiquidParser.newInstance().parse("hash has {{ hash.size }} elements").render(assigns)).isEqualTo("hash has" + " 4 elements")
+    assert(LiquidParser.newInstance().parse("hash has {{ hash.size }} elements").renderJson(assigns)).isEqualTo("hash has" + " 4 elements")
   }
 
   private fun createTestContext(): RenderContext {

@@ -13,7 +13,7 @@ class OutputNodeTest(val template: String, val expect: String) {
   fun run() {
 
     val template = LiquidParser.newInstance().parse(template)
-    val rendered = template.render("{\"X\" : \"mu\"}")
+    val rendered = template.renderJson("{\"X\" : \"mu\"}")
 
     assert(rendered).isEqualTo(expect)
   }
@@ -33,7 +33,7 @@ class OutputNodeKeywordTest(val keyword:String) {
     val expected = keyword + "_" + Integer.toString(keyword.length)
     val json = "{\"$keyword\" : \"$expected\" }"
     val template = LiquidParser.newInstance().parse(test)
-    val rendered = template.render(json)
+    val rendered = template.renderJson(json)
 
     assert(rendered).isEqualTo(expected)
   }
@@ -56,7 +56,7 @@ class OutputNodeBadKeywordTest(val keyword: String, val expected: String) {
     val test = "{{$keyword}}"
     val json = "{\"$keyword\" : \"bad\" }"
     val template = LiquidParser.newInstance().parse(test)
-    val rendered = template.render(json)
+    val rendered = template.renderJson(json)
 
     assert(rendered).isEqualTo(expected)
   }

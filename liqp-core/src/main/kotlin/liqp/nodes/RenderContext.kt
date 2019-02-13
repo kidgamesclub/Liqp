@@ -34,7 +34,7 @@ import kotlin.reflect.KProperty
 const val FORLOOP = "forloop"
 
 @Suppress("UNCHECKED_CAST")
-data class RenderContext @JvmOverloads constructor(private val rawInputData: Any?,
+data class RenderContext @JvmOverloads constructor(val inputData: Any?,
                                                    override var result: Any? = null,
                                                    val logic: LLogic,
                                                    val parser: LParser,
@@ -51,14 +51,6 @@ data class RenderContext @JvmOverloads constructor(private val rawInputData: Any
   override var locale: Locale by delegated(Locale.US)
   override var zoneId: ZoneId by delegated(ZoneId.systemDefault())
   private val stack: Deque<RenderFrame> by lazy { ArrayDeque<RenderFrame>() }
-
-  private val inputData: Any? by lazy {
-    when (rawInputData) {
-      null -> null
-      is String -> rawInputData.parseJSON()
-      else -> rawInputData
-    }
-  }
 
   private val inputProperties: PropertyGetter by lazy {
     when (val input = inputData) {

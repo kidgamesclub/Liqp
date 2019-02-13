@@ -27,7 +27,7 @@ public class JoinTest {
         for (String[] test : tests) {
 
             LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
-            String rendered = String.valueOf(template.render(json));
+            String rendered = String.valueOf(template.renderJson(json));
 
             assertThat(rendered, is(test[1]));
         }

@@ -30,7 +30,7 @@ class StripHtmlFilterTestParameterized(val template: String, val expected: Strin
         .addFilters(StripHtmlFilter())
         .toParser()
         .parse(template)
-    val rendered = template.render(json)
+    val rendered = template.renderJson(json)
     assert(rendered).isEqualTo(expected)
   }
 }

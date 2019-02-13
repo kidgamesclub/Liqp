@@ -30,11 +30,11 @@ public class AssignTest {
 
         String json = "{\"values\":[\"A\", [\"B1\", \"B2\"], \"C\"]}";
 
-        assertThat(LiquidParser.newInstance().parse("{% assign foo = values %}.{{ foo[1][1] }}.").render(json), is(".B2."));
+        assertThat(LiquidParser.newInstance().parse("{% assign foo = values %}.{{ foo[1][1] }}.").renderJson(json), is(".B2."));
 
         json = "{\"values\":[\"A\", {\"bar\":{\"xyz\":[\"B1\", \"ok\"]}}, \"C\"]}";
 
-        assertThat(LiquidParser.newInstance().parse("{% assign foo = values %}.{{ foo[1].bar.xyz[1] }}.").render(json), is(".ok."));
+        assertThat(LiquidParser.newInstance().parse("{% assign foo = values %}.{{ foo[1].bar.xyz[1] }}.").renderJson(json), is(".ok."));
     }
 
     /*
@@ -97,7 +97,7 @@ public class AssignTest {
 
         assertThat(
                 LiquidParser.newInstance().parse("var2:{{var2}} {%assign var2 = var%} var2:{{var2}}")
-                        .render(" { \"var\" : \"content\" } "),
+                        .renderJson("{ \"var\" : \"content\" } "),
                 is("var2:  var2:content"));
     }
 
@@ -112,7 +112,7 @@ public class AssignTest {
 
         assertThat(
                 LiquidParser.newInstance().parse("a-b:{{a-b}} {%assign a-b = 2 %}a-b:{{a-b}}")
-                        .render(" { \"a-b\" : \"1\" } "),
+                        .renderJson(" { \"a-b\" : \"1\" } "),
                 is("a-b:1 a-b:2"));
     }
 
@@ -127,7 +127,7 @@ public class AssignTest {
 
         assertThat(
                 LiquidParser.newInstance().parse("{%assign var2 = var[\"a:b c\"].paged %}var2: {{var2}}")
-                        .render("{\"var\" : {\"a:b c\" : {\"paged\" : \"1\" }}}"),
+                        .renderJson("{\"var\" : {\"a:b c\" : {\"paged\" : \"1\" }}}"),
                 is("var2: 1"));
     }
 
