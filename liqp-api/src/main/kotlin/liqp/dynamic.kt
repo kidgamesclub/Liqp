@@ -24,30 +24,17 @@ class TypeCoersion(private val facts: InstanceFacts,
     return coerceOrNull(from, T::class.java)
   }
 
-  inline fun <reified T : Any> coerce(from: Any?): T? {
-    return coerceTo(from, T::class.java)
-  }
-
-  fun <T : Any> coerceTo(from: Any?, to: T): T? {
-    return coerceTo(from, to::class.java)
-  }
-
-  fun <T : Any> coerceTo(from: Any?, type: Class<T>): T {
-    return coerceOrNull(from, type)
-        ?: throw NullPointerException("Unexpected null value for ${type.name}")
-  }
-
   @Suppress("unchecked_cast")
   fun <T : Any> coerceOrNull(from: Any?, to: Class<T>): T? {
     val value = from ?: return null
     return when (to) {
       List::class.java -> asIterable(value).toList() as T?
-      String::class.java -> asString(value) as T?
-      Boolean::class.java -> isTrue(value) as T?
+      String::class.java, java.lang.String::class.java -> asString(value) as T?
+      Boolean::class.java, java.lang.Boolean::class.java -> isTrue(value) as T?
       Int::class.java -> asInteger(value) as T?
-      Integer::class.java -> asInteger(value) as T?
-      Long::class.java -> asLong(value) as T?
-      Double::class.java -> asDouble(value) as T?
+      Integer::class.java, java.lang.Integer::class.java -> asInteger(value) as T?
+      Long::class.java, java.lang.Long::class.java -> asLong(value) as T?
+      Double::class.java, java.lang.Double::class.java -> asDouble(value) as T?
       else -> {
         when {
           Number::class.java.isAssignableFrom(to) -> asNumber(value) as T?
