@@ -47,8 +47,8 @@ class TypeCoersion(private val facts: InstanceFacts,
 }
 
 interface Truth {
-  fun isTrue(t: Any?): Boolean
-  fun isFalse(t: Any?): Boolean
+  infix fun isTrue(t: Any?): Boolean
+  infix fun isFalse(t: Any?): Boolean
 }
 
 interface Comparisons {

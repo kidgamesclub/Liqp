@@ -1,7 +1,5 @@
 package liqp.config
 
-import liqp.LRenderer
-import liqp.Liquify
 import liqp.parser.Flavor.LIQUID
 import java.io.File
 import java.time.ZoneId
@@ -22,7 +20,6 @@ interface LRenderSettings {
   val defaultLocale: Locale
   val defaultTimezone: ZoneId
   val executor: ExecutorService?
-  fun withParseSettings(settings: LParseSettings): LRenderSettings
   fun toMutableSettings(): MutableRenderSettings
   fun reconfigure(block: MutableRenderSettings.() -> Unit): LRenderSettings = toMutableSettings().build(block)
 }
@@ -40,15 +37,6 @@ data class RenderSettings(override val baseDir: File,
                           override val executor: ExecutorService? = null,
                           override val defaultLocale: Locale = Locale.US,
                           override val defaultTimezone: ZoneId = ZoneId.of("America/Phoenix")) : LRenderSettings {
-
-  override fun withParseSettings(settings: LParseSettings): LRenderSettings {
-    return this.toMutableSettings().build {
-      baseDir = settings.baseDir
-      includesDir = settings.includesDir
-      isStrictIncludes = settings.isStrictIncludes
-      isStrictVariables = settings.isStrictVariables
-    }
-  }
 
   constructor(parseSettings: LParseSettings) : this(baseDir = parseSettings.baseDir,
       includesDir = parseSettings.includesDir,

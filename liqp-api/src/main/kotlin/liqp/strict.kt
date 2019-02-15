@@ -220,8 +220,8 @@ class StrictLogic : LLogic {
     return when (t) {
       null -> 0
       is Boolean -> if (t) 1 else 0
-      is Long -> {
-        val len = t.toString().length / 2
+      is Number -> {
+        val len = t.toLong().toString().length / 2
         len + len % 2
       }
       is Collection<*> -> t.size
