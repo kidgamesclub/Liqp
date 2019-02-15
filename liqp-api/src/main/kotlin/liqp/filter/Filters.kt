@@ -7,7 +7,9 @@ import kotlin.reflect.KProperty
 data class Filters(val filters: List<LFilter> = listOf()) : List<LFilter> by filters {
   constructor(vararg filters: LFilter) : this(listOf(*filters))
 
-  private val mapped: Map<String, LFilter> = filters.map { it.name to it }.toMap()
+  private val mapped: Map<String, LFilter> = filters
+      .flatMap { filter -> filter.names.map { it to filter } }
+      .toMap()
 
   /**
    * Helps with java interop.  Kotlin can just use the + operator to combine filters instances, eg:

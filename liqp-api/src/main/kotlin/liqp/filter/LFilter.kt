@@ -18,9 +18,14 @@ import liqp.toSnakeCase
  * <p/>
  * -- https://github.com/Shopify/liquid/wiki/Liquid-for-Designers
  */
-abstract class LFilter(name: String? = null) {
+abstract class LFilter(vararg name: String) {
 
-  open val name = name ?: this.toSnakeCase().removeSuffix("_filter")
+  val names: Iterable<String> = when {
+    name.isEmpty() -> listOf(this.toSnakeCase().removeSuffix("_filter"))
+    else -> name.asIterable()
+  }
+
+  val name = names.first()
 
   open fun doFilter(params: FilterParams,
                     chain: FilterChainPointer,

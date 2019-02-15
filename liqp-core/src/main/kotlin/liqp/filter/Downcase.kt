@@ -3,7 +3,7 @@ package liqp.filter
 import liqp.context.LContext
 import liqp.params.FilterParams
 
-class Downcase : LFilter() {
+class Downcase : LFilter("downcase", "lower") {
 
   /**
    * downcase(input)

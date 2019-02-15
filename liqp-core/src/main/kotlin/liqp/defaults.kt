@@ -44,6 +44,7 @@ import liqp.filter.StripNewlines
 import liqp.filter.Times
 import liqp.filter.Truncate
 import liqp.filter.Truncatewords
+import liqp.filter.Uncapitalize
 import liqp.filter.Uniq
 import liqp.filter.Upcase
 import liqp.filter.UrlDecode
@@ -76,6 +77,7 @@ object LiquidDefaults {
         AtLeast(),
         AtMost(),
         Capitalize(),
+        Uncapitalize(),
         Ceil(),
         Compact(),
         Concat(),

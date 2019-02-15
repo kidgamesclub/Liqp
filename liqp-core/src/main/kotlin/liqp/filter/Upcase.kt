@@ -3,7 +3,7 @@ package liqp.filter
 import liqp.context.LContext
 import liqp.params.FilterParams
 
-class Upcase : LFilter() {
+class Upcase : LFilter("upcase", "upper") {
 
   /**
    * upcase(input)

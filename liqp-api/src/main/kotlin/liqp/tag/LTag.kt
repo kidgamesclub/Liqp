@@ -7,9 +7,14 @@ import liqp.toSnakeCase
 /**
  * Tags are used for the logic in a template.
  */
-abstract class LTag(name:String? = null) {
-  val name = name ?: this.toSnakeCase()
+abstract class LTag(vararg name: String) {
 
+  val names: Iterable<String> = when {
+    name.isEmpty() -> listOf(this.toSnakeCase().removeSuffix("_tag"))
+    else -> name.asIterable()
+  }
+
+  val name = names.first()
   /**
    * Renders this tag.
    *
@@ -24,6 +29,7 @@ abstract class LTag(name:String? = null) {
    * @return an Object denoting the rendered AST.
    */
   abstract fun render(context: LContext, vararg nodes: LNode): Any?
+
   open fun render(context: LContext, nodes: List<LNode>): Any? {
     return render(context, *nodes.toTypedArray())
   }
