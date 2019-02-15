@@ -1,8 +1,10 @@
 package liqp.tags;
 
+import static liqp.AssertsKt.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import liqp.AssertsKt;
 import liqp.LiquidParser;
 import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
@@ -20,7 +22,7 @@ public class CommentTest {
 
         for (String[] test : tests) {
 
-            LTemplate template = LiquidParser.newInstance().parse(test[0]);
+            LTemplate template = createTestParser().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -55,25 +57,25 @@ public class CommentTest {
     @Test
     public void has_a_block_which_does_nothingTest() throws RecognitionException {
 
-        assertThat(LiquidParser.newInstance().parse("the comment block should be removed {%comment%} be gone.. {%endcomment%} .. right?").render(),
+        assertThat(createTestParser().parse("the comment block should be removed {%comment%} be gone.. {%endcomment%} .. right?").render(),
                 is("the comment block should be removed  .. right?"));
 
-        assertThat(LiquidParser.newInstance().parse("{%comment%}{%endcomment%}").render(), is(""));
-        assertThat(LiquidParser.newInstance().parse("{%comment%}{% endcomment %}").render(), is(""));
-        assertThat(LiquidParser.newInstance().parse("{% comment %}{%endcomment%}").render(), is(""));
-        assertThat(LiquidParser.newInstance().parse("{% comment %}{% endcomment %}").render(), is(""));
-        assertThat(LiquidParser.newInstance().parse("{%comment%}comment{%endcomment%}").render(), is(""));
-        assertThat(LiquidParser.newInstance().parse("{% comment %}comment{% endcomment %}").render(), is(""));
+        assertThat(createTestParser().parse("{%comment%}{%endcomment%}").render(), is(""));
+        assertThat(createTestParser().parse("{%comment%}{% endcomment %}").render(), is(""));
+        assertThat(createTestParser().parse("{% comment %}{%endcomment%}").render(), is(""));
+        assertThat(createTestParser().parse("{% comment %}{% endcomment %}").render(), is(""));
+        assertThat(createTestParser().parse("{%comment%}comment{%endcomment%}").render(), is(""));
+        assertThat(createTestParser().parse("{% comment %}comment{% endcomment %}").render(), is(""));
 
-        assertThat(LiquidParser.newInstance().parse("foo{%comment%}comment{%endcomment%}bar").render(), is("foobar"));
-        assertThat(LiquidParser.newInstance().parse("foo{% comment %}comment{% endcomment %}bar").render(), is("foobar"));
-        assertThat(LiquidParser.newInstance().parse("foo{%comment%} comment {%endcomment%}bar").render(), is("foobar"));
-        assertThat(LiquidParser.newInstance().parse("foo{% comment %} comment {% endcomment %}bar").render(), is("foobar"));
+        assertThat(createTestParser().parse("foo{%comment%}comment{%endcomment%}bar").render(), is("foobar"));
+        assertThat(createTestParser().parse("foo{% comment %}comment{% endcomment %}bar").render(), is("foobar"));
+        assertThat(createTestParser().parse("foo{%comment%} comment {%endcomment%}bar").render(), is("foobar"));
+        assertThat(createTestParser().parse("foo{% comment %} comment {% endcomment %}bar").render(), is("foobar"));
 
-        assertThat(LiquidParser.newInstance().parse("foo {%comment%} {%endcomment%} bar").render(), is("foo  bar"));
-        assertThat(LiquidParser.newInstance().parse("foo {%comment%}comment{%endcomment%} bar").render(), is("foo  bar"));
-        assertThat(LiquidParser.newInstance().parse("foo {%comment%} comment {%endcomment%} bar").render(), is("foo  bar"));
+        assertThat(createTestParser().parse("foo {%comment%} {%endcomment%} bar").render(), is("foo  bar"));
+        assertThat(createTestParser().parse("foo {%comment%}comment{%endcomment%} bar").render(), is("foo  bar"));
+        assertThat(createTestParser().parse("foo {%comment%} comment {%endcomment%} bar").render(), is("foo  bar"));
 
-        assertThat(LiquidParser.newInstance().parse("foo{%comment%}\n         {%endcomment%}bar").render(), is("foobar"));
+        assertThat(createTestParser().parse("foo{%comment%}\n         {%endcomment%}bar").render(), is("foobar"));
     }
 }

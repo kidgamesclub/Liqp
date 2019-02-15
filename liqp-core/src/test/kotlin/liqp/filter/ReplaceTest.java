@@ -1,13 +1,16 @@
 package liqp.filter;
 
+import static liqp.AssertsKt.*;
 import static liqp.LiquidDefaults.*;
-import static liqp.LiquidParser.newInstance;
 import static liqp.Mocks.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.time.ZoneId;
+import java.util.Locale;
+import liqp.AssertsKt;
 import liqp.LiquidTemplate;
-import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import liqp.params.FilterParams;
 import org.antlr.runtime.RecognitionException;
 import org.assertj.core.api.Assertions;
@@ -27,8 +30,8 @@ public class ReplaceTest {
 
     for (String[] test : tests) {
 
-      LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
-      String rendered = String.valueOf(template.render());
+      LTemplate template = createTestParser().parse(test[0]);
+      String rendered = String.valueOf(template.render(Locale.US, ZoneId.systemDefault()));
 
       assertThat(rendered, is(test[1]));
     }
@@ -36,13 +39,13 @@ public class ReplaceTest {
 
   @Test
   public void applyTestInvalidPattern1() throws RecognitionException {
-    final String render = newInstance().parse("{{ 'ababab' | replace:nil, 'A' }}").render();
+    final String render = createTestParser().parse("{{ 'ababab' | replace:nil, 'A' }}").render(Locale.US, ZoneId.systemDefault());
     Assertions.assertThat(render).isEqualTo("ababab");
   }
 
   @Test
   public void applyTestInvalidPattern2() throws RecognitionException {
-    final String render = newInstance().parse("{{ 'ababab' | replace:'a', nil }}").render();
+    final String render = createTestParser().parse("{{ 'ababab' | replace:'a', nil }}").render(Locale.US, ZoneId.systemDefault());
     Assertions.assertThat(render).isEqualTo("bbb");
   }
 

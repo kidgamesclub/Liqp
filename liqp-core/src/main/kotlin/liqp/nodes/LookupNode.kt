@@ -20,11 +20,11 @@ class LookupNode(val id: String,
   override fun render(context: LContext): Any? {
     // Check if there's a [var] lookup, AST: ^(LOOKUP Id["@var"])
     var value: Any? = when {
-      id == "this" -> context
+      id == "_" -> context.inputData
       id.startsWith("@") -> {
         val existing: Any? = context[id.substring(1)]
         val varName = existing.toString()
-        context.get<Any>(varName)
+        context[varName]
       }
       else -> context[id]
     }

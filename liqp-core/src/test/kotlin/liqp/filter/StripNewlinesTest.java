@@ -1,5 +1,6 @@
 package liqp.filter;
 
+import static liqp.AssertsKt.createTestParser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -10,6 +11,7 @@ import java.util.Map;
 import liqp.LParser;
 import liqp.LiquidTemplate;
 import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -26,12 +28,12 @@ public class StripNewlinesTest {
           {"{{ a | strip_newlines }}", "123"},
     };
 
-    final LParser ctx = LiquidParser.newBuilder().toParser();
+    final LParser ctx = createTestParser();
 
     for (String[] test : tests) {
 
-      LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
-      String rendered = String.valueOf(template.render(jsonData));
+      LTemplate template = createTestParser().parse(test[0]);
+      String rendered = template.render(jsonData);
 
       assertThat(rendered, is(test[1]));
     }
@@ -45,7 +47,7 @@ public class StripNewlinesTest {
   @Test
   public void applyOriginalTest() {
 
-    assertThat(LiquidParser.newInstance().parse("{{ source | strip_newlines }}")
+    assertThat(createTestParser().parse("{{ source | strip_newlines }}")
           .render(Collections.singletonMap("source", "a\nb\nc")), is((Object) "abc"));
   }
 }

@@ -1,8 +1,10 @@
 package liqp.tags;
 
+import static liqp.AssertsKt.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import liqp.AssertsKt;
 import liqp.LiquidParser;
 import liqp.context.LContext;
 import liqp.node.LNode;
@@ -24,9 +26,8 @@ public class LTagTest {
       }
     };
 
-    LTemplate template = LiquidParser.newInstance().withTags(custom).parse("{% twice 10 %}");
-    String rendered = String.valueOf(template.render());
-
+    LTemplate template = createParseSettings().addTags(custom).build().toParser().parse("{% twice 10 %}");
+    String rendered = template.render();
     assertThat(rendered, is("20.0"));
   }
 
@@ -42,11 +43,12 @@ public class LTagTest {
       }
     };
 
-    LTemplate template = LiquidParser.newBuilder()
+    LTemplate template = createParseSettings()
           .addTags(custom)
+          .build()
           .toParser()
           .parse("{% twice %}abc{% endtwice %}");
-    String rendered = String.valueOf(template.render());
+    String rendered = template.render();
 
     assertThat(rendered, is("abc abc"));
   }
@@ -61,7 +63,7 @@ public class LTagTest {
           "{{ item }}" +
           "{% endfor %}";
 
-    assertThat(LiquidParser.newInstance().parse(markup).renderJson(context), is("112233"));
+    assertThat(createTestParser().parse(markup).renderJson(context), is("112233"));
   }
 
   /*
@@ -76,7 +78,7 @@ public class LTagTest {
   @Test
   public void breakWithNoBlockTest() throws RecognitionException {
 
-    assertThat(LiquidParser.newInstance().parse("{% break %}").render(), is(""));
+    assertThat(createTestParser().parse("{% break %}").render(), is(""));
   }
 
   @Test
@@ -89,7 +91,7 @@ public class LTagTest {
           "{{ item }}" +
           "{% endfor %}";
 
-    assertThat(LiquidParser.newInstance().parse(markup).renderJson(context), is("4455"));
+    assertThat(createTestParser().parse(markup).renderJson(context), is("4455"));
   }
 
   /*
@@ -104,7 +106,7 @@ public class LTagTest {
   @Test
   public void continueWithNoBlockTest() throws RecognitionException {
 
-    assertThat(LiquidParser.newInstance().parse("{% continue %}").render(), is(""));
+    assertThat(createTestParser().parse("{% continue %}").render(), is(""));
   }
 
   /*
@@ -123,18 +125,18 @@ public class LTagTest {
    * end
    */
   @Test
-  public void no_transformTest() throws RecognitionException {
+  public void no_transformTest() {
 
-    assertThat(LiquidParser.newInstance().parse("this text should come out of the template without change...").render(),
+    assertThat(createTestParser().parse("this text should come out of the template without change...").render(),
           is("this text should come out of the template without change..."));
 
-    assertThat(LiquidParser.newInstance().parse("blah").render(), is("blah"));
-    assertThat(LiquidParser.newInstance().parse("<blah>").render(), is("<blah>"));
-    assertThat(LiquidParser.newInstance().parse("|,.:").render(), is("|,.:"));
-    assertThat(LiquidParser.newInstance().parse("").render(), is(""));
+    assertThat(createTestParser().parse("blah").render(), is("blah"));
+    assertThat(createTestParser().parse("<blah>").render(), is("<blah>"));
+    assertThat(createTestParser().parse("|,.:").render(), is("|,.:"));
+    assertThat(createTestParser().parse("").render(), is(""));
 
     String text = "this shouldnt see any transformation either but has multiple lines\n as you can clearly see here " +
           "...";
-    assertThat(LiquidParser.newInstance().parse(text).render(), is(text));
+    assertThat(createTestParser().parse(text).render(), is(text));
   }
 }

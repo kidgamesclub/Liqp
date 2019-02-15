@@ -1,5 +1,6 @@
 package liqp.filter;
 
+import static liqp.AssertsKt.createTestParser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -7,6 +8,7 @@ import liqp.LiquidDefaults;
 import liqp.Mocks;
 import liqp.LiquidTemplate;
 import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -15,7 +17,7 @@ public class LastTest {
     @Test
     public void applyTest() throws RecognitionException {
 
-        LiquidTemplate template = LiquidParser.newInstance().parse("{{values | last}}");
+        LTemplate template = createTestParser().parse("{{values | last}}");
 
         String rendered = String.valueOf(template.renderJson("{\"values\" : [\"Mu\", \"foo\", \"bar\"]}"));
 

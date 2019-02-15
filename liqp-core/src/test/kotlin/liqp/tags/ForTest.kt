@@ -2,6 +2,7 @@ package liqp.tags
 
 import liqp.LiquidParser
 import liqp.assertThat
+import liqp.createTestParser
 import liqp.parameterized.LiquifyNoInputTest
 import org.antlr.runtime.RecognitionException
 import org.hamcrest.CoreMatchers.`is`
@@ -72,12 +73,12 @@ class ForTest {
     @Throws(RecognitionException::class)
     fun forTest() {
 
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%} yo {%endfor%}").renderJson("{\"array\":[1,2,3," + "4]}"), `is`(" yo  yo  yo  yo "))
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%}yo{%endfor%}").renderJson("{\"array\":[1,2]}"),
+      assertThat(createTestParser{}.parse("{%for item in array%} yo {%endfor%}").renderJson("{\"array\":[1,2,3," + "4]}"), `is`(" yo  yo  yo  yo "))
+      assertThat(createTestParser{}.parse("{%for item in array%}yo{%endfor%}").renderJson("{\"array\":[1,2]}"),
           `is`("yoyo"))
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%} yo {%endfor%}").renderJson("{\"array\":[1]}"),
+      assertThat(createTestParser{}.parse("{%for item in array%} yo {%endfor%}").renderJson("{\"array\":[1]}"),
           `is`(" yo "))
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%}{%endfor%}").renderJson("{\"array\":[1,2]}"), `is`(""))
+      assertThat(createTestParser{}.parse("{%for item in array%}{%endfor%}").renderJson("{\"array\":[1,2]}"), `is`(""))
     }
 
     /*
@@ -89,7 +90,7 @@ class ForTest {
     @Throws(RecognitionException::class)
     fun forWithRangeTest() {
 
-      assertThat(LiquidParser.newInstance().parse("{%for item in (1..3) %} {{item}} {%endfor%}").render(), `is`(" 1  2" + "  3 "))
+      assertThat(createTestParser{}.parse("{%for item in (1..3) %} {{item}} {%endfor%}").render(), `is`(" 1  2" + "  3 "))
     }
 
     /*
@@ -106,12 +107,12 @@ class ForTest {
     @Throws(RecognitionException::class)
     fun forWithVariableTest() {
 
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%} {{item}} {%endfor%}").renderJson("{\"array\":[1,2,3]}"), `is`(" 1  2  3 "))
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%}{{item}}{%endfor%}").renderJson("{\"array\":[1," + "2,3]}"), `is`("123"))
-      assertThat(LiquidParser.newInstance().parse("{% for item in array %}{{item}}{% endfor %}").renderJson("{\"array\":[1,2,3]}"), `is`("123"))
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%}{{item}}{%endfor%}").renderJson("{\"array\":[\"a\",\"b\",\"c\",\"d\"]}"), `is`("abcd"))
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%}{{item}}{%endfor%}").renderJson("{\"array\":[\"a\",\" \",\"b\",\" \",\"c\"]}"), `is`("a b c"))
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%}{{item}}{%endfor%}").renderJson("{\"array\":[\"a\",\"\",\"b\",\"\",\"c\"]}"), `is`("abc"))
+      assertThat(createTestParser{}.parse("{%for item in array%} {{item}} {%endfor%}").renderJson("{\"array\":[1,2,3]}"), `is`(" 1  2  3 "))
+      assertThat(createTestParser{}.parse("{%for item in array%}{{item}}{%endfor%}").renderJson("{\"array\":[1," + "2,3]}"), `is`("123"))
+      assertThat(createTestParser{}.parse("{% for item in array %}{{item}}{% endfor %}").renderJson("{\"array\":[1,2,3]}"), `is`("123"))
+      assertThat(createTestParser{}.parse("{%for item in array%}{{item}}{%endfor%}").renderJson("{\"array\":[\"a\",\"b\",\"c\",\"d\"]}"), `is`("abcd"))
+      assertThat(createTestParser{}.parse("{%for item in array%}{{item}}{%endfor%}").renderJson("{\"array\":[\"a\",\" \",\"b\",\" \",\"c\"]}"), `is`("a b c"))
+      assertThat(createTestParser{}.parse("{%for item in array%}{{item}}{%endfor%}").renderJson("{\"array\":[\"a\",\"\",\"b\",\"\",\"c\"]}"), `is`("abc"))
     }
 
     /*
@@ -134,13 +135,13 @@ class ForTest {
 
       val assigns = "{\"array\":[1,2,3]}"
 
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%} {{forloop.index}}/{{forloop.length}} " + "{%endfor%}").renderJson(assigns), `is`(" 1/3  2/3  3/3 "))
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%} {{forloop.index}} {%endfor%}").renderJson(assigns), `is`(" 1  2  3 "))
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%} {{forloop.index0}} {%endfor%}").renderJson(assigns), `is`(" 0  1  2 "))
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%} {{forloop.rindex0}} {%endfor%}").renderJson(assigns), `is`(" 2  1  0 "))
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%} {{forloop.rindex}} {%endfor%}").renderJson(assigns), `is`(" 3  2  1 "))
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%} {{forloop.first}} {%endfor%}").renderJson(assigns), `is`(" true  false  false "))
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%} {{forloop.last}} {%endfor%}").renderJson(assigns), `is`(" false  false  true "))
+      assertThat(createTestParser{}.parse("{%for item in array%} {{forloop.index}}/{{forloop.length}} " + "{%endfor%}").renderJson(assigns), `is`(" 1/3  2/3  3/3 "))
+      assertThat(createTestParser{}.parse("{%for item in array%} {{forloop.index}} {%endfor%}").renderJson(assigns), `is`(" 1  2  3 "))
+      assertThat(createTestParser{}.parse("{%for item in array%} {{forloop.index0}} {%endfor%}").renderJson(assigns), `is`(" 0  1  2 "))
+      assertThat(createTestParser{}.parse("{%for item in array%} {{forloop.rindex0}} {%endfor%}").renderJson(assigns), `is`(" 2  1  0 "))
+      assertThat(createTestParser{}.parse("{%for item in array%} {{forloop.rindex}} {%endfor%}").renderJson(assigns), `is`(" 3  2  1 "))
+      assertThat(createTestParser{}.parse("{%for item in array%} {{forloop.first}} {%endfor%}").renderJson(assigns), `is`(" true  false  false "))
+      assertThat(createTestParser{}.parse("{%for item in array%} {{forloop.last}} {%endfor%}").renderJson(assigns), `is`(" false  false  true "))
     }
 
     /*
@@ -157,7 +158,7 @@ class ForTest {
 
       val assigns = "{\"array\":[1,2,3]}"
 
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%}{% if forloop.first %}+{% else %}-{% endif " + "%}{%endfor%}").renderJson(assigns), `is`("+--"))
+      assertThat(createTestParser{}.parse("{%for item in array%}{% if forloop.first %}+{% else %}-{% endif " + "%}{%endfor%}").renderJson(assigns), `is`("+--"))
     }
 
     /*
@@ -171,9 +172,9 @@ class ForTest {
     @Throws(RecognitionException::class)
     fun forElseTest() {
 
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%}+{%else%}-{%endfor%}").renderJson("{\"array\":[1,2,3]}"), `is`("+++"))
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%}+{%else%}-{%endfor%}").renderJson("{\"array\":[]}"), `is`("-"))
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%}+{%else%}-{%endfor%}").renderJson("{\"array\":null}"), `is`("-"))
+      assertThat(createTestParser{}.parse("{%for item in array%}+{%else%}-{%endfor%}").renderJson("{\"array\":[1,2,3]}"), `is`("+++"))
+      assertThat(createTestParser{}.parse("{%for item in array%}+{%else%}-{%endfor%}").renderJson("{\"array\":[]}"), `is`("-"))
+      assertThat(createTestParser{}.parse("{%for item in array%}+{%else%}-{%endfor%}").renderJson("{\"array\":null}"), `is`("-"))
     }
 
     /*
@@ -190,12 +191,12 @@ class ForTest {
 
       val assigns = "{\"array\":[1,2,3,4,5,6,7,8,9,0]}"
 
-      assertThat(LiquidParser.newInstance().parse("{%for i in array limit:2 %}{{ i }}{%endfor%}").renderJson(assigns),
+      assertThat(createTestParser{}.parse("{%for i in array limit:2 %}{{ i }}{%endfor%}").renderJson(assigns),
           `is`("12"))
-      assertThat(LiquidParser.newInstance().parse("{%for i in array limit:4 %}{{ i }}{%endfor%}").renderJson(assigns),
+      assertThat(createTestParser{}.parse("{%for i in array limit:4 %}{{ i }}{%endfor%}").renderJson(assigns),
           `is`("1234"))
-      assertThat(LiquidParser.newInstance().parse("{%for i in array limit:4 offset:2 %}{{ i }}{%endfor%}").renderJson(assigns), `is`("3456"))
-      assertThat(LiquidParser.newInstance().parse("{%for i in array limit: 4 offset: 2 %}{{ i }}{%endfor%}").renderJson(assigns), `is`("3456"))
+      assertThat(createTestParser{}.parse("{%for i in array limit:4 offset:2 %}{{ i }}{%endfor%}").renderJson(assigns), `is`("3456"))
+      assertThat(createTestParser{}.parse("{%for i in array limit: 4 offset: 2 %}{{ i }}{%endfor%}").renderJson(assigns), `is`("3456"))
     }
 
     /*
@@ -210,7 +211,7 @@ class ForTest {
     @Test
     fun dynamicVariableLimitingTest() {
 
-      LiquidParser.newInstance()
+      createTestParser{}
           .assertThat()
           .withTemplateString("{%for i in array limit: limit offset: offset %}{{ i }}{%endfor%}")
           .rendering(mapOf(
@@ -233,7 +234,7 @@ class ForTest {
 
       val assigns = "{ \"array\":[[1,2], [3,4], [5,6]] }"
 
-      assertThat(LiquidParser.newInstance().parse("{%for item in array%}{%for i in item%}{{ i " + "}}{%endfor%}{%endfor%}").renderJson(assigns), `is`("123456"))
+      assertThat(createTestParser{}.parse("{%for item in array%}{%for i in item%}{{ i " + "}}{%endfor%}{%endfor%}").renderJson(assigns), `is`("123456"))
     }
 
     /*
@@ -248,7 +249,7 @@ class ForTest {
 
       val assigns = "{ \"array\":[1,2,3,4,5,6,7,8,9,0] }"
 
-      assertThat(LiquidParser.newInstance().parse("{%for i in array offset:7 %}{{ i }}{%endfor%}").renderJson(assigns),
+      assertThat(createTestParser{}.parse("{%for i in array offset:7 %}{{ i }}{%endfor%}").renderJson(assigns),
           `is`("890"))
     }
 
@@ -290,7 +291,7 @@ class ForTest {
           "next\n" +
           "789"
 
-      assertThat(LiquidParser.newInstance().parse(markup).renderJson(assigns), `is`(expected))
+      assertThat(createTestParser{}.parse(markup).renderJson(assigns), `is`(expected))
     }
 
     /*
@@ -317,7 +318,7 @@ class ForTest {
     @Throws(RecognitionException::class)
     fun pauseResumeLimitTest() {
 
-      LiquidParser.newInstance()
+      createTestParser{}
           .assertThat()
           .withTemplateString("{%for i in array.items limit:3 %}{{i}}{%endfor%}\n" +
               "next\n" +
@@ -370,7 +371,7 @@ class ForTest {
           "next\n" +
           "7890"
 
-      assertThat(LiquidParser.newInstance().parse(markup).renderJson(assigns), `is`(expected))
+      assertThat(createTestParser{}.parse(markup).renderJson(assigns), `is`(expected))
     }
 
     /*
@@ -406,7 +407,7 @@ class ForTest {
           "456\n" +
           "next\n"
 
-      assertThat(LiquidParser.newInstance().parse(markup).renderJson(assigns), `is`(expected))
+      assertThat(createTestParser{}.parse(markup).renderJson(assigns), `is`(expected))
     }
 
     /*
@@ -458,19 +459,19 @@ class ForTest {
 
       var markup = "{% for i in array.items %}{% break %}{% endfor %}"
       var expected = ""
-      assertThat(LiquidParser.newInstance().parse(markup).renderJson(assigns), `is`(expected))
+      assertThat(createTestParser{}.parse(markup).renderJson(assigns), `is`(expected))
 
       markup = "{% for i in array.items %}{{ i }}{% break %}{% endfor %}"
       expected = "1"
-      assertThat(LiquidParser.newInstance().parse(markup).renderJson(assigns), `is`(expected))
+      assertThat(createTestParser{}.parse(markup).renderJson(assigns), `is`(expected))
 
       markup = "{% for i in array.items %}{% break %}{{ i }}{% endfor %}"
       expected = ""
-      assertThat(LiquidParser.newInstance().parse(markup).renderJson(assigns), `is`(expected))
+      assertThat(createTestParser{}.parse(markup).renderJson(assigns), `is`(expected))
 
       markup = "{% for i in array.items %}{{ i }}{% if i > 3 %}{% break %}{% endif %}{% endfor %}"
       expected = "1234"
-      assertThat(LiquidParser.newInstance().parse(markup).renderJson(assigns), `is`(expected))
+      assertThat(createTestParser{}.parse(markup).renderJson(assigns), `is`(expected))
 
       assigns = "{ \"array\":[[1,2],[3,4],[5,6]] }"
 
@@ -483,13 +484,13 @@ class ForTest {
           "{% endfor %}" +
           "{% endfor %}"
       expected = "3456"
-      assertThat(LiquidParser.newInstance().parse(markup).renderJson(assigns), `is`(expected))
+      assertThat(createTestParser{}.parse(markup).renderJson(assigns), `is`(expected))
 
       assigns = "{ \"array\": { \"items\":[1,2,3,4,5] } }"
 
       markup = "{% for i in array.items %}{% if i == 9999 %}{% break %}{% endif %}{{ i }}{% endfor %}"
       expected = "12345"
-      assertThat(LiquidParser.newInstance().parse(markup).renderJson(assigns), `is`(expected))
+      assertThat(createTestParser{}.parse(markup).renderJson(assigns), `is`(expected))
     }
 
     /*
@@ -541,39 +542,39 @@ class ForTest {
 
       var markup = "{% for i in array.items %}{% continue %}{% endfor %}"
       var expected = ""
-      LiquidParser.newInstance().parse(markup)
+      createTestParser{}.parse(markup)
           .assertThat()
           .rendering("{ \"array\": { \"items\":[1,2,3,4,5] } }")
           .isEqualTo(expected)
 
       markup = "{% for i in array.items %}{{ i }}{% continue %}{% endfor %}"
       expected = "12345"
-      LiquidParser.newInstance().parse(markup)
+      createTestParser{}.parse(markup)
           .assertThat()
           .rendering("{ \"array\": { \"items\":[1,2,3,4,5] } }")
           .isEqualTo(expected)
 
-      LiquidParser.newInstance().parse("{% for i in array.items %}{% continue %}{{ i }}{% endfor %}")
+      createTestParser{}.parse("{% for i in array.items %}{% continue %}{{ i }}{% endfor %}")
           .assertThat()
           .rendering("{ \"array\": { \"items\":[1,2,3,4,5] } }")
           .isEqualTo("")
 
       markup = "{% for i in array.items %}{% if i > 3 %}{% continue %}{% endif %}{{ i }}{% endfor %}"
       expected = "123"
-      LiquidParser.newInstance().parse(markup)
+      createTestParser{}.parse(markup)
           .assertThat()
           .rendering("{ \"array\": { \"items\":[1,2,3,4,5] } }")
           .isEqualTo(expected)
 
       markup = "{% for i in array.items %}{% if i == 3 %}{% continue %}{% else %}{{ i }}{% endif %}{% endfor %}"
       expected = "1245"
-      LiquidParser.newInstance().parse(markup)
+      createTestParser{}.parse(markup)
           .assertThat()
           .rendering("{ \"array\": { \"items\":[1,2,3,4,5] } }")
           .isEqualTo(expected)
 
       expected = "23456"
-      LiquidParser.newInstance().parse("{% for item in array %}" +
+      createTestParser{}.parse("{% for item in array %}" +
           "{% for i in item %}" +
           "{% if i == 1 %}" +
           "{% continue %}" +
@@ -585,7 +586,7 @@ class ForTest {
           .rendering("{ \"array\":[[1,2],[3,4],[5,6]] }")
           .isEqualTo(expected)
 
-      LiquidParser.newInstance().parse("{% for i in array.items %}{% if i == 9999 %}{% continue %}{% endif %}{{ i }}{% endfor %}")
+      createTestParser{}.parse("{% for i in array.items %}{% if i == 9999 %}{% continue %}{% endif %}{{ i }}{% endfor %}")
           .assertThat()
           .rendering("{ \"array\": { \"items\":[1,2,3,4,5] } }")
           .isEqualTo("12345")
@@ -625,11 +626,11 @@ class ForTest {
 
       var json = "{ \"string\":\"test string\" }"
 
-      assertThat(LiquidParser.newInstance().parse("{%for val in string%}{{val}}{%endfor%}").renderJson(json), `is`("test " + "string"))
+      assertThat(createTestParser{}.parse("{%for val in string%}{{val}}{%endfor%}").renderJson(json), `is`("test " + "string"))
 
-      assertThat(LiquidParser.newInstance().parse("{%for val in string limit:1%}{{val}}{%endfor%}").renderJson(json), `is`("test string"))
+      assertThat(createTestParser{}.parse("{%for val in string limit:1%}{{val}}{%endfor%}").renderJson(json), `is`("test string"))
 
-      assertThat(LiquidParser.newInstance().parse("{%for val in string%}" +
+      assertThat(createTestParser{}.parse("{%for val in string%}" +
           "{{forloop.name}}-" +
           "{{forloop.index}}-" +
           "{{forloop.length}}-" +
@@ -642,7 +643,7 @@ class ForTest {
 
       // extra `name` testjson = "{ \"string\":\"test string\" }";
       json = "{ \"X\": [ { \"Y\":\"foo\"}, \"test string\" ] }"
-      assertThat(LiquidParser.newInstance().parse("{% for x in X[0].Y %}{{forloop.name}}-{{x}}{%endfor%}").renderJson(json),
+      assertThat(createTestParser{}.parse("{% for x in X[0].Y %}{{forloop.name}}-{{x}}{%endfor%}").renderJson(json),
           `is`("x-X[0].Y-foo"))
     }
 
@@ -655,7 +656,7 @@ class ForTest {
     @Throws(RecognitionException::class)
     fun blankStringNotIterableTest() {
 
-      LiquidParser.newInstance()
+      createTestParser{}
           .parse("{% for char in characters %}I WILL NOT BE OUTPUT{% endfor %}")
           .assertThat()
           .rendering()
@@ -724,6 +725,6 @@ class ForTest {
           "  \n" +
           "`"
 
-      assertThat(LiquidParser.newInstance().parse(template).render(variables), `is`(expected))
+      assertThat(createTestParser{}.parse(template).render(variables), `is`(expected))
     }
   }

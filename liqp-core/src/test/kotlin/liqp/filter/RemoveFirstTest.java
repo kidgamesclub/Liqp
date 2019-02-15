@@ -1,5 +1,6 @@
 package liqp.filter;
 
+import static liqp.AssertsKt.createTestParser;
 import static liqp.Mocks.mockRenderContext;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -7,6 +8,7 @@ import static org.junit.Assert.assertThat;
 import liqp.LiquidDefaults;
 import liqp.LiquidTemplate;
 import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -24,8 +26,8 @@ public class RemoveFirstTest {
 
     for (String[] test : tests) {
 
-      LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
-      String rendered = String.valueOf(template.render());
+      LTemplate template = createTestParser().parse(test[0]);
+      String rendered = template.render();
 
       assertThat(rendered, is(test[1]));
     }
@@ -33,7 +35,7 @@ public class RemoveFirstTest {
 
   @Test(expected = RuntimeException.class)
   public void applyTestInvalidPattern() throws RecognitionException {
-    LiquidParser.newInstance().parse("{{ 'ababab' | remove_first:nil }}").render();
+    createTestParser().parse("{{ 'ababab' | remove_first:nil }}").render();
   }
 
   /*
@@ -49,7 +51,7 @@ public class RemoveFirstTest {
     LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("remove_first");
 
     assertThat(filter.onFilterAction(mockRenderContext(), "a a a a", "a "), is((Object) "a a a"));
-    assertThat(LiquidParser.newInstance().parse("{{ 'a a a a' | remove_first: 'a ' }}")
+    assertThat(createTestParser().parse("{{ 'a a a a' | remove_first: 'a ' }}")
           .render(), is((Object) "a a " +
           "a"));
   }

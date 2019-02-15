@@ -1,5 +1,7 @@
 package liqp;
 
+import static java.util.Collections.singletonMap;
+import static liqp.AssertsKt.*;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -15,13 +17,13 @@ public class TemplateTest {
   public void renderObjectTest() {
 
     // `a` is public
-    assertThat(LiquidParser.newInstance().parse("{{foo.a}}").render("foo", new Foo()), is("A"));
+    assertThat(createTestParser().parse("{{foo.a}}").render(singletonMap("foo", new Foo())), is("A"));
 
     // there is a public `getB()` method that exposes `b`
-    assertThat(LiquidParser.newInstance().parse("{{foo.b}}").render("foo", new Foo()), is("B"));
+    assertThat(createTestParser().parse("{{foo.b}}").render(singletonMap("foo", new Foo())), is("B"));
 
     // `c` is not accessible
-    assertThat(LiquidParser.newInstance().parse("{{foo.c}}").render("foo", new Foo()), is(""));
+    assertThat(createTestParser().parse("{{foo.c}}").render(singletonMap("foo", new Foo())), is(""));
   }
 
   @Test
@@ -29,19 +31,19 @@ public class TemplateTest {
 
     final String expected = "Hey";
 
-    String rendered = LiquidParser.newInstance().parse("{{mu}}").renderJson("{\"mu\" : \"" + expected + "\"}");
+    String rendered = createTestParser().parse("{{mu}}").renderJson("{\"mu\" : \"" + expected + "\"}");
     assertThat(rendered, is(expected));
   }
 
   @Test
   public void renderJSONStringTestInvalidJSON_NotAccessed() {
-    assertThatCode(() -> LiquidParser.newInstance().parse("mu").renderJson("{\"key : \"value\"}"))
+    assertThatCode(() -> createTestParser().parse("mu").renderJson("{\"key : \"value\"}"))
           .isInstanceOf(JsonParsingException.class);
   }
 
   @Test
   public void renderJSONStringTestInvalidJSON_Accessed() {
-    assertThatCode(() -> LiquidParser.newInstance().parse("{{ key }}").renderJson("{\"key : \"value\"}"))
+    assertThatCode(() -> createTestParser().parse("{{ key }}").renderJson("{\"key : \"value\"}"))
           .isInstanceOf(JsonParsingException.class);
   }
 
@@ -50,10 +52,10 @@ public class TemplateTest {
 
     final String expected = "Hey";
 
-    String rendered = LiquidParser.newInstance().parse("{{mu}}").render("mu", expected);
+    String rendered = createTestParser().parse("{{mu}}").render(singletonMap("mu", expected));
     assertThat(rendered, is(expected));
 
-    rendered = LiquidParser.newInstance().parse("{{a}}{{b}}{{c}}").render(ImmutableMap.of(
+    rendered = createTestParser().parse("{{a}}{{b}}{{c}}").render(ImmutableMap.of(
           "a", expected,
           "b", expected,
           "c", ""
@@ -61,14 +63,14 @@ public class TemplateTest {
     );
     assertThat(rendered, is(expected + expected));
 
-    rendered = LiquidParser.newInstance().parse("{{a}}{{b}}{{c}}").render(
+    rendered = createTestParser().parse("{{a}}{{b}}{{c}}").render(
           ImmutableMap.of("a", expected,
                 "b", expected,
                 "c", "") /* no value */
     );
     assertThat(rendered, is(expected + expected));
 
-    rendered = LiquidParser.newInstance().parse("{{a}}{{b}}{{c}}").render(
+    rendered = createTestParser().parse("{{a}}{{b}}{{c}}").render(
           ImmutableMap.of("a", "A",
                 "b", "B",
                 "c", "C")
@@ -79,8 +81,8 @@ public class TemplateTest {
   @Test
   public void renderVarArgsTestInvalidKey2() {
     assertThatCode(() -> {
-      LiquidParser.newInstance().parse("mu").render(null, 456);
-    }).isInstanceOf(IllegalArgumentException.class);
+      createTestParser().parse("mu").render(singletonMap(null, 456));
+    }).doesNotThrowAnyException();
   }
 
   static class Foo {

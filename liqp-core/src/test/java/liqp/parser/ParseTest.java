@@ -1,8 +1,10 @@
 package liqp.parser;
 
+import static liqp.AssertsKt.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import liqp.AssertsKt;
 import liqp.LiquidParser;
 import org.junit.Test;
 
@@ -22,7 +24,7 @@ public class ParseTest {
 
     String text = " div { font-weight: bold; } ";
 
-    assertThat(LiquidParser.newInstance().parse(text).render(), is(text));
+    assertThat(createTestParser().parse(text).render(), is(text));
   }
 
   /*
@@ -34,7 +36,7 @@ public class ParseTest {
    */
   @Test(expected = RuntimeException.class)
   public void raise_on_single_close_bracetTest() throws Exception {
-    LiquidParser.newInstance().parse("text {{method} oh nos!");
+    createTestParser().parse("text {{method} oh nos!");
   }
 
   /*
@@ -46,7 +48,7 @@ public class ParseTest {
    */
   @Test(expected = RuntimeException.class)
   public void raise_on_label_and_no_close_bracetsTest() throws Exception {
-    LiquidParser.newInstance().parse("TEST {{ ");
+    createTestParser().parse("TEST {{ ");
   }
 
   /*
@@ -58,7 +60,7 @@ public class ParseTest {
    */
   @Test(expected = RuntimeException.class)
   public void raise_on_label_and_no_close_bracets_percentTest() throws Exception {
-    LiquidParser.newInstance().parse("TEST {% ");
+    createTestParser().parse("TEST {% ");
   }
 
   /*
@@ -73,7 +75,7 @@ public class ParseTest {
   @Test
   public void error_on_empty_filterTest() throws Exception {
     //TemplateFactory.newInstance().parse("{{test |a|b|}}"); // TODO isn't allowed (yet?)
-    LiquidParser.newInstance().parse("{{test}}");
+    createTestParser().parse("{{test}}");
     //TemplateFactory.newInstance().parse("{{|test|}}"); // TODO isn't allowed (yet?)
   }
 
@@ -89,7 +91,7 @@ public class ParseTest {
 
     String assigns = "{\"b\" : \"bar\", \"c\" : \"baz\"}";
     String markup = "a == 'foo' or (b == 'bar' and c == 'baz') or false";
-    assertThat(LiquidParser.newInstance().parse("{% if " + markup + " %} YES {% endif %}").renderJson(assigns), is(" " +
+    assertThat(createTestParser().parse("{% if " + markup + " %} YES {% endif %}").renderJson(assigns), is(" " +
           "YES "));
   }
 
@@ -115,12 +117,12 @@ public class ParseTest {
   public void keywords_as_identifier() throws Exception {
 
     assertThat(
-          LiquidParser.newInstance().parse("var2:{{var2}} {%assign var2 = var.comment%} var2:{{var2}}")
+          createTestParser().parse("var2:{{var2}} {%assign var2 = var.comment%} var2:{{var2}}")
                 .renderJson(" { \"var\": { \"comment\": \"content\" } } "),
           is("var2:  var2:content"));
 
     assertThat(
-          LiquidParser.newInstance().parse("var2:{{var2}} {%assign var2 = var.end%} var2:{{var2}}")
+          createTestParser().parse("var2:{{var2}} {%assign var2 = var.end%} var2:{{var2}}")
                 .renderJson(" { \"var\": { \"end\": \"content\" } } "),
           is("var2:  var2:content"));
   }

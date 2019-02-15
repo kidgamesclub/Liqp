@@ -6,6 +6,7 @@ import liqp.LiquidDefaults
 import liqp.LiquidDefaults.defaultFilters
 import liqp.LiquidParser
 import liqp.Mocks
+import liqp.createTestParser
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -16,7 +17,7 @@ data class MinusTest(val test: String, val expected: String) {
 
   @Test
   fun minusTest() {
-    val template = LiquidParser.newInstance().parse(test)
+    val template = createTestParser {  }.parse(test)
     val rendered = template.render()
 
     assert(rendered).isEqualTo(expected)
@@ -44,9 +45,9 @@ data class MinusTest(val test: String, val expected: String) {
   @Test
   fun originalTest() {
 
-    assert(LiquidParser.newInstance().parse("{{ input | minus:operand }}")
+    assert(createTestParser {  }.parse("{{ input | minus:operand }}")
         .renderJson("{\"input\":5, \"operand\":1}")).isEqualTo("4")
-    assert(LiquidParser.newInstance().parse("{{ '4.3' | minus:'2' }}")
+    assert(createTestParser {  }.parse("{{ '4.3' | minus:'2' }}")
         .render()).isEqualTo("2.3")
   }
 

@@ -4,17 +4,21 @@ import static liqp.TestUtils.getNode;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.time.ZoneId;
+import java.util.Locale;
+import liqp.context.LContext;
 import liqp.nodes.RenderContext;
 import org.junit.Before;
 import org.junit.Test;
 
 public class ConditionTest {
-  private LiquidRenderer engine;
+  private LRenderer engine;
   private RenderContext context;
 
   @Before
   public void setUp() {
-    engine = new LiquidRenderer();
+    LParser parser = Liquify.getProvider().createParser();
+    engine = Liquify.getProvider().createRenderer(parser, Liquify.getProvider().getDefaultRenderSettings());
     context = Mocks.mockRenderContext();
   }
 
@@ -27,8 +31,8 @@ public class ConditionTest {
   @Test
   public void basicConditionTest() throws Exception {
 
-    assertThat(getNode("1 == 2", "expr").invoke(context, Boolean.class), is(false));
-    assertThat(getNode("1 == 1", "expr").invoke(context, Boolean.class), is(true));
+    assertThat(getNode("1 == 2").invoke(context, Boolean.class), is(false));
+    assertThat(getNode("1 == 1").invoke(context, Boolean.class), is(true));
   }
 
   /*
@@ -52,21 +56,21 @@ public class ConditionTest {
   @Test
   public void defaultOperatorsEvaluteTrueTest() throws Exception {
 
-    assertThat(getNode("1 == 1", "expr").invoke(context, Boolean.class), is(true));
-    assertThat(getNode("1 != 2", "expr").invoke(context, Boolean.class), is(true));
-    assertThat(getNode("1 <> 2", "expr").invoke(context, Boolean.class), is(true));
-    assertThat(getNode("1 < 2", "expr").invoke(context, Boolean.class), is(true));
-    assertThat(getNode("2 > 1", "expr").invoke(context, Boolean.class), is(true));
-    assertThat(getNode("1 >= 1", "expr").invoke(context, Boolean.class), is(true));
-    assertThat(getNode("2 >= 1", "expr").invoke(context, Boolean.class), is(true));
-    assertThat(getNode("1 <= 2", "expr").invoke(context, Boolean.class), is(true));
-    assertThat(getNode("1 <= 1", "expr").invoke(context, Boolean.class), is(true));
+    assertThat(getNode("1 == 1").invoke(context, Boolean.class), is(true));
+    assertThat(getNode("1 != 2").invoke(context, Boolean.class), is(true));
+    assertThat(getNode("1 <> 2").invoke(context, Boolean.class), is(true));
+    assertThat(getNode("1 < 2").invoke(context, Boolean.class), is(true));
+    assertThat(getNode("2 > 1").invoke(context, Boolean.class), is(true));
+    assertThat(getNode("1 >= 1").invoke(context, Boolean.class), is(true));
+    assertThat(getNode("2 >= 1").invoke(context, Boolean.class), is(true));
+    assertThat(getNode("1 <= 2").invoke(context, Boolean.class), is(true));
+    assertThat(getNode("1 <= 1").invoke(context, Boolean.class), is(true));
 
     // negative numbers
-    assertThat(getNode("1 > -1", "expr").invoke(context, Boolean.class), is(true));
-    assertThat(getNode("-1 < 1", "expr").invoke(context, Boolean.class), is(true));
-    assertThat(getNode("1.0 > -1.0", "expr").invoke(context, Boolean.class), is(true));
-    assertThat(getNode("-1.0 < 1.0", "expr").invoke(context, Boolean.class), is(true));
+    assertThat(getNode("1 > -1").invoke(context, Boolean.class), is(true));
+    assertThat(getNode("-1 < 1").invoke(context, Boolean.class), is(true));
+    assertThat(getNode("1.0 > -1.0").invoke(context, Boolean.class), is(true));
+    assertThat(getNode("-1.0 < 1.0").invoke(context, Boolean.class), is(true));
   }
 
   /*
@@ -85,14 +89,14 @@ public class ConditionTest {
   public void defaultOperatorsEvaluateFalseTest() throws Exception {
 
     final RenderContext context = Mocks.mockRenderContext();
-    assertThat(getNode("1 == 2", "expr").invoke(context, Boolean.class), is(false));
-    assertThat(getNode("1 != 1", "expr").invoke(context, Boolean.class), is(false));
-    assertThat(getNode("1 <> 1", "expr").invoke(context, Boolean.class), is(false));
-    assertThat(getNode("1 < 0", "expr").invoke(context, Boolean.class), is(false));
-    assertThat(getNode("2 > 4", "expr").invoke(context, Boolean.class), is(false));
-    assertThat(getNode("1 >= 3", "expr").invoke(context, Boolean.class), is(false));
-    assertThat(getNode("2 >= 4", "expr").invoke(context, Boolean.class), is(false));
-    assertThat(getNode("1 <= 0", "expr").invoke(context, Boolean.class), is(false));
+    assertThat(getNode("1 == 2").invoke(context, Boolean.class), is(false));
+    assertThat(getNode("1 != 1").invoke(context, Boolean.class), is(false));
+    assertThat(getNode("1 <> 1").invoke(context, Boolean.class), is(false));
+    assertThat(getNode("1 < 0").invoke(context, Boolean.class), is(false));
+    assertThat(getNode("2 > 4").invoke(context, Boolean.class), is(false));
+    assertThat(getNode("1 >= 3").invoke(context, Boolean.class), is(false));
+    assertThat(getNode("2 >= 4").invoke(context, Boolean.class), is(false));
+    assertThat(getNode("1 <= 0").invoke(context, Boolean.class), is(false));
   }
 
   /*
@@ -111,15 +115,15 @@ public class ConditionTest {
   @Test
   public void containsWorksOnStringsTest() throws Exception {
 
-    assertThat(getNode("'bob' contains 'o'", "expr").render(context), is((Object) true));
-    assertThat(getNode("'bob' contains 'b'", "expr").render(context), is((Object) true));
-    assertThat(getNode("'bob' contains 'bo'", "expr").render(context), is((Object) true));
-    assertThat(getNode("'bob' contains 'ob'", "expr").render(context), is((Object) true));
-    assertThat(getNode("'bob' contains 'bob'", "expr").render(context), is((Object) true));
+    assertThat(getNode("'bob' contains 'o'").render(context), is((Object) true));
+    assertThat(getNode("'bob' contains 'b'").render(context), is((Object) true));
+    assertThat(getNode("'bob' contains 'bo'").render(context), is((Object) true));
+    assertThat(getNode("'bob' contains 'ob'").render(context), is((Object) true));
+    assertThat(getNode("'bob' contains 'bob'").render(context), is((Object) true));
 
-    assertThat(getNode("'bob' contains 'bob2'", "expr").render(context), is((Object) false));
-    assertThat(getNode("'bob' contains 'a'", "expr").render(context), is((Object) false));
-    assertThat(getNode("'bob' contains '---'", "expr").render(context), is((Object) false));
+    assertThat(getNode("'bob' contains 'bob2'").render(context), is((Object) false));
+    assertThat(getNode("'bob' contains 'a'").render(context), is((Object) false));
+    assertThat(getNode("'bob' contains '---'").render(context), is((Object) false));
   }
 
   /*
@@ -142,14 +146,14 @@ public class ConditionTest {
 
     context.set("array", new Long[]{1L, 2L, 3L, 4L, 5L});
 
-    assertThat(getNode("array contains 0", "expr").render(context), is((Object) false));
-    assertThat(getNode("array contains 1", "expr").render(context), is((Object) true));
-    assertThat(getNode("array contains 2", "expr").render(context), is((Object) true));
-    assertThat(getNode("array contains 3", "expr").render(context), is((Object) true));
-    assertThat(getNode("array contains 4", "expr").render(context), is((Object) true));
-    assertThat(getNode("array contains 5", "expr").render(context), is((Object) true));
-    assertThat(getNode("array contains 6", "expr").render(context), is((Object) false));
-    assertThat(getNode("array contains '1'", "expr").render(context), is((Object) false));
+    assertThat(getNode("array contains 0").render(context), is((Object) false));
+    assertThat(getNode("array contains 1").render(context), is((Object) true));
+    assertThat(getNode("array contains 2").render(context), is((Object) true));
+    assertThat(getNode("array contains 3").render(context), is((Object) true));
+    assertThat(getNode("array contains 4").render(context), is((Object) true));
+    assertThat(getNode("array contains 5").render(context), is((Object) true));
+    assertThat(getNode("array contains 6").render(context), is((Object) false));
+    assertThat(getNode("array contains '1'").render(context), is((Object) false));
   }
 
   /*
@@ -162,8 +166,8 @@ public class ConditionTest {
   @Test
   public void containsReturnsFalseForNilOperandsTest() throws Exception {
 
-    assertThat(getNode("not_assigned contains 0", "expr").render(context), is((Object) false));
-    assertThat(getNode("0 contains not_assigned", "expr").render(context), is((Object) false));
+    assertThat(getNode("not_assigned contains 0").render(context), is((Object) false));
+    assertThat(getNode("0 contains not_assigned").render(context), is((Object) false));
   }
 
   /*
@@ -180,10 +184,10 @@ public class ConditionTest {
     context.set("one", "gnomeslab-and-or-liquid");
     context.set("another", "gnomeslab-and-or-liquid");
 
-    assertThat(getNode("one == another", "expr").invoke(context, Boolean.class), is(true));
+    assertThat(getNode("one == another").invoke(context, Boolean.class), is(true));
   }
 
-  private RenderContext createTestContext() {
-    return engine.createRenderContext(context);
+  private LContext createTestContext() {
+    return engine.createRenderContext(Locale.US, ZoneId.systemDefault(), context);
   }
 }

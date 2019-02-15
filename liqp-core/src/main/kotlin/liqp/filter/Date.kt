@@ -55,7 +55,7 @@ class Date : LFilter() {
                               params: FilterParams): Any? {
 
     context.run {
-      val zone = context.zoneId
+      val zone = context.timezone
       val locale = context.locale
       val date: TemporalAccessor? = when (value) {
         null -> return value //Exits completely

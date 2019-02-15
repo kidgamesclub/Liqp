@@ -1,5 +1,6 @@
 package liqp.filter;
 
+import static liqp.AssertsKt.createTestParser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -10,6 +11,7 @@ import liqp.LiquidDefaults;
 import liqp.Mocks;
 import liqp.LiquidTemplate;
 import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -34,8 +36,8 @@ public class MapTest {
 
         for (String[] test : tests) {
 
-            LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
-            String rendered = String.valueOf(template.renderJson(json));
+            LTemplate template = createTestParser().parse(test[0]);
+            String rendered = template.renderJson(json);
 
             assertThat(rendered, is(test[1]));
         }
@@ -68,6 +70,6 @@ public class MapTest {
 
         final String json = "{\"ary\":[{\"foo\":{\"bar\":\"a\"}}, {\"foo\":{\"bar\":\"b\"}}, {\"foo\":{\"bar\":\"c\"}}]}";
 
-        assertThat(LiquidParser.newInstance().parse("{{ ary | map:'foo' | map:'bar' }}").renderJson(json), is("abc"));
+        assertThat(createTestParser().parse("{{ ary | map:'foo' | map:'bar' }}").renderJson(json), is("abc"));
     }
 }

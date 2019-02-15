@@ -1,10 +1,13 @@
 package liqp.filter;
 
+import static liqp.AssertsKt.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import liqp.AssertsKt;
 import liqp.LiquidTemplate;
 import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -22,8 +25,8 @@ public class CompactTest {
 
     for (String[] test : tests) {
 
-      LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
-      String rendered = String.valueOf(template.renderJson(test[2]));
+      LTemplate template = createTestParser().parse(test[0]);
+      String rendered = template.renderJson(test[2]);
 
       assertThat(rendered, is(test[1]));
     }

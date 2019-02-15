@@ -1,11 +1,15 @@
 package liqp.filter;
 
-import static liqp.LiquidParser.newInstance;
+import static liqp.AssertsKt.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.time.ZoneId;
+import java.util.Locale;
+import liqp.AssertsKt;
 import liqp.LiquidDefaults;
 import liqp.Mocks;
+import liqp.TestUtils;
 import liqp.parameterized.LiquifyNoInputTest;
 import org.antlr.runtime.RecognitionException;
 import org.assertj.core.api.Assertions;
@@ -32,13 +36,15 @@ public class ReplaceFirstTest extends LiquifyNoInputTest {
 
   @Test
   public void applyTestInvalidPattern1() throws RecognitionException {
-    final String render = newInstance().parse("{{ 'ababab' | replace_first:nil, 'A' }}").render();
+    final String render = createTestParser().parse("{{ 'ababab' | replace_first:nil, 'A' }}").render(Locale.US,
+          ZoneId.systemDefault());
     Assertions.assertThat(render).isEqualTo("ababab");
   }
 
   @Test
   public void applyTestInvalidPattern2() {
-    final String render = newInstance().parse("{{ 'ababab' | replace_first:'a', nil }}").render();
+    final String render = createTestParser().parse("{{ 'ababab' | replace_first:'a', nil }}").render(Locale.US,
+          ZoneId.systemDefault());
     Assertions.assertThat(render).isEqualTo("babab");
   }
 
@@ -54,7 +60,8 @@ public class ReplaceFirstTest extends LiquifyNoInputTest {
 
     LFilter filter = LiquidDefaults.getDefaultFilters().getFilter("replace_first");
 
-    assertThat(filter.onFilterAction(Mocks.mockRenderContext(), "a a a a", "a", "b"), is((Object) "b a a a"));
-    assertThat(newInstance().parse("{{ 'a a a a' | replace_first: 'a', 'b' }}").render(), is("b a a a"));
+    assertThat(filter.onFilterAction(Mocks.mockRenderContext(), "a a a a", "a", "b"), is("b a a a"));
+    assertThat(createTestParser().parse("{{ 'a a a a' | replace_first: 'a', 'b' }}").render(Locale.US,
+          ZoneId.systemDefault()), is("b a a a"));
   }
 }

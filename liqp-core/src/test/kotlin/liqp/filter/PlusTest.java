@@ -1,5 +1,6 @@
 package liqp.filter;
 
+import static liqp.AssertsKt.createTestParser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -7,6 +8,7 @@ import liqp.LiquidDefaults;
 import liqp.LiquidParser;
 import liqp.Mocks;
 import liqp.LiquidTemplate;
+import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -26,8 +28,8 @@ public class PlusTest {
 
     for (String[] test : tests) {
 
-      LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
-      String rendered = String.valueOf(template.render());
+      LTemplate template = createTestParser().parse(test[0]);
+      String rendered = template.render();
 
       assertThat(rendered, is(test[1]));
     }
@@ -54,7 +56,7 @@ public class PlusTest {
   @Test
   public void applyOriginalTest() {
 
-    assertThat(LiquidParser.newInstance().parse("{{ 1 | plus:1 }}").render(), is((Object) "2"));
-    assertThat(LiquidParser.newInstance().parse("{{ '1' | plus:'1.0' }}").render(), is((Object) "2.0"));
+    assertThat(createTestParser().parse("{{ 1 | plus:1 }}").render(), is((Object) "2"));
+    assertThat(createTestParser().parse("{{ '1' | plus:'1.0' }}").render(), is((Object) "2.0"));
   }
 }

@@ -2,11 +2,13 @@ package liqp.tags;
 
 
 
+import liqp.AssertsKt;
 import liqp.LiquidParser;
 import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
+import static liqp.AssertsKt.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -22,7 +24,7 @@ public class AssignTest {
 
         for (String[] test : tests) {
 
-            LTemplate template = LiquidParser.newInstance().parse(test[0]);
+            LTemplate template = createTestParser().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -30,11 +32,11 @@ public class AssignTest {
 
         String json = "{\"values\":[\"A\", [\"B1\", \"B2\"], \"C\"]}";
 
-        assertThat(LiquidParser.newInstance().parse("{% assign foo = values %}.{{ foo[1][1] }}.").renderJson(json), is(".B2."));
+        assertThat(createTestParser().parse("{% assign foo = values %}.{{ foo[1][1] }}.").renderJson(json), is(".B2."));
 
         json = "{\"values\":[\"A\", {\"bar\":{\"xyz\":[\"B1\", \"ok\"]}}, \"C\"]}";
 
-        assertThat(LiquidParser.newInstance().parse("{% assign foo = values %}.{{ foo[1].bar.xyz[1] }}.").renderJson(json), is(".ok."));
+        assertThat(createTestParser().parse("{% assign foo = values %}.{{ foo[1].bar.xyz[1] }}.").renderJson(json), is(".ok."));
     }
 
     /*
@@ -59,16 +61,19 @@ public class AssignTest {
 
         final String[] values = {"foo", "bar", "baz"};
 
-        assertThat(LiquidParser.newInstance().parse("{% assign foo = values %}.{{ foo[0] }}.").render("values", values), is(".foo."));
-        assertThat(LiquidParser.newInstance().parse("{% assign foo = values %}.{{ foo[1] }}.").render("values", values), is(".bar."));
+        assertThat(createTestParser().parse("{% assign foo = values %}.{{ foo[0] }}.").render(mapOf("values", values)),
+              is(".foo."));
+        assertThat(createTestParser().parse("{% assign foo = values %}.{{ foo[1] }}.").render(mapOf("values", values)),
+              is(".bar."));
 
-        assertThat(LiquidParser.newInstance().parse("{% assign foo = values | split: \",\" %}.{{ foo[1] }}.").render("values", "foo,bar,baz"), is(".bar."));
+        assertThat(createTestParser().parse("{% assign foo = values | split: \",\" %}.{{ foo[1] }}.").render(mapOf(
+              "values", "foo,bar,baz")), is(".bar."));
     }
 
     @Test
     public void multipleFiltersTest() {
         // https://github.com/bkiers/Liqp/issues/84
-        assertThat(LiquidParser.newInstance().parse("{% assign v = 1 | minus: 10 | plus: 5 %}{{v}}").render(), is("-4"));
+        assertThat(createTestParser().parse("{% assign v = 1 | minus: 10 | plus: 5 %}{{v}}").render(), is("-4"));
     }
 
     /*
@@ -82,7 +87,7 @@ public class AssignTest {
     @Test
     public void hyphenatedVariableTest() throws Exception {
 
-        assertThat(LiquidParser.newInstance().parse("{% assign oh-my = 'godz' %}{{ oh-my }}").render(), is("godz"));
+        assertThat(createTestParser().parse("{% assign oh-my = 'godz' %}{{ oh-my }}").render(), is("godz"));
     }
 
     /*
@@ -96,7 +101,7 @@ public class AssignTest {
     public void assignTest() throws Exception {
 
         assertThat(
-                LiquidParser.newInstance().parse("var2:{{var2}} {%assign var2 = var%} var2:{{var2}}")
+                createTestParser().parse("var2:{{var2}} {%assign var2 = var%} var2:{{var2}}")
                         .renderJson("{ \"var\" : \"content\" } "),
                 is("var2:  var2:content"));
     }
@@ -111,7 +116,7 @@ public class AssignTest {
     public void hyphenated_assignTest() throws Exception {
 
         assertThat(
-                LiquidParser.newInstance().parse("a-b:{{a-b}} {%assign a-b = 2 %}a-b:{{a-b}}")
+                createTestParser().parse("a-b:{{a-b}} {%assign a-b = 2 %}a-b:{{a-b}}")
                         .renderJson(" { \"a-b\" : \"1\" } "),
                 is("a-b:1 a-b:2"));
     }
@@ -126,7 +131,7 @@ public class AssignTest {
     public void assign_with_colon_and_spacesTest() throws Exception {
 
         assertThat(
-                LiquidParser.newInstance().parse("{%assign var2 = var[\"a:b c\"].paged %}var2: {{var2}}")
+                createTestParser().parse("{%assign var2 = var[\"a:b c\"].paged %}var2: {{var2}}")
                         .renderJson("{\"var\" : {\"a:b c\" : {\"paged\" : \"1\" }}}"),
                 is("var2: 1"));
     }
@@ -140,7 +145,7 @@ public class AssignTest {
     public void assign2Test() throws Exception {
 
         assertThat(
-                LiquidParser.newInstance().parse("{% assign a = \"variable\"%}{{a}}")
+                createTestParser().parse("{% assign a = \"variable\"%}{{a}}")
                         .render(),
                 is("variable"));
     }
@@ -154,7 +159,7 @@ public class AssignTest {
     public void assign_an_empty_stringTest() throws Exception {
 
         assertThat(
-                LiquidParser.newInstance().parse("{% assign a = \"\"%}{{a}}")
+                createTestParser().parse("{% assign a = \"\"%}{{a}}")
                         .render(),
                 is(""));
     }
@@ -169,7 +174,7 @@ public class AssignTest {
     public void assign_is_globalTest() throws Exception {
 
         assertThat(
-                LiquidParser.newInstance().parse("{%for i in (1..2) %}{% assign a = \"variable\"%}{% endfor %}{{a}}")
+                createTestParser().parse("{%for i in (1..2) %}{% assign a = \"variable\"%}{% endfor %}{{a}}")
                         .render(),
                 is("variable"));
     }

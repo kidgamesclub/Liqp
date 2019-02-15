@@ -12,14 +12,13 @@ import liqp.filter.LFilter
  */
 object Examples {
 
-  private val engine = LiquidRenderer.defaultInstance
-
+  private val parser = Liquify.provider.createParser()
+  private val engine = Liquify.provider.createRenderer(parser)
   private fun demoGuards() {
 
-    val templateCtx = LiquidParser.newBuilder()
-        .maxTemplateSize(300L)
-        .maxTemplateSize(100L)
-        .toParser()
+    val templateCtx = provider.createParser().reconfigure {
+      maxTemplateSize = 100L
+    }
 
     val rendered = templateCtx
         .parse("{% for i in (1..10) %}{{ text }}{% endfor %}")
@@ -29,19 +28,18 @@ object Examples {
   }
 
   private fun demoSimple() {
-
-    System.out.println(LiquidParser.newInstance()
+    System.out.println(provider.createParser()
         .parse("hi {{name}}")
         .render("name" to "tobi"))
 
-    System.out.println(LiquidParser.newInstance().parse("hi {{name}}")
+    System.out.println(provider.createParser().parse("hi {{name}}")
         .render("name" to "tobi"))
   }
 
   private fun demoCustomStrongFilter() {
 
     // first register your custom filter
-    val ctx = LiquidParser.newInstance()
+    val ctx = provider.defaultParseSettings
         .withFilters(object : LFilter("b") {
           override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
             // create a string from the  value
@@ -50,7 +48,7 @@ object Examples {
             // replace and return *...* with <strong>...</strong>
             return text?.replace("\\*(\\w(.*?\\w)?)\\*".toRegex(), "<strong>$1</strong>")
           }
-        })
+        }).toParser()
 
     // use your filter
     val template = ctx.parse("{{ wiki | b }}")
@@ -61,7 +59,7 @@ object Examples {
   private fun demoCustomRepeatFilter() {
 
     // first register your custom filter
-    val ctx = LiquidParser.newInstance()
+    val ctx = provider.defaultParseSettings
         .withFilters(object : LFilter("repeat") {
           override fun onFilterAction(context: LContext, value: Any?, vararg params: Any?): Any? {
             context.run {
@@ -74,6 +72,7 @@ object Examples {
             }
           }
         })
+        .toParser()
 
     // use your filter
     val template = ctx.parse("{{ 'a' | repeat }}\n{{ 'b' | repeat:5 }}")
@@ -83,7 +82,7 @@ object Examples {
 
   private fun demoCustomSumFilter() {
 
-    val ctx = LiquidParser.newInstance()
+    val ctx = provider.defaultParseSettings
         .withFilters(object : LFilter("sum") {
           override fun onFilterAction(context: LContext,
                                       value: Any?,
@@ -98,7 +97,7 @@ object Examples {
             return sum
           }
 
-        })
+        }).toParser()
 
     val template = ctx.parse("{{ numbers | sum }}")
     val rendered = template.render(singletonMap("numbers", ImmutableList.of(1, 2, 3, 4, 5)))

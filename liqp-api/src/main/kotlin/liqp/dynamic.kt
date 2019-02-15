@@ -38,9 +38,9 @@ class TypeCoersion(private val facts: InstanceFacts,
   }
 
   @Suppress("unchecked_cast")
-  fun <T : Any> coerceOrNull(from: Any?, type: Class<T>): T? {
+  fun <T : Any> coerceOrNull(from: Any?, to: Class<T>): T? {
     val value = from ?: return null
-    return when (type) {
+    return when (to) {
       List::class.java -> asIterable(value).toList() as T?
       String::class.java -> asString(value) as T?
       Boolean::class.java -> isTrue(value) as T?
@@ -50,8 +50,8 @@ class TypeCoersion(private val facts: InstanceFacts,
       Double::class.java -> asDouble(value) as T?
       else -> {
         when {
-          Number::class.java.isAssignableFrom(type) -> asNumber(value) as T?
-          Iterable::class.java.isAssignableFrom(type) -> asIterable(value) as T?
+          Number::class.java.isAssignableFrom(to) -> asNumber(value) as T?
+          Iterable::class.java.isAssignableFrom(to) -> asIterable(value) as T?
           else -> value as T?
         }
       }

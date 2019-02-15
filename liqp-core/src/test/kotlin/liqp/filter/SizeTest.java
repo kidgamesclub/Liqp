@@ -1,5 +1,6 @@
 package liqp.filter;
 
+import static liqp.AssertsKt.createTestParser;
 import static liqp.Mocks.mockRenderContext;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -7,6 +8,7 @@ import static org.junit.Assert.assertThat;
 import liqp.LiquidDefaults;
 import liqp.LiquidTemplate;
 import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -28,8 +30,8 @@ public class SizeTest {
 
     for (String[] test : tests) {
 
-      LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
-      String rendered = String.valueOf(template.renderJson(json));
+      LTemplate template = createTestParser().parse(test[0]);
+      String rendered = template.renderJson(json);
 
       assertThat(rendered, is(test[1]));
     }

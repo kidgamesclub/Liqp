@@ -11,7 +11,7 @@ class ProtectionSettingsTest {
 
   @Test
   fun testWithinMaxRenderTimeMillis() {
-    val template = LiquidParser()
+    val template = createTestParser{}
         .parse("{% for i in (1..100) %}{{ i }}{% endfor %}")
 
     template.executing(
@@ -26,7 +26,7 @@ class ProtectionSettingsTest {
 
   @Test
   fun testExceedMaxRenderTimeMillis() {
-    LiquidParser.newInstance()
+    createTestParser{}
         .parse("{% for i in (1..10000) %}{{ i }}{% endfor %}")
         .executing {
           maxRenderTimeMillis = 1
@@ -37,7 +37,7 @@ class ProtectionSettingsTest {
 
   @Test
   fun testWithinMaxIterationsRange() {
-    val template = LiquidParser.newInstance()
+    val template = createTestParser {  }
         .parse("{% for i in (1..100) %}{{ i }}{% endfor %}")
 
     template.executing { maxIterations = 1000 }
@@ -47,7 +47,7 @@ class ProtectionSettingsTest {
 
   @Test
   fun testExceedMaxIterationsRange() {
-    LiquidParser.newInstance()
+    createTestParser {  }
         .parse("{% for i in (1..100) %}{{ i }}{% endfor %}")
         .executing {
           maxIterations = 10
@@ -106,26 +106,21 @@ class ProtectionSettingsTest {
 
   @Test
   fun testWithinMaxTemplateSizeBytes() {
-    LiquidParser.newBuilder()
-        .maxTemplateSize(3000)
-        .toParser()
+    createTestParser { maxTemplateSize(3000) }
         .parse("{% tablerow n in collections.frontpage cols:3%} {{n}} {% endtablerow %}")
         .renderJson("{ \"collections\" : { \"frontpage\" : [1,2,3,4,5,6] } }")
   }
 
   @Test(expected = RuntimeException::class)
   fun testExceedMaxTemplateSizeBytes() {
-    LiquidParser.newBuilder()
-        .maxTemplateSize(30)
-        .toParser()
+    createTestParser {maxTemplateSize(30)  }
         .parse("{% tablerow n in collections.frontpage cols:3%} {{n}} {% endtablerow %}")
         .renderJson("{ \"collections\" : { \"frontpage\" : [1,2,3,4,5,6] } }")
   }
 
   @Test
   fun testWithinMaxSizeRenderedString() {
-    LiquidParser.newBuilder()
-        .toParser()
+    createTestParser {  }
         .parse("{% for i in (1..100) %}{{ abc }}{% endfor %}")
         .executing(
             data = "{\"abc\": \"abcdefghijklmnopqrstuvwxyz\"}",
@@ -135,8 +130,7 @@ class ProtectionSettingsTest {
 
   @Test
   fun testExceedMaxSizeRenderedString() {
-    LiquidParser.newBuilder()
-        .toParser()
+    createTestParser {  }
         .parse("{% for i in (1..1000) %}{{ abc }}{% endfor %}")
         .rendering(
             data = "{\"abc\": \"abcdefghijklmnopqrstuvwxyz\"}",

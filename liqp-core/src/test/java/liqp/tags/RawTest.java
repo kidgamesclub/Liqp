@@ -1,8 +1,10 @@
 package liqp.tags;
 
+import static liqp.AssertsKt.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import liqp.AssertsKt;
 import liqp.LiquidParser;
 import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
@@ -20,7 +22,7 @@ public class RawTest {
 
         for (String[] test : tests) {
 
-            LTemplate template = LiquidParser.newInstance().parse(test[0]);
+            LTemplate template = createTestParser().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -36,7 +38,7 @@ public class RawTest {
     @Test
     public void tag_in_rawTest() throws RecognitionException {
 
-        assertThat(LiquidParser.newInstance().parse("{% raw %}{% comment %} test {% endcomment %}{% endraw %}").render(),
+        assertThat(createTestParser().parse("{% raw %}{% comment %} test {% endcomment %}{% endraw %}").render(),
                 is("{% comment %} test {% endcomment %}"));
     }
 
@@ -49,7 +51,7 @@ public class RawTest {
     @Test
     public void output_in_rawTest() throws RecognitionException {
 
-        assertThat(LiquidParser.newInstance().parse("{% raw %}{{ test }}{% endraw %}").render(),
+        assertThat(createTestParser().parse("{% raw %}{{ test }}{% endraw %}").render(),
                 is("{{ test }}"));
     }
 }

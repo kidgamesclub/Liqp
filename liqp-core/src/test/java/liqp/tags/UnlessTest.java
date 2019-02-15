@@ -40,11 +40,11 @@ public class UnlessTest extends LiquifyNoInputTest {
   @Test
   public void unlessTest() throws RecognitionException {
 
-    assertThat(LiquidParser.newInstance().parse(" {% unless true %} this text should not go into the output {% " +
+    assertThat(AssertsKt.createTestParser().parse(" {% unless true %} this text should not go into the output {% " +
           "endunless %} ").render(), is("  "));
-    assertThat(LiquidParser.newInstance().parse(" {% unless false %} this text should go into the output {% endunless" +
+    assertThat(AssertsKt.createTestParser().parse(" {% unless false %} this text should go into the output {% endunless" +
           " %} ").render(), is("  this text should go into the output  "));
-    assertThat(LiquidParser.newInstance().parse("{% unless true %} you suck {% endunless %} {% unless false %} you " +
+    assertThat(AssertsKt.createTestParser().parse("{% unless true %} you suck {% endunless %} {% unless false %} you " +
           "rock {% endunless %}?").render(), is("  you rock ?"));
   }
 
@@ -58,17 +58,17 @@ public class UnlessTest extends LiquifyNoInputTest {
   @Test
   public void unless_elseTest() throws RecognitionException {
 
-    AssertsKt.assertThat(LiquidParser.newInstance())
+    AssertsKt.assertThat(AssertsKt.createTestParser())
           .withTemplateString("{% unless true %} NO {% else %} YES {% endunless %}")
           .rendering()
           .isEqualTo(" YES ");
 
-    AssertsKt.assertThat(LiquidParser.newInstance())
+    AssertsKt.assertThat(AssertsKt.createTestParser())
           .withTemplateString("{% unless false %} YES {% else %} NO {% endunless %}")
           .rendering()
           .isEqualTo(" YES ");
 
-    AssertsKt.assertThat(LiquidParser.newInstance())
+    AssertsKt.assertThat(AssertsKt.createTestParser())
           .withTemplateString("{% unless \"foo\" %} NO {% else %} YES {% endunless %}")
           .rendering()
           .isEqualTo(" YES ");
@@ -84,7 +84,7 @@ public class UnlessTest extends LiquifyNoInputTest {
   public void unless_in_loopTest() throws RecognitionException {
 
     assertThat(
-          LiquidParser.newInstance().parse("{% for i in choices %}{% unless i %}{{ forloop.index }}{% endunless %}{% " +
+          AssertsKt.createTestParser().parse("{% for i in choices %}{% unless i %}{{ forloop.index }}{% endunless %}{% " +
                 "endfor %}")
                 .renderJson("{ \"choices\" : [1, null, false] }"),
           is("23"));
@@ -100,7 +100,7 @@ public class UnlessTest extends LiquifyNoInputTest {
   public void unless_else_in_loopTest() throws RecognitionException {
 
     assertThat(
-          LiquidParser.newInstance().parse("{% for i in choices %}{% unless i %} {{ forloop.index }} {% else %} TRUE " +
+          AssertsKt.createTestParser().parse("{% for i in choices %}{% unless i %} {{ forloop.index }} {% else %} TRUE " +
                 "{% endunless %}{% endfor %}")
                 .renderJson("{ \"choices\" : [1, null, false] }"),
           is(" TRUE  2  3 "));

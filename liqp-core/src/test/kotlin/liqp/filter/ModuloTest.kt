@@ -5,6 +5,7 @@ import assertk.assertions.isEqualTo
 import liqp.LiquidDefaults.defaultFilters
 import liqp.LiquidParser
 import liqp.Mocks
+import liqp.createTestParser
 import liqp.exceptions.LiquidRenderingException
 import org.assertj.core.api.Assertions
 import org.junit.Test
@@ -19,7 +20,7 @@ class ModuloTestParameterized(val template: String, val expected: String) {
 
   @Test
   fun run() {
-    val template = LiquidParser.newInstance().parse(template)
+    val template = createTestParser {  }.parse(template)
     val rendered = template.render()
     assert(rendered).isEqualTo(expected)
   }
@@ -57,6 +58,6 @@ class ModuloTest {
    */
   @Test
   fun applyOriginalTest() {
-    assert(LiquidParser.newInstance().parse("{{ 3 | modulo:2 }}").render()).isEqualTo("1")
+    assert(createTestParser {  }.parse("{{ 3 | modulo:2 }}").render()).isEqualTo("1")
   }
 }

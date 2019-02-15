@@ -3,8 +3,8 @@ package liqp.nodes;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import liqp.LiquidParser;
-import liqp.LiquidTemplate;
+import liqp.AssertsKt;
+import liqp.node.LTemplate;
 import liqp.parameterized.LiquifyNoInputTest;
 import org.antlr.runtime.RecognitionException;
 import org.jetbrains.annotations.NotNull;
@@ -36,8 +36,8 @@ public class GtNodeTest extends LiquifyNoInputTest {
 
   @Test
   public void applyTest() throws RecognitionException {
-    LiquidTemplate template = LiquidParser.newInstance().parse(getTemplateString());
-    String rendered = String.valueOf(template.render());
+    LTemplate template = AssertsKt.createTestParser().parse(getTemplateString());
+    String rendered = template.render();
 
     assertThat(rendered, is(getExpectedResult()));
   }

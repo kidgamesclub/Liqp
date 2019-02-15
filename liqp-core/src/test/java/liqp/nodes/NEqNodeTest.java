@@ -3,8 +3,10 @@ package liqp.nodes;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import liqp.AssertsKt;
 import liqp.LiquidTemplate;
 import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -22,8 +24,8 @@ public class NEqNodeTest {
 
         for (String[] test : tests) {
 
-            LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
-            String rendered = String.valueOf(template.render());
+            LTemplate template = AssertsKt.createTestParser().parse(test[0]);
+            String rendered = template.render();
 
             assertThat(rendered, is(test[1]));
         }

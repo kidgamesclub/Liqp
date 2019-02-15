@@ -1,5 +1,6 @@
 package liqp.filter;
 
+import static liqp.AssertsKt.createTestParser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -7,6 +8,7 @@ import liqp.LiquidDefaults;
 import liqp.Mocks;
 import liqp.LiquidTemplate;
 import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -24,7 +26,7 @@ public class RemoveTest {
 
         for (String[] test : tests) {
 
-            LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
+            LTemplate template = createTestParser().parse(test[0]);
             String rendered = String.valueOf(template.render());
 
             assertThat(rendered, is(test[1]));
@@ -33,7 +35,7 @@ public class RemoveTest {
 
     @Test(expected = RuntimeException.class)
     public void applyTestInvalidPattern() throws RecognitionException {
-        LiquidParser.newInstance().parse("{{ 'ababab' | remove:nil }}").render();
+        createTestParser().parse("{{ 'ababab' | remove:nil }}").render();
     }
 
     /*

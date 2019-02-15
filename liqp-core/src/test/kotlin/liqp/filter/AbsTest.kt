@@ -3,6 +3,7 @@ package liqp.filter
 import assertk.assert
 import assertk.assertions.isEqualTo
 import liqp.LiquidParser
+import liqp.createTestParser
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -13,7 +14,7 @@ class AbsTest(val template: String, val expected: String) {
 
   @Test
   fun applyTest() {
-    val template = LiquidParser.newInstance().parse(template)
+    val template = createTestParser{}.parse(template)
     val rendered = template.render()
     assert(rendered).isEqualTo(expected)
   }

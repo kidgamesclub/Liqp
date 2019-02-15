@@ -5,6 +5,7 @@ import assertk.assertions.isEqualTo
 import liqp.LiquidDefaults
 import liqp.LiquidParser
 import liqp.Mocks
+import liqp.createTestParser
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -42,7 +43,7 @@ class DateTestParameterized(val template: String, val expected: String) {
 
   @Test
   fun run() {
-    val template = LiquidParser.newInstance().parse(template)
+    val template = createTestParser{}.parse(template)
     val rendered = template.render()
     assert(rendered).isEqualTo(expected)
   }

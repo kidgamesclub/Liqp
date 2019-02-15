@@ -3,11 +3,10 @@ package liqp.context
 import liqp.Getter
 import liqp.HasProperties
 import liqp.LLogic
-import liqp.PropertyGetter
 import liqp.TypeCoersion
+import liqp.config.LParseSettings
+import liqp.config.LRenderSettings
 import liqp.config.MutableRenderSettings
-import liqp.config.ParseSettings
-import liqp.config.RenderSettings
 import liqp.node.LTemplate
 import java.io.File
 import java.time.ZoneId
@@ -15,20 +14,20 @@ import java.util.*
 import kotlin.reflect.KProperty
 
 interface LContext : LLogic, HasProperties {
-  val parseSettings: ParseSettings
-  val renderSettings: RenderSettings
+  val inputData: Any?
+  val parseSettings: LParseSettings
+  val renderSettings: LRenderSettings
   val coersion: TypeCoersion
   var result: Any?
   val logs: MutableList<Any>
-  var locale: Locale
-  var zoneId: ZoneId
+  val locale: Locale
+  val timezone: ZoneId
   val current: LFrame
   val loopState: LoopState
   val root: LFrame
   val includeFile: File
 
-  fun applyRenderSettings(configure: MutableRenderSettings.() -> Unit): LContext
-  fun withRenderSettings(configurer: (MutableRenderSettings) -> MutableRenderSettings): LContext
+  fun reconfigure(configure: MutableRenderSettings.() -> Unit): LContext
   fun pushFrame(): LFrame
   fun popFrame(): LFrame
   fun withFrame(block: () -> Any?): Any?

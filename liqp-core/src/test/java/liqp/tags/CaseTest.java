@@ -1,8 +1,10 @@
 package liqp.tags;
 
+import static liqp.AssertsKt.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import liqp.AssertsKt;
 import liqp.LiquidParser;
 import liqp.node.LTemplate;
 import liqp.parameterized.LiquifyNoInputTest;
@@ -62,27 +64,27 @@ public class CaseTest extends LiquifyNoInputTest {
   public void caseTest() {
 
     assertThat(
-          LiquidParser.newInstance().parse("{% case condition %}{% when 1 %} its 1 {% when 2 %} its 2 {% endcase %}")
+          createTestParser().parse("{% case condition %}{% when 1 %} its 1 {% when 2 %} its 2 {% endcase %}")
                 .renderJson("{ \"condition\":2 }"),
           is(" its 2 "));
 
     assertThat(
-          LiquidParser.newInstance().parse("{% case condition %}{% when 1 %} its 1 {% when 2 %} its 2 {% endcase %}")
+          createTestParser().parse("{% case condition %}{% when 1 %} its 1 {% when 2 %} its 2 {% endcase %}")
                 .renderJson("{ \"condition\":1 }"),
           is(" its 1 "));
 
     assertThat(
-          LiquidParser.newInstance().parse("{% case condition %}{% when 1 %} its 1 {% when 2 %} its 2 {% endcase %}")
+          createTestParser().parse("{% case condition %}{% when 1 %} its 1 {% when 2 %} its 2 {% endcase %}")
                 .renderJson("{ \"condition\":3 }"),
           is(""));
 
     assertThat(
-          LiquidParser.newInstance().parse("{% case condition %}{% when \"string here\" %} hit {% endcase %}")
+          createTestParser().parse("{% case condition %}{% when \"string here\" %} hit {% endcase %}")
                 .renderJson("{ \"condition\":\"string here\" }"),
           is(" hit "));
 
     assertThat(
-          LiquidParser.newInstance().parse("{% case condition %}{% when \"string here\" %} hit {% endcase %}")
+          createTestParser().parse("{% case condition %}{% when \"string here\" %} hit {% endcase %}")
                 .renderJson("{ \"condition\":\"bad string here\" }"),
           is(""));
   }
@@ -109,17 +111,17 @@ public class CaseTest extends LiquifyNoInputTest {
   public void case_with_elseTest() throws RecognitionException {
 
     assertThat(
-          LiquidParser.newInstance().parse("{% case condition %}{% when 5 %} hit {% else %} else {% endcase %}")
+          createTestParser().parse("{% case condition %}{% when 5 %} hit {% else %} else {% endcase %}")
                 .renderJson("{ \"condition\":5 }"),
           is(" hit "));
 
     assertThat(
-          LiquidParser.newInstance().parse("{% case condition %}{% when 5 %} hit {% else %} else {% endcase %}")
+          createTestParser().parse("{% case condition %}{% when 5 %} hit {% else %} else {% endcase %}")
                 .renderJson("{ \"condition\":6 }"),
           is(" else "));
 
     assertThat(
-          LiquidParser.newInstance().parse("{% case condition %} {% when 5 %} hit {% else %} else {% endcase %}")
+          createTestParser().parse("{% case condition %} {% when 5 %} hit {% else %} else {% endcase %}")
                 .renderJson("{ \"condition\":6 }"),
           is(" else "));
   }
@@ -137,17 +139,17 @@ public class CaseTest extends LiquifyNoInputTest {
   @Test
   public void case_on_sizeTest() throws RecognitionException {
 
-    assertThat(LiquidParser.newInstance().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").renderJson("{" +
+    assertThat(createTestParser().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").renderJson("{" +
           " \"a\":[] }"), is(""));
-    assertThat(LiquidParser.newInstance().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").renderJson("{" +
+    assertThat(createTestParser().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").renderJson("{" +
           " \"a\":[1] }"), is("1"));
-    assertThat(LiquidParser.newInstance().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").renderJson("{" +
+    assertThat(createTestParser().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").renderJson("{" +
           " \"a\":[1,1] }"), is("2"));
-    assertThat(LiquidParser.newInstance().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").renderJson("{" +
+    assertThat(createTestParser().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").renderJson("{" +
           " \"a\":[1,1,1] }"), is(""));
-    assertThat(LiquidParser.newInstance().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").renderJson("{" +
+    assertThat(createTestParser().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").renderJson("{" +
           " \"a\":[1,1,1,1] }"), is(""));
-    assertThat(LiquidParser.newInstance().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").renderJson("{" +
+    assertThat(createTestParser().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% endcase %}").renderJson("{" +
           " \"a\":[1,1,1,1,1] }"), is(""));
   }
 
@@ -181,17 +183,17 @@ public class CaseTest extends LiquifyNoInputTest {
   @Test
   public void case_on_size_with_elseTest() throws RecognitionException {
 
-    assertThat(LiquidParser.newInstance().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase " +
+    assertThat(createTestParser().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase " +
           "%}").renderJson("{ \"a\":[] }"), is("else"));
-    assertThat(LiquidParser.newInstance().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase " +
+    assertThat(createTestParser().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase " +
           "%}").renderJson("{ \"a\":[1] }"), is("1"));
-    assertThat(LiquidParser.newInstance().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase " +
+    assertThat(createTestParser().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase " +
           "%}").renderJson("{ \"a\":[1,1] }"), is("2"));
-    assertThat(LiquidParser.newInstance().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase " +
+    assertThat(createTestParser().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase " +
           "%}").renderJson("{ \"a\":[1,1,1] }"), is("else"));
-    assertThat(LiquidParser.newInstance().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase " +
+    assertThat(createTestParser().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase " +
           "%}").renderJson("{ \"a\":[1,1,1,1] }"), is("else"));
-    assertThat(LiquidParser.newInstance().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase " +
+    assertThat(createTestParser().parse("{% case a.size %}{% when 1 %}1{% when 2 %}2{% else %}else{% endcase " +
           "%}").renderJson("{ \"a\":[1,1,1,1,1] }"), is("else"));
   }
 
@@ -217,13 +219,13 @@ public class CaseTest extends LiquifyNoInputTest {
   @Test
   public void case_on_length_with_elseTest() throws RecognitionException {
 
-    assertThat(LiquidParser.newInstance().parse("{% case a.empty? %}{% when true %}true{% when false %}false{% else " +
+    assertThat(createTestParser().parse("{% case a.empty? %}{% when true %}true{% when false %}false{% else " +
           "%}else{% endcase %}").render(), is("else"));
-    assertThat(LiquidParser.newInstance().parse("{% case false %}{% when true %}true{% when false %}false{% else " +
+    assertThat(createTestParser().parse("{% case false %}{% when true %}true{% when false %}false{% else " +
           "%}else{% endcase %}").render(), is("false"));
-    assertThat(LiquidParser.newInstance().parse("{% case true %}{% when true %}true{% when false %}false{% else " +
+    assertThat(createTestParser().parse("{% case true %}{% when true %}true{% when false %}false{% else " +
           "%}else{% endcase %}").render(), is("true"));
-    assertThat(LiquidParser.newInstance().parse("{% case NULL %}{% when true %}true{% when false %}false{% else " +
+    assertThat(createTestParser().parse("{% case NULL %}{% when true %}true{% when false %}false{% else " +
           "%}else{% endcase %}").render(), is("else"));
   }
 
@@ -247,7 +249,7 @@ public class CaseTest extends LiquifyNoInputTest {
     String code = "{% case collection.handle %}{% when 'menswear-jackets' %}{% assign ptitle = 'menswear' %}{% when " +
           "'menswear-t-shirts' %}{% assign ptitle = 'menswear' %}{% else %}{% assign ptitle = 'womenswear' %}{% " +
           "endcase %}{{ ptitle }}";
-    LTemplate template = LiquidParser.newInstance().parse(code);
+    LTemplate template = createTestParser().parse(code);
 
     assertThat(template.renderJson("{ \"collection\" : {\"handle\" : \"menswear-jackets\"} }"), is("menswear"));
     assertThat(template.renderJson("{ \"collection\" : {\"handle\" : \"menswear-t-shirts\"} }"), is("menswear"));
@@ -277,11 +279,11 @@ public class CaseTest extends LiquifyNoInputTest {
 
     String code = "{% case condition %}{% when 1 or 2 or 3 %} its 1 or 2 or 3 {% when 4 %} its 4 {% endcase %}";
 
-    assertThat(LiquidParser.newInstance().parse(code).renderJson("{ \"condition\" : 1 }"), is(" its 1 or 2 or 3 "));
-    assertThat(LiquidParser.newInstance().parse(code).renderJson("{ \"condition\" : 2 }"), is(" its 1 or 2 or 3 "));
-    assertThat(LiquidParser.newInstance().parse(code).renderJson("{ \"condition\" : 3 }"), is(" its 1 or 2 or 3 "));
-    assertThat(LiquidParser.newInstance().parse(code).renderJson("{ \"condition\" : 4 }"), is(" its 4 "));
-    assertThat(LiquidParser.newInstance().parse(code).renderJson("{ \"condition\" : 5 }"), is(""));
+    assertThat(createTestParser().parse(code).renderJson("{ \"condition\" : 1 }"), is(" its 1 or 2 or 3 "));
+    assertThat(createTestParser().parse(code).renderJson("{ \"condition\" : 2 }"), is(" its 1 or 2 or 3 "));
+    assertThat(createTestParser().parse(code).renderJson("{ \"condition\" : 3 }"), is(" its 1 or 2 or 3 "));
+    assertThat(createTestParser().parse(code).renderJson("{ \"condition\" : 4 }"), is(" its 4 "));
+    assertThat(createTestParser().parse(code).renderJson("{ \"condition\" : 5 }"), is(""));
   }
 
   /*
@@ -305,19 +307,19 @@ public class CaseTest extends LiquifyNoInputTest {
 
     String code = "{% case condition %}{% when 1, 2, 3 %} its 1 or 2 or 3 {% when 4 %} its 4 {% endcase %}";
 
-    assertThat(LiquidParser.newInstance().parse(code).renderJson("{ \"condition\" : 1 }"), is(" its 1 or 2 or 3 "));
-    assertThat(LiquidParser.newInstance().parse(code).renderJson("{ \"condition\" : 2 }"), is(" its 1 or 2 or 3 "));
-    assertThat(LiquidParser.newInstance().parse(code).renderJson("{ \"condition\" : 3 }"), is(" its 1 or 2 or 3 "));
-    assertThat(LiquidParser.newInstance().parse(code).renderJson("{ \"condition\" : 4 }"), is(" its 4 "));
-    assertThat(LiquidParser.newInstance().parse(code).renderJson("{ \"condition\" : 5 }"), is(""));
+    assertThat(createTestParser().parse(code).renderJson("{ \"condition\" : 1 }"), is(" its 1 or 2 or 3 "));
+    assertThat(createTestParser().parse(code).renderJson("{ \"condition\" : 2 }"), is(" its 1 or 2 or 3 "));
+    assertThat(createTestParser().parse(code).renderJson("{ \"condition\" : 3 }"), is(" its 1 or 2 or 3 "));
+    assertThat(createTestParser().parse(code).renderJson("{ \"condition\" : 4 }"), is(" its 4 "));
+    assertThat(createTestParser().parse(code).renderJson("{ \"condition\" : 5 }"), is(""));
 
     code = "{% case condition %}{% when 1, \"string\", null %} its 1 or 2 or 3 {% when 4 %} its 4 {% endcase %}";
 
-    assertThat(LiquidParser.newInstance().parse(code).renderJson("{ \"condition\" : 1 }"), is(" its 1 or 2 or 3 "));
-    assertThat(LiquidParser.newInstance().parse(code).renderJson("{ \"condition\" : \"string\" }"), is(" its 1 or 2 or 3 " +
+    assertThat(createTestParser().parse(code).renderJson("{ \"condition\" : 1 }"), is(" its 1 or 2 or 3 "));
+    assertThat(createTestParser().parse(code).renderJson("{ \"condition\" : \"string\" }"), is(" its 1 or 2 or 3 " +
           ""));
-    assertThat(LiquidParser.newInstance().parse(code).renderJson("{ \"condition\" : null }"), is(" its 1 or 2 or 3 "));
-    assertThat(LiquidParser.newInstance().parse(code).renderJson("{ \"condition\" : \"something else\" }"), is(""));
+    assertThat(createTestParser().parse(code).renderJson("{ \"condition\" : null }"), is(" its 1 or 2 or 3 "));
+    assertThat(createTestParser().parse(code).renderJson("{ \"condition\" : \"something else\" }"), is(""));
   }
 
   /*
@@ -334,11 +336,11 @@ public class CaseTest extends LiquifyNoInputTest {
    */
   @Test(expected = RuntimeException.class)
   public void case_detects_bad_syntax1Test() throws Exception {
-    LiquidParser.newInstance().parse("{% case false %}{% when %}true{% endcase %}");
+    createTestParser().parse("{% case false %}{% when %}true{% endcase %}");
   }
 
   @Test(expected = RuntimeException.class)
   public void case_detects_bad_syntax2Test() throws Exception {
-    LiquidParser.newInstance().parse("{% case false %}{% huh %}true{% endcase %}");
+    createTestParser().parse("{% case false %}{% huh %}true{% endcase %}");
   }
 }

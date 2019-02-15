@@ -4,7 +4,9 @@ import assertk.assert
 import assertk.assertions.isEqualTo
 import liqp.LiquidParser
 import liqp.assertThat
+import liqp.createParseSettings
 import liqp.ext.filters.strings.StripHtmlFilter
+import liqp.toParser
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -26,7 +28,7 @@ class StripHtmlFilterTestParameterized(val template: String, val expected: Strin
   @Test
   fun run() {
     val json = "{ \"html\" : \"1<h>2</h>3\" }"
-    val template = LiquidParser.newBuilder()
+    val template = createParseSettings()
         .addFilters(StripHtmlFilter())
         .toParser()
         .parse(template)

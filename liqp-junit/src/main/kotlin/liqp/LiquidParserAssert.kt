@@ -2,8 +2,8 @@ package liqp
 
 import java.io.File
 
-class LiquidParserAssert(private val parser: LiquidParser,
-                         private val engine: LiquidRenderer = LiquidRenderer(parser = parser)) {
+class LiquidParserAssert(private val parser: LParser,
+                         private val engine: LRenderer = parser.toRenderer()) {
 
   fun withTemplateString(template: String): TemplateAssert {
     try {

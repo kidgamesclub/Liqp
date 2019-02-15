@@ -85,27 +85,27 @@ public class CycleTest extends LiquifyNoInputTest {
   @Test
   public void cycleTest() throws Exception {
 
-    AssertsKt.assertThat(LiquidParser.newInstance())
+    AssertsKt.assertThat(AssertsKt.createTestParser())
           .withTemplateString("{%cycle \"one\", \"two\"%}")
           .rendering()
           .isEqualTo("one");
 
-    AssertsKt.assertThat(LiquidParser.newInstance())
+    AssertsKt.assertThat(AssertsKt.createTestParser())
           .withTemplateString("{%cycle \"one\", \"two\"%} {%cycle \"one\", \"two\"%}")
           .rendering()
           .isEqualTo("one two");
 
-    AssertsKt.assertThat(LiquidParser.newInstance())
+    AssertsKt.assertThat(AssertsKt.createTestParser())
           .withTemplateString("{%cycle \"\", \"two\"%} {%cycle \"\", \"two\"%}")
           .rendering()
           .isEqualTo(" two");
 
-    AssertsKt.assertThat(LiquidParser.newInstance())
+    AssertsKt.assertThat(AssertsKt.createTestParser())
           .withTemplateString("{%cycle \"one\", \"two\"%} {%cycle \"one\", \"two\"%} {%cycle \"one\", \"two\"%}")
           .rendering()
           .isEqualTo("one two one");
 
-    AssertsKt.assertThat(LiquidParser.newInstance())
+    AssertsKt.assertThat(AssertsKt.createTestParser())
           .withTemplateString("{%cycle \"text-align: left\", \"text-align: right\" %} {%cycle " +
                 "\"text-align: left\", \"text-align: right\"%}")
           .rendering()
@@ -122,7 +122,7 @@ public class CycleTest extends LiquifyNoInputTest {
   public void multiple_cyclesTest() throws Exception {
 
     assertThat(
-          LiquidParser.newInstance().parse(
+          AssertsKt.createTestParser().parse(
                 "{%cycle 1,2%} " +
                       "{%cycle 1,2%} " +
                       "{%cycle 1,2%} " +
@@ -144,7 +144,7 @@ public class CycleTest extends LiquifyNoInputTest {
   public void multiple_named_cyclesTest() throws Exception {
 
     assertThat(
-          LiquidParser.newInstance().parse(
+          AssertsKt.createTestParser().parse(
                 "{%cycle 1: \"one\", \"two\" %} {%cycle 2: \"one\", \"two\" %} " +
                       "{%cycle 1: \"one\", \"two\" %} {%cycle 2: \"one\", \"two\" %} " +
                       "{%cycle 1: \"one\", \"two\" %} {%cycle 2: \"one\", \"two\" %}").render(),
@@ -165,7 +165,7 @@ public class CycleTest extends LiquifyNoInputTest {
     String assigns = "{\"var1\" : 1, \"var2\" : 2 }";
 
     assertThat(
-          LiquidParser.newInstance().parse(
+          AssertsKt.createTestParser().parse(
                 "{%cycle var1: \"one\", \"two\" %} {%cycle var2: \"one\", \"two\" %} " +
                       "{%cycle var1: \"one\", \"two\" %} {%cycle var2: \"one\", \"two\" %} " +
                       "{%cycle var1: \"one\", \"two\" %} {%cycle var2: \"one\", \"two\" %}").renderJson(assigns),

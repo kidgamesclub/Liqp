@@ -1,5 +1,6 @@
 package liqp.filter;
 
+import static liqp.AssertsKt.createTestParser;
 import static liqp.Mocks.mockRenderContext;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -7,6 +8,7 @@ import static org.junit.Assert.assertThat;
 import com.google.common.collect.ImmutableList;
 import liqp.LiquidTemplate;
 import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import liqp.params.FilterParams;
 import liqp.params.ResolvedFilterParams;
 import org.antlr.runtime.RecognitionException;
@@ -17,9 +19,9 @@ public class FirstTest {
   @Test
   public void applyTest() throws RecognitionException {
 
-    LiquidTemplate template = LiquidParser.newInstance().parse("{{values | first}}");
+    LTemplate template = createTestParser().parse("{{values | first}}");
 
-    String rendered = String.valueOf(template.renderJson("{\"values\" : [\"Mu\", \"foo\", \"bar\"]}"));
+    String rendered = template.renderJson("{\"values\" : [\"Mu\", \"foo\", \"bar\"]}");
 
     assertThat(rendered, is("Mu"));
   }

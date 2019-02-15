@@ -18,7 +18,7 @@ public class StatementsTest {
   @Test
   public void true_eql_trueTest() throws Exception {
 
-    assertThat(LiquidParser.newInstance().parse(" {% if true == true %} true {% else %} false {% endif %} ").render()
+    assertThat(AssertsKt.createTestParser().parse(" {% if true == true %} true {% else %} false {% endif %} ").render()
           , is("  true  "));
   }
 
@@ -32,7 +32,7 @@ public class StatementsTest {
   @Test
   public void true_not_eql_trueTest() throws Exception {
 
-    assertThat(LiquidParser.newInstance().parse(" {% if true != true %} true {% else %} false {% endif %} ").render()
+    assertThat(AssertsKt.createTestParser().parse(" {% if true != true %} true {% else %} false {% endif %} ").render()
           , is("  false  "));
   }
 
@@ -46,7 +46,7 @@ public class StatementsTest {
   @Test
   public void true_lq_trueTest() throws Exception {
 
-    assertThat(LiquidParser.newInstance().parse(" {% if 0 > 0 %} true {% else %} false {% endif %} ").render(), is(" " +
+    assertThat(AssertsKt.createTestParser().parse(" {% if 0 > 0 %} true {% else %} false {% endif %} ").render(), is(" " +
           " false  "));
   }
 
@@ -60,7 +60,7 @@ public class StatementsTest {
   @Test
   public void one_lq_zeroTest() throws Exception {
 
-    assertThat(LiquidParser.newInstance().parse(" {% if 1 > 0 %} true {% else %} false {% endif %} ").render(), is(" " +
+    assertThat(AssertsKt.createTestParser().parse(" {% if 1 > 0 %} true {% else %} false {% endif %} ").render(), is(" " +
           " true  "));
   }
 
@@ -74,7 +74,7 @@ public class StatementsTest {
   @Test
   public void zero_lq_oneTest() throws Exception {
 
-    assertThat(LiquidParser.newInstance().parse(" {% if 0 < 1 %} true {% else %} false {% endif %} ").render(), is(" " +
+    assertThat(AssertsKt.createTestParser().parse(" {% if 0 < 1 %} true {% else %} false {% endif %} ").render(), is(" " +
           " true  "));
   }
 
@@ -88,7 +88,7 @@ public class StatementsTest {
   @Test
   public void zero_lq_or_equal_oneTest() throws Exception {
 
-    assertThat(LiquidParser.newInstance().parse(" {% if 0 <= 0 %} true {% else %} false {% endif %} ").render(), is(
+    assertThat(AssertsKt.createTestParser().parse(" {% if 0 <= 0 %} true {% else %} false {% endif %} ").render(), is(
           "  true  "));
   }
 
@@ -107,10 +107,10 @@ public class StatementsTest {
   @Test
   public void zero_lq_or_equal_one_involving_nilTest() throws Exception {
 
-    assertThat(LiquidParser.newInstance().parse(" {% if null <= 0 %} true {% else %} false {% endif %} ").render(),
+    assertThat(AssertsKt.createTestParser().parse(" {% if null <= 0 %} true {% else %} false {% endif %} ").render(),
           is("  false  "));
 
-    assertThat(LiquidParser.newInstance().parse(" {% if 0 <= null %} true {% else %} false {% endif %} ").render(),
+    assertThat(AssertsKt.createTestParser().parse(" {% if 0 <= null %} true {% else %} false {% endif %} ").render(),
           is("  false  "));
   }
 
@@ -124,7 +124,7 @@ public class StatementsTest {
   @Test
   public void zero_lqq_or_equal_oneTest() throws Exception {
 
-    assertThat(LiquidParser.newInstance().parse(" {% if 0 >= 0 %} true {% else %} false {% endif %} ").render(), is(
+    assertThat(AssertsKt.createTestParser().parse(" {% if 0 >= 0 %} true {% else %} false {% endif %} ").render(), is(
           "  true  "));
   }
 
@@ -138,7 +138,7 @@ public class StatementsTest {
   @Test
   public void stringsTest() throws Exception {
 
-    assertThat(LiquidParser.newInstance().parse(" {% if 'test' == 'test' %} true {% else %} false {% endif %} ").render(), is("  true  "));
+    assertThat(AssertsKt.createTestParser().parse(" {% if 'test' == 'test' %} true {% else %} false {% endif %} ").render(), is("  true  "));
   }
 
   /*
@@ -151,7 +151,7 @@ public class StatementsTest {
   @Test
   public void strings_not_equalTest() throws Exception {
 
-    assertThat(LiquidParser.newInstance().parse(" {% if 'test' != 'test' %} true {% else %} false {% endif %} ").render(), is("  false  "));
+    assertThat(AssertsKt.createTestParser().parse(" {% if 'test' != 'test' %} true {% else %} false {% endif %} ").render(), is("  false  "));
   }
 
   /*
@@ -165,7 +165,7 @@ public class StatementsTest {
   public void var_strings_equalTest() throws Exception {
 
     assertThat(
-          LiquidParser.newInstance().parse(" {% if var == \"hello there!\" %} true {% else %} false {% endif %} ")
+          AssertsKt.createTestParser().parse(" {% if var == \"hello there!\" %} true {% else %} false {% endif %} ")
                 .render(parseIfNecessary("{ \"var\" : \"hello there!\" }")),
           is("  true  "));
   }
@@ -181,7 +181,7 @@ public class StatementsTest {
   public void var_strings_are_not_equalTest() throws Exception {
 
     assertThat(
-          LiquidParser.newInstance().parse(" {% if \"hello there!\" == var %} true {% else %} false {% endif %} ")
+          AssertsKt.createTestParser().parse(" {% if \"hello there!\" == var %} true {% else %} false {% endif %} ")
                 .renderJson("{ \"var\" : \"hello there!\" }"),
           is("  true  "));
   }
@@ -197,7 +197,7 @@ public class StatementsTest {
   public void var_and_long_string_are_equalTest() throws Exception {
 
     assertThat(
-          LiquidParser.newInstance().parse(" {% if var == 'hello there!' %} true {% else %} false {% endif %} ")
+          AssertsKt.createTestParser().parse(" {% if var == 'hello there!' %} true {% else %} false {% endif %} ")
                 .renderJson("{ \"var\" : \"hello there!\" }"),
           is("  true  "));
   }
@@ -213,7 +213,7 @@ public class StatementsTest {
   public void var_and_long_string_are_equal_backwardsTest() throws Exception {
 
     assertThat(
-          LiquidParser.newInstance().parse(" {% if 'hello there!' == var %} true {% else %} false {% endif %} ")
+          AssertsKt.createTestParser().parse(" {% if 'hello there!' == var %} true {% else %} false {% endif %} ")
                 .renderJson("{ \"var\" : \"hello there!\" }"),
           is("  true  "));
   }
@@ -229,7 +229,7 @@ public class StatementsTest {
   public void is_collection_emptyTest() throws Exception {
 
     assertThat(
-          LiquidParser.newInstance().parse(" {% if array == empty %} true {% else %} false {% endif %} ")
+          AssertsKt.createTestParser().parse(" {% if array == empty %} true {% else %} false {% endif %} ")
                 .renderJson("{ \"array\" : [] }"),
           is("  true  "));
   }
@@ -245,7 +245,7 @@ public class StatementsTest {
   public void is_not_collection_emptyTest() throws Exception {
 
     assertThat(
-          LiquidParser.newInstance().parse(" {% if array == empty %} true {% else %} false {% endif %} ")
+          AssertsKt.createTestParser().parse(" {% if array == empty %} true {% else %} false {% endif %} ")
                 .renderJson("{ \"array\" : [1,2,3] }"),
           is("  false  "));
   }
@@ -264,10 +264,10 @@ public class StatementsTest {
   @Test
   public void nilTest() throws Exception {
 
-    assertThat(LiquidParser.newInstance().parse(" {% if var == nil %} true {% else %} false {% endif %} ").renderJson("{ " +
+    assertThat(AssertsKt.createTestParser().parse(" {% if var == nil %} true {% else %} false {% endif %} ").renderJson("{ " +
           "\"var\" : null }"), is("  true  "));
 
-    assertThat(LiquidParser.newInstance().parse(" {% if var == null %} true {% else %} false {% endif %} ").renderJson("{" +
+    assertThat(AssertsKt.createTestParser().parse(" {% if var == null %} true {% else %} false {% endif %} ").renderJson("{" +
           " \"var\" : null }"), is("  true  "));
   }
 
@@ -285,10 +285,10 @@ public class StatementsTest {
   @Test
   public void not_nilTest() throws Exception {
 
-    assertThat(LiquidParser.newInstance().parse(" {% if var != nil %} true {% else %} false {% endif %} ")
+    assertThat(AssertsKt.createTestParser().parse(" {% if var != nil %} true {% else %} false {% endif %} ")
           .renderJson("{\"var\":1}"), is("  true  "));
 
-    assertThat(LiquidParser.newInstance().parse(" {% if var != null %} true {% else %} false {% endif %} ")
+    assertThat(AssertsKt.createTestParser().parse(" {% if var != null %} true {% else %} false {% endif %} ")
           .renderJson("{\"var\":1}"), is("  true  "));
   }
 }

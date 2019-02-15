@@ -1,10 +1,12 @@
 package liqp.filter;
 
+import static liqp.AssertsKt.createTestParser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import liqp.LiquidTemplate;
 import liqp.LiquidParser;
+import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
 
@@ -23,8 +25,8 @@ public class PrependTest {
 
         for (String[] test : tests) {
 
-            LiquidTemplate template = LiquidParser.newInstance().parse(test[0]);
-            String rendered = String.valueOf(template.render());
+            LTemplate template = createTestParser().parse(test[0]);
+            String rendered = template.render();
 
             assertThat(rendered, is(test[1]));
         }
@@ -42,7 +44,7 @@ public class PrependTest {
 
         final String json = "{ \"a\":\"bc\", \"b\":\"a\" }";
 
-        assertThat(LiquidParser.newInstance().parse("{{ a | prepend: 'a'}}").renderJson(json), is("abc"));
-        assertThat(LiquidParser.newInstance().parse("{{ a | prepend: b}}").renderJson(json), is("abc"));
+        assertThat(createTestParser().parse("{{ a | prepend: 'a'}}").renderJson(json), is("abc"));
+        assertThat(createTestParser().parse("{{ a | prepend: b}}").renderJson(json), is("abc"));
     }
 }

@@ -1,6 +1,7 @@
 package liqp.parameterized
 
 import liqp.LiquidParser
+import liqp.createTestParser
 import liqp.parseIfNecessary
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -11,7 +12,7 @@ import org.junit.runners.Parameterized
 abstract class LiquifyNoInputTest @JvmOverloads constructor(val templateString: String, val expectedResult: String, val inputData: String? = null) {
   @Test
   open fun run() {
-    val template = LiquidParser.newInstance().parse(templateString)
+    val template = createTestParser{}.parse(templateString)
     val input = try {
       inputData.parseIfNecessary()
     } catch (e: Exception) {

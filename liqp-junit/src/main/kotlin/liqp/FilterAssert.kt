@@ -16,17 +16,19 @@ import org.assertj.core.api.Assertions.assertThat
 
 data class FilterAssert(val name: String? = null,
                         val filter: LFilter,
-                        val parser: LiquidParser = LiquidParser().withFilters(filter),
+                        val parser: LParser = provider.defaultParseSettings.withFilters(filter).toParser(),
                         val inputData: Any? = null,
                         val result: Any? = null,
                         val error: Exception? = null,
-                        val engine: LiquidRenderer = LiquidRenderer(parser = parser),
+                        val engine: LiquidRenderer = LiquidRenderer(parser = parser, renderSettings = parser.toRenderSettings()),
                         val context: LContext = RenderContext(inputData, parser,
                             engine.logic,
                             engine.parser,
                             engine,
+                            engine.renderSettings.defaultLocale,
+                            engine.renderSettings.defaultTimezone,
                             engine.accessors,
-                            engine.settings)) {
+                            engine.renderSettings)) {
 
 
   fun resultAsString(): Assert<String> {

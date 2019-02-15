@@ -3,6 +3,7 @@ package liqp.nodes
 import liqp.node.LNode
 import liqp.LiquidParser
 import liqp.context.LContext
+import liqp.createTestParser
 import liqp.executing
 import liqp.tag.LTag
 import org.antlr.runtime.RecognitionException
@@ -30,12 +31,12 @@ class BlockNodeTest {
       }
     }
 
-    LiquidParser.newInstance().withTags(customTag).parse("{% testtag %} {% endtesttag %}").render()
+    createTestParser{addTags(customTag)}.parse("{% testtag %} {% endtesttag %}").render()
   }
 
   @Test
   fun testRenderNonString() {
-    LiquidParser.newInstance().parse("{{0}}")
+    createTestParser{}.parse("{{0}}")
         .executing { }
         .isNotError()
         .isEqualTo(0L)
@@ -43,7 +44,7 @@ class BlockNodeTest {
 
   @Test
   fun testRenderNonStringPadding() {
-    LiquidParser.newInstance().parse(" {{0}}")
+    createTestParser{}.parse(" {{0}}")
         .executing { }
         .isNotError()
         .isEqualTo(" 0")
@@ -51,7 +52,7 @@ class BlockNodeTest {
 
   @Test
   fun testRenderNonStringNested() {
-    LiquidParser.newInstance().parse("{%if true%}{{ 0 }}{%else%}{{1}}{%endif%}")
+    createTestParser{}.parse("{%if true%}{{ 0 }}{%else%}{{1}}{%endif%}")
         .executing { }
         .isNotError()
         .isEqualTo(0L)
@@ -59,7 +60,7 @@ class BlockNodeTest {
 
   @Test
   fun testRenderNonStringNested1() {
-    LiquidParser.newInstance().parse("{%if true%}{{ 1 }}{%else%} {{1}} {%endif%}")
+    createTestParser{}.parse("{%if true%}{{ 1 }}{%else%} {{1}} {%endif%}")
         .executing { }
         .isNotError()
         .isEqualTo(1L)

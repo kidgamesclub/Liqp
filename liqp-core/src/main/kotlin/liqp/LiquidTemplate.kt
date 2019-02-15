@@ -1,5 +1,6 @@
 package liqp
 
+import liqp.config.RenderSettings
 import liqp.node.LNode
 import liqp.node.LTemplate
 import org.antlr.v4.runtime.tree.ParseTree
@@ -7,18 +8,13 @@ import org.antlr.v4.runtime.tree.ParseTree
 /**
  * This class holds the state of a parsed template
  */
-class LiquidTemplate(override val rootNode: LNode,
-                     private val parseTree: ParseTree?,
-                     private val parser: LiquidParser,
-                     val renderer: LiquidRenderer = LiquidRenderer.newInstance(parser.toRenderSettings())) : LTemplate {
+data class LiquidTemplate(override val rootNode: LNode,
+                          private val parseTree: ParseTree?,
+                          private val parser: LParser,
+                          private val providedRenderer: LRenderer?) : LTemplate {
 
-  override fun render(inputData: Any?): String = renderer.render(this, inputData)
-  override fun render(key: String, value: Any?): String = renderer.render(this, key to value)
-  override fun render(pair: Pair<String, Any?>): String = renderer.render(this, pair)
-  override fun render(): String = renderer.render(this)
-
-  fun render(key: String, value: Any?, engine: LiquidRenderer = this.renderer): String =
-      engine.render(this, key to value)
+  override val renderer: LRenderer = providedRenderer ?: Liquify.provider.createRenderer(parser,
+      RenderSettings(parser.parseSettings))
 
   /**
    * Returns a string representation of the parse tree of the parsed

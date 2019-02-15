@@ -1,7 +1,11 @@
 package liqp.config
 
+import liqp.LRenderer
+import liqp.Liquify
 import liqp.parser.Flavor.LIQUID
 import java.io.File
+import java.time.ZoneId
+import java.util.*
 import java.util.concurrent.ExecutorService
 
 interface LRenderSettings {
@@ -15,9 +19,12 @@ interface LRenderSettings {
   val maxSizeRenderedString: Int
   val maxRenderTimeMillis: Long
   val defaultDateFormat: Char
+  val defaultLocale: Locale
+  val defaultTimezone: ZoneId
   val executor: ExecutorService?
-
-  fun toMutableRenderSettings(): MutableRenderSettings
+  fun withParseSettings(settings: LParseSettings): LRenderSettings
+  fun toMutableSettings(): MutableRenderSettings
+  fun reconfigure(block: MutableRenderSettings.() -> Unit): LRenderSettings = toMutableSettings().build(block)
 }
 
 data class RenderSettings(override val baseDir: File,
@@ -30,12 +37,25 @@ data class RenderSettings(override val baseDir: File,
                           override val maxSizeRenderedString: Int = Integer.MAX_VALUE,
                           override val maxRenderTimeMillis: Long = Long.MAX_VALUE,
                           override val defaultDateFormat: Char = 'c',
-                          override val executor: ExecutorService? = null) : LRenderSettings {
+                          override val executor: ExecutorService? = null,
+                          override val defaultLocale: Locale = Locale.US,
+                          override val defaultTimezone: ZoneId = ZoneId.of("America/Phoenix")) : LRenderSettings {
 
-  constructor(parseSettings: ParseSettings): this(baseDir = parseSettings.baseDir, includesDir = parseSettings.includesDir,
-      isStrictVariables = parseSettings.isStrictVariables, isStrictIncludes = parseSettings.isStrictIncludes)
+  override fun withParseSettings(settings: LParseSettings): LRenderSettings {
+    return this.toMutableSettings().build {
+      baseDir = settings.baseDir
+      includesDir = settings.includesDir
+      isStrictIncludes = settings.isStrictIncludes
+      isStrictVariables = settings.isStrictVariables
+    }
+  }
 
-  override fun toMutableRenderSettings(): MutableRenderSettings {
+  constructor(parseSettings: LParseSettings) : this(baseDir = parseSettings.baseDir,
+      includesDir = parseSettings.includesDir,
+      isStrictVariables = parseSettings.isStrictVariables,
+      isStrictIncludes = parseSettings.isStrictIncludes)
+
+  override fun toMutableSettings(): MutableRenderSettings {
     return MutableRenderSettings(this)
   }
 }
@@ -43,19 +63,21 @@ data class RenderSettings(override val baseDir: File,
 data class MutableRenderSettings(internal var settings: RenderSettings = RenderSettings(
     baseDir = File("./"),
     includesDir = LIQUID.includesDirName,
-    isStrictIncludes = false)) : LRenderSettings {
+    isStrictIncludes = false)) {
 
-  override var isStrictVariables by delegate(settings::isStrictVariables, this::withStrictVariables)
-  override var isStrictIncludes by delegate(settings::isStrictIncludes, this::withStrictIncludes)
-  override var baseDir by delegate(settings::baseDir, this::withBaseDir)
-  override var includesDir by delegate(settings::includesDir, this::withIncludesDir)
-  override var maxIterations by delegate(settings::maxIterations, this::withMaxIterations)
-  override var maxStackSize by delegate(settings::maxStackSize, this::withMaxStackSize)
-  override var isUseTruthyChecks by delegate(settings::isUseTruthyChecks, this::withUseTruthyChecks)
-  override var maxSizeRenderedString by delegate(settings::maxSizeRenderedString, this::withMaxSizeRenderedString)
-  override var maxRenderTimeMillis by delegate(settings::maxRenderTimeMillis, this::withMaxRenderTimeMillis)
-  override var defaultDateFormat by delegate(settings::defaultDateFormat, this::withDefaultDateFormat)
-  override var executor by delegate(settings::executor, this::withExecutor)
+  var isStrictVariables by delegate(settings::isStrictVariables, this::withStrictVariables)
+  var isStrictIncludes by delegate(settings::isStrictIncludes, this::withStrictIncludes)
+  var baseDir by delegate(settings::baseDir, this::withBaseDir)
+  var includesDir by delegate(settings::includesDir, this::withIncludesDir)
+  var maxIterations by delegate(settings::maxIterations, this::withMaxIterations)
+  var maxStackSize by delegate(settings::maxStackSize, this::withMaxStackSize)
+  var isUseTruthyChecks by delegate(settings::isUseTruthyChecks, this::withUseTruthyChecks)
+  var maxSizeRenderedString by delegate(settings::maxSizeRenderedString, this::withMaxSizeRenderedString)
+  var maxRenderTimeMillis by delegate(settings::maxRenderTimeMillis, this::withMaxRenderTimeMillis)
+  var defaultDateFormat by delegate(settings::defaultDateFormat, this::withDefaultDateFormat)
+  var defaultLocale by delegate(settings::defaultLocale, this::withDefaultLocale)
+  var defaultTimezone by delegate(settings::defaultTimezone, this::withDefaultTimezone)
+  var executor by delegate(settings::executor, this::withExecutor)
 
   fun withStrictVariables(strictVariables: Boolean): MutableRenderSettings {
     settings = settings.copy(isStrictVariables = strictVariables)
@@ -107,17 +129,19 @@ data class MutableRenderSettings(internal var settings: RenderSettings = RenderS
     return this
   }
 
+  fun withDefaultTimezone(defaultTimezone: ZoneId): MutableRenderSettings = apply {
+    settings = settings.copy(defaultTimezone = defaultTimezone)
+  }
+
+  fun withDefaultLocale(defaultLocale: Locale): MutableRenderSettings = apply {
+    settings = settings.copy(defaultLocale = defaultLocale)
+  }
+
   fun withExecutor(executor: ExecutorService?): MutableRenderSettings {
     settings = settings.copy(executor = executor)
     return this
   }
 
-  override fun toMutableRenderSettings(): MutableRenderSettings {
-    return this
-  }
-
-  fun build(): RenderSettings {
-    return settings
-  }
+  fun build(block: MutableRenderSettings.() -> Unit = {}): RenderSettings = apply(block).settings
 }
 

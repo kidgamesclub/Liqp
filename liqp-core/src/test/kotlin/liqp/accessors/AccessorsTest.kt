@@ -4,6 +4,7 @@ import assertk.assertions.isEqualTo
 import lang.json.JsrObject
 import lang.json.jsrObject
 import liqp.LiquidParser
+import liqp.createTestParser
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -12,7 +13,7 @@ import org.junit.runners.Parameterized
 class AccessorsTest(val name: String, val template: String, val input: Any?, val expected: Any?) {
   @Test
   fun run() {
-    val template = LiquidParser.newInstance().parse(template)
+    val template = createTestParser{}.parse(template)
     val rendered = template.render(input)
     assertk.assert(rendered).isEqualTo(expected)
   }

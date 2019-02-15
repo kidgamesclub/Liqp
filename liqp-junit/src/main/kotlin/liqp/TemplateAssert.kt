@@ -4,7 +4,7 @@ import liqp.node.LTemplate
 import org.assertj.core.api.Assertions.assertThat
 
 class TemplateAssert(val template: LTemplate? = null,
-                     private val engine:LRenderer = (template as? LiquidTemplate)?.renderer ?: LiquidRenderer.newInstance(),
+                     private val engine:LRenderer = (template as? LiquidTemplate)?.renderer ?: createTestRenderer {  },
                      val error:Exception? = null) {
 
   fun parsedWithoutError():TemplateAssert {
@@ -19,7 +19,7 @@ class TemplateAssert(val template: LTemplate? = null,
   }
 
   fun withEngine(configurer: RenderConfigurer): TemplateAssert {
-    return TemplateAssert(template, engine.withRenderSettings(configurer))
+    return TemplateAssert(template, engine.reconfigure(configurer))
   }
 
   @JvmOverloads fun rendering(inputData:Any? = null): TemplateRenderAssert {

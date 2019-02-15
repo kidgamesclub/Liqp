@@ -3,6 +3,7 @@ package liqp.nodes
 import assertk.assert
 import assertk.assertions.isEqualTo
 import liqp.LiquidParser
+import liqp.createTestParser
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -12,7 +13,7 @@ class OutputNodeTest(val template: String, val expect: String) {
   @Test
   fun run() {
 
-    val template = LiquidParser.newInstance().parse(template)
+    val template = createTestParser{}.parse(template)
     val rendered = template.renderJson("{\"X\" : \"mu\"}")
 
     assert(rendered).isEqualTo(expect)
@@ -32,7 +33,7 @@ class OutputNodeKeywordTest(val keyword:String) {
     val test = "{{$keyword}}"
     val expected = keyword + "_" + Integer.toString(keyword.length)
     val json = "{\"$keyword\" : \"$expected\" }"
-    val template = LiquidParser.newInstance().parse(test)
+    val template = createTestParser {  }.parse(test)
     val rendered = template.renderJson(json)
 
     assert(rendered).isEqualTo(expected)
@@ -55,7 +56,7 @@ class OutputNodeBadKeywordTest(val keyword: String, val expected: String) {
   @Test fun badKeywordAsVariableTest() {
     val test = "{{$keyword}}"
     val json = "{\"$keyword\" : \"bad\" }"
-    val template = LiquidParser.newInstance().parse(test)
+    val template = createTestParser { }.parse(test)
     val rendered = template.renderJson(json)
 
     assert(rendered).isEqualTo(expected)

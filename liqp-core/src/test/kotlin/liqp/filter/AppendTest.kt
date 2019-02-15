@@ -1,6 +1,7 @@
 package liqp.filter
 
 import liqp.LiquidParser
+import liqp.createTestParser
 import liqp.parameterized.LiquifyNoInputTest
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
@@ -33,7 +34,7 @@ class AppendTest {
 
     val assigns = "{\"a\":\"bc\", \"b\":\"d\" }"
 
-    assertThat(LiquidParser.newInstance().parse("{{ a | append: 'd'}}").renderJson(assigns), `is`("bcd"))
-    assertThat(LiquidParser.newInstance().parse("{{ a | append: b}}").renderJson(assigns), `is`("bcd"))
+    assertThat(createTestParser{}.parse("{{ a | append: 'd'}}").renderJson(assigns), `is`("bcd"))
+    assertThat(createTestParser{}.parse("{{ a | append: b}}").renderJson(assigns), `is`("bcd"))
   }
 }

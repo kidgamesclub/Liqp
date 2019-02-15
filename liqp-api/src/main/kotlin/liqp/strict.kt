@@ -1,13 +1,12 @@
 package liqp
 
-import lang.isIntegral
 import liqp.ComparisonResult.EQUAL
 import liqp.ComparisonResult.GREATER
 import liqp.ComparisonResult.LESS
 import liqp.ComparisonResult.NOOP
 import liqp.ComparisonResult.NULL
-import liqp.coersion.ToIterable
-import liqp.coersion.ToNumberOrNull
+import liqp.coersion.toIterable
+import liqp.coersion.toNumber
 import liqp.exceptions.LiquidRenderingException
 import kotlin.math.absoluteValue
 
@@ -178,7 +177,7 @@ class StrictLogic : LLogic {
   }
 
   override fun asIterable(t: Any?): Iterable<Any?> {
-    return ToIterable.convert(t)
+    return toIterable.coerce(t)
   }
 
   override fun asString(t: Any?): String? {
@@ -201,7 +200,7 @@ class StrictLogic : LLogic {
   override fun asDouble(t: Any?): Double? = asNumber(t)?.toDouble()
 
   override fun asNumber(t: Any?): Number? {
-    val number = ToNumberOrNull.convert(t)
+    val number = toNumber.coerceOrNull(t)
     return when (number) {
       is Long -> number
       is Double -> number

@@ -1,16 +1,17 @@
 package liqp.traverse
 
-import liqp.LiquidParser
 import liqp.isTag
+import liqp.createParseSettings
 import liqp.nodes.LookupNode
 import liqp.tags.If
+import liqp.toParser
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class FilteredLNodeVisitorTest {
   @Test
   fun testNodeVisitor_Iterator() {
-    val parsedTemplate = LiquidParser.newBuilder()
+    val parsedTemplate = createParseSettings()
         .toParser()
         .parse("Hey, welcome to {{ root.branch.leaf }} of our " +
             "{%if child.parent.grandparent.name == 'Bob'%}" +
@@ -32,7 +33,7 @@ class FilteredLNodeVisitorTest {
 
   @Test
   fun testNodeVisitor_Parents() {
-    val parsedTemplate = LiquidParser.newBuilder()
+    val parsedTemplate = createParseSettings()
         .toParser()
         .parse("Hey, welcome to {{ root.branch.leaf }} of our " +
             "{%if child.parent.grandparent.name == 'Bob'%}" +

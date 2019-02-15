@@ -25,8 +25,12 @@ interface LParseSettings {
   val isKeepParseTree: Boolean
   val cacheSettings: CacheSetup?
 
+  fun withFilters(vararg filters: LFilter): LParseSettings
+  fun withTags(vararg tags: LTag): LParseSettings
+
   fun toParser(): LParser
   fun toMutableSettings(): MutableParseSettings
+  fun reconfigure(block:MutableParseSettings.()->Unit):LParseSettings = toMutableSettings().build(block)
 }
 
 data class ParseSettings(override val tags: Tags = Liquify.provider.defaultTags,
@@ -41,7 +45,7 @@ data class ParseSettings(override val tags: Tags = Liquify.provider.defaultTags,
                          override val isKeepParseTree: Boolean = false,
                          override val cacheSettings: CacheSetup? = null) : LParseSettings {
 
-  constructor(settings: LParseSettings) : this(settings.tags, settings.filters, settings.baseDir, settings.includesDir,
+  constructor(settings: MutableParseSettings) : this(settings.tags, settings.filters, settings.baseDir, settings.includesDir,
       settings.isStrictVariables, settings.isStrictIncludes, settings.isStripSpacesAroundTags, settings.isStripSingleLine,
       settings.maxTemplateSize, settings.isKeepParseTree, settings.cacheSettings)
 
@@ -49,11 +53,11 @@ data class ParseSettings(override val tags: Tags = Liquify.provider.defaultTags,
     return MutableParseSettings(this)
   }
 
-  fun withFilters(vararg filter: LFilter): ParseSettings {
+  override fun withFilters(vararg filter: LFilter): ParseSettings {
     return this.copy(filters = this.filters + listOf(*filter))
   }
 
-  fun withTags(vararg tags: LTag): ParseSettings {
+  override fun withTags(vararg tags: LTag): ParseSettings {
     return this.copy(tags = this.tags + listOf(*tags))
   }
 
@@ -64,28 +68,23 @@ data class ParseSettings(override val tags: Tags = Liquify.provider.defaultTags,
  * This class is largely to support interop with java builders.  kotlin code should avoid this,
  * and just use the copy methods on {@link RenderSettings} directly
  */
-data class MutableParseSettings(override var tags: Tags = Liquify.provider.defaultTags,
-                                override var filters: Filters = Liquify.provider.defaultFilters,
-                                override var baseDir: File,
-                                override var includesDir: String,
-                                override var isStrictVariables: Boolean = false,
-                                override var isStrictIncludes: Boolean,
-                                override var isStripSpacesAroundTags: Boolean = false,
-                                override var isStripSingleLine: Boolean = false,
-                                override var maxTemplateSize: Long? = null,
-                                override var isKeepParseTree: Boolean = false,
-                                override var cacheSettings: CacheSetup? = null) : LParseSettings {
+data class MutableParseSettings(var tags: Tags = Liquify.provider.defaultTags,
+                                var filters: Filters = Liquify.provider.defaultFilters,
+                                var baseDir: File,
+                                var includesDir: String,
+                                var isStrictVariables: Boolean = false,
+                                var isStrictIncludes: Boolean,
+                                var isStripSpacesAroundTags: Boolean = false,
+                                var isStripSingleLine: Boolean = false,
+                                var maxTemplateSize: Long? = null,
+                                var isKeepParseTree: Boolean = false,
+                                var cacheSettings: CacheSetup? = null) {
 
   constructor(settings: ParseSettings) : this(settings.tags, settings.filters, settings.baseDir, settings.includesDir,
       settings.isStrictVariables, settings.isStrictIncludes, settings.isStripSpacesAroundTags, settings.isStripSingleLine,
       settings.maxTemplateSize, settings.isKeepParseTree, settings.cacheSettings)
 
-  override fun toMutableSettings(): MutableParseSettings {
-    return this
-  }
-
-  fun build(): ParseSettings = ParseSettings(this)
-  override fun toParser(): LParser = Liquify.provider.createParser(this.build())
+  @JvmOverloads fun build(block: MutableParseSettings.() -> Unit = {}): ParseSettings = ParseSettings(this.apply(block))
 
   fun baseDir(baseDir: File): MutableParseSettings {
     this.baseDir = baseDir
@@ -161,6 +160,8 @@ data class MutableParseSettings(override var tags: Tags = Liquify.provider.defau
     this.cacheSettings = cacheSettings
     return this
   }
+
+
 }
 
 interface CacheSetup : Consumer<CacheBuilder<*, *>>

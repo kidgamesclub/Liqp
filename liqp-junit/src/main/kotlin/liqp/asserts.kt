@@ -7,13 +7,15 @@ import liqp.config.MutableRenderSettings
 import liqp.filter.LFilter
 import liqp.node.LTemplate
 import java.io.File
+import java.time.ZoneId
+import java.util.*
 
-typealias ParseConfigurer = MutableParseSettings.() -> MutableParseSettings
-typealias RenderConfigurer = MutableRenderSettings.() -> MutableRenderSettings
+typealias ParseConfigurer = MutableParseSettings.() -> Unit
+typealias RenderConfigurer = MutableRenderSettings.() -> Unit
 typealias CreateTestTemplate = LParser.() -> LTemplate
 
-fun LiquidParser.assertThat(): LiquidParserAssert = LiquidParserAssert(this)
-fun assertParser(): LiquidParserAssert = LiquidParser.newInstance().assertThat()
+fun LParser.assertThat(): LiquidParserAssert = LiquidParserAssert(this)
+fun assertParser(): LiquidParserAssert = provider.createParser().assertThat()
 
 /**
  * Creates a {@link TemplateRenderAssert} instance for a string template, and allows overloaded
@@ -40,22 +42,24 @@ fun assertFileTemplate(templateFile: File, data: Any? = null,
 }
 
 private fun createTemplateAssert(createTestTemplate: CreateTestTemplate, data: Any? = null,
-                                 configureParser: ParseConfigurer = { this },
-                                 configureRenderer: RenderConfigurer = { this }): TemplateRenderAssert {
+                                 configureParser: ParseConfigurer = { },
+                                 configureRenderer: RenderConfigurer = { }): TemplateRenderAssert {
   val template: LTemplate
+  val renderer: LRenderer
   try {
-    val parser = MutableParseSettings(defaultParseSettings).configureParser().toParser()
+    val parser = provider.createParser().reconfigure(configureParser)
+    renderer = provider.createRenderer(parser, provider.defaultRenderSettings.reconfigure(configureRenderer))
     template = parser.createTestTemplate()
   } catch (e: Exception) {
     return TemplateRenderAssert(error = e)
   }
 
-  return executeTemplateAndAssert(template, LiquidRenderer.newInstance(configureRenderer), data)
+  return executeTemplateAndAssert(template, renderer, data)
 }
 
 fun executeTemplateAndAssert(template: LTemplate, engine: LRenderer, data: Any? = null): TemplateRenderAssert {
   return try {
-    val context = engine.createRenderContext(data)
+    val context = engine.createRenderContext(Locale.US, ZoneId.systemDefault(), data)
     val results = engine.executeWithContext(template, context)
 
 
@@ -69,7 +73,7 @@ fun executeTemplateAndAssert(template: LTemplate, engine: LRenderer, data: Any? 
 
 fun renderTemplateAndAssert(template: LTemplate, engine: LRenderer, data: Any? = null): TemplateRenderAssert {
   return try {
-    val context = engine.createRenderContext(data)
+    val context = engine.createRenderContext(Locale.US, ZoneId.systemDefault(), data)
     val results = engine.renderWithContext(template, context)
 
     TemplateRenderAssert(template = template,
@@ -81,11 +85,11 @@ fun renderTemplateAndAssert(template: LTemplate, engine: LRenderer, data: Any? =
 }
 
 fun LTemplate.executing(data: Any? = null, renderer: MutableRenderSettings.() -> Unit = {}): TemplateRenderAssert {
-  return executeTemplateAndAssert(this, LiquidRenderer.newInstance(renderer), data)
+  return executeTemplateAndAssert(this, createTestRenderer(renderer), data)
 }
 
 fun LTemplate.rendering(data: Any? = null, renderer: MutableRenderSettings.() -> Unit = {}): TemplateRenderAssert {
-  return renderTemplateAndAssert(this, LiquidRenderer.newInstance(renderer), data.parseIfNecessary())
+  return renderTemplateAndAssert(this, createTestRenderer(renderer), data.parseIfNecessary())
 }
 
 fun LTemplate.assertThat(): TemplateAssert {
@@ -105,6 +109,22 @@ inline fun <reified T : Any> T?.asserting(): Assert<T> {
     else -> assertk.assert(this)
   }
 }
+
+@JvmOverloads fun createTestRenderer(block: MutableRenderSettings.() -> Unit = {}): LRenderer {
+  return provider.createRenderer(provider.createParser(), provider.defaultRenderSettings.reconfigure(block))
+}
+
+fun createParseSettings(): MutableParseSettings {
+  return Liquify.provider.defaultParseSettings.toMutableSettings()
+}
+
+fun <K,V> mapOf(key:K, value:V) = mapOf(key to value)
+
+@JvmOverloads fun createTestParser(block: MutableParseSettings.() -> Unit = {}): LParser {
+  return provider.createParser(provider.defaultParseSettings.reconfigure(block))
+}
+
+fun MutableParseSettings.toParser(): LParser = build().toParser()
 
 fun <T : Any> assertThat(subject: T?): Assert<T> {
   return when (subject) {

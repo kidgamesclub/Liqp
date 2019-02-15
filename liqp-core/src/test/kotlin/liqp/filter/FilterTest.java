@@ -3,6 +3,8 @@ package liqp.filter;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import assertk.AssertKt;
+import liqp.AssertsKt;
 import liqp.LParser;
 import liqp.LiquidParser;
 import liqp.context.LContext;
@@ -29,8 +31,9 @@ public class FilterTest {
       }
     };
 
-    final LParser parser = LiquidParser.newBuilder()
+    final LParser parser = AssertsKt.createParseSettings()
           .addFilters(custom)
+          .build()
           .toParser();
     LTemplate template = parser.parse("{{ '*hi*' | textilize }}");
     String rendered = String.valueOf(template.render());

@@ -3,6 +3,7 @@ package liqp.tags;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import liqp.AssertsKt;
 import liqp.LiquidParser;
 import liqp.node.LTemplate;
 import org.junit.Test;
@@ -30,8 +31,8 @@ public class IncrementTest {
 
         for (String[] test : tests) {
 
-            LTemplate template = LiquidParser.newInstance().parse(test[0]);
-            String rendered = String.valueOf(template.render());
+            LTemplate template = AssertsKt.createTestParser().parse(test[0]);
+            String rendered = template.render();
 
             assertThat(rendered, is(test[1]));
         }

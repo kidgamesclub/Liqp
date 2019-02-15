@@ -1,6 +1,5 @@
 package liqp.nodes
 
-import lang.exception.illegalState
 import lang.json.JsrObject
 import liqp.Getter
 import liqp.LLogic
@@ -10,9 +9,8 @@ import liqp.PropertyGetter
 import liqp.RenderFrame
 import liqp.TypeCoersion
 import liqp.child
+import liqp.config.LRenderSettings
 import liqp.config.MutableRenderSettings
-import liqp.config.ParseSettings
-import liqp.config.RenderSettings
 import liqp.context.LContext
 import liqp.context.LoopState
 import liqp.exceptions.ExceededMaxIterationsException
@@ -24,32 +22,31 @@ import liqp.lookup.MapPropertyGetter
 import liqp.lookup.PropertyAccessors
 import liqp.lookup.propertyContainer
 import liqp.node.LTemplate
-import liqp.parseJSON
 import java.io.File
 import java.time.ZoneId
 import java.util.*
-import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 const val FORLOOP = "forloop"
 
 @Suppress("UNCHECKED_CAST")
-data class RenderContext @JvmOverloads constructor(val inputData: Any?,
+data class RenderContext @JvmOverloads constructor(override val inputData: Any?,
                                                    override var result: Any? = null,
                                                    val logic: LLogic,
                                                    val parser: LParser,
                                                    val renderer: LRenderer,
+                                                   override val locale: Locale = renderer.renderSettings.defaultLocale,
+                                                   override val timezone: ZoneId = renderer.renderSettings.defaultTimezone,
                                                    val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
-                                                   override val renderSettings: RenderSettings = renderer.settings)
+                                                   override val renderSettings: LRenderSettings = renderer.renderSettings)
   : LContext, LLogic by logic {
 
-  override val parseSettings: ParseSettings = parser.settings
-  override val coersion: TypeCoersion = TypeCoersion(logic, logic)
+  override val parseSettings = parser.parseSettings
+  override val coersion = TypeCoersion(logic, logic)
   override val includeFile = parseSettings.baseDir.child(parseSettings.includesDir)
-  private var iterationCount: Int = 0
+  private var iterationCount = 0
   override val logs = mutableListOf<Any>()
-  override var locale: Locale by delegated(Locale.US)
-  override var zoneId: ZoneId by delegated(ZoneId.systemDefault())
+
   private val stack: Deque<RenderFrame> by lazy { ArrayDeque<RenderFrame>() }
 
   private val inputProperties: PropertyGetter by lazy {
@@ -96,15 +93,10 @@ data class RenderContext @JvmOverloads constructor(val inputData: Any?,
     }
   }
 
-  override fun applyRenderSettings(configure: MutableRenderSettings.() -> Unit): LContext {
-    val renderSettings = renderSettings.toMutableRenderSettings().apply(configure).build()
-    return this.copy(renderer = renderer.withRenderSettings(renderSettings),
-        renderSettings = renderSettings)
-  }
-
-  override fun withRenderSettings(configurer: (MutableRenderSettings) -> MutableRenderSettings): LContext {
-    val renderSettings = configurer(renderSettings.toMutableRenderSettings()).build()
-    return this.copy(renderer = renderer.withRenderSettings(renderSettings),
+  override fun reconfigure(block: MutableRenderSettings.() -> Unit): LContext {
+    val renderSettings = renderSettings.toMutableSettings().apply(block).build()
+    return copy(
+        renderer = renderer.withRenderSettings(renderSettings),
         renderSettings = renderSettings)
   }
 
@@ -139,21 +131,6 @@ data class RenderContext @JvmOverloads constructor(val inputData: Any?,
         }
       }
       else -> current[varName] = value
-    }
-  }
-
-  fun <T : Any> delegated(default: T?): ReadWriteProperty<RenderContext, T> {
-    return object : ReadWriteProperty<RenderContext, T> {
-      override fun getValue(thisRef: RenderContext, property: KProperty<*>): T {
-        val value: T? = thisRef[property.name]
-        return value
-            ?: default
-            ?: throw NullPointerException("Value for ${property.name} is null, with no default specified")
-      }
-
-      override fun setValue(thisRef: RenderContext, property: KProperty<*>, value: T) {
-        thisRef[property.name] = value
-      }
     }
   }
 
@@ -215,7 +192,7 @@ data class RenderContext @JvmOverloads constructor(val inputData: Any?,
   override fun hasVar(name: String): Boolean = current.hasVar(name) || current.hasScopedVar(name)
   override fun remove(varName: String): Any? = current.remove(varName)
   override fun parseFile(file: File): LTemplate = parser.parseFile(file)
-  override fun render(template: LTemplate): String = renderer.render(template, this)
+  override fun render(template: LTemplate): String = renderer.renderWithContext(template, this)
   override fun getAccessor(container: Any, prop: String): Getter<Any> = renderer.getAccessor(this, container, prop)
 
   override fun withFrame(block: () -> Any?): Any? {

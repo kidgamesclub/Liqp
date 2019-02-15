@@ -10,10 +10,12 @@ class Mocks {
   companion object {
     @JvmStatic
     fun mockRenderContext(): RenderContext {
+      val parser = provider.createParser()
+
       return RenderContext(emptyMap<Any, Any>(),
           logic = strictLogic,
-          parser = LiquidParser(),
-          renderer = LiquidRenderer())
+          parser = parser,
+          renderer = parser.toRenderer())
     }
   }
 
