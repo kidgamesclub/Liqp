@@ -25,6 +25,7 @@ import liqp.filter.Lstrip
 import liqp.filter.Minus
 import liqp.filter.Modulo
 import liqp.filter.NewlineToBr
+import liqp.filter.Parenthesis
 import liqp.filter.Plus
 import liqp.filter.Prepend
 import liqp.filter.Remove
@@ -42,6 +43,7 @@ import liqp.filter.Split
 import liqp.filter.Strip
 import liqp.filter.StripNewlines
 import liqp.filter.Times
+import liqp.filter.Trim
 import liqp.filter.Truncate
 import liqp.filter.Truncatewords
 import liqp.filter.Uncapitalize
@@ -97,6 +99,7 @@ object LiquidDefaults {
         Minus(),
         Modulo(),
         NewlineToBr(),
+        Parenthesis(),
         Plus(),
         Prepend(),
         Remove(),
@@ -114,6 +117,7 @@ object LiquidDefaults {
         Strip(),
         StripNewlines(),
         Times(),
+        Trim(),
         Truncate(),
         Truncatewords(),
         Uniq(),
