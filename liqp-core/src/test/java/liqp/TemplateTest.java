@@ -22,8 +22,8 @@ public class TemplateTest {
     // there is a public `getB()` method that exposes `b`
     assertThat(createTestParser().parse("{{foo.b}}").render(singletonMap("foo", new Foo())), is("B"));
 
-    // `c` is not accessible
-    assertThat(createTestParser().parse("{{foo.c}}").render(singletonMap("foo", new Foo())), is(""));
+    // `c` is private but we use reflection
+    assertThat(createTestParser().parse("{{foo.c}}").render(singletonMap("foo", new Foo())), is("C"));
   }
 
   @Test

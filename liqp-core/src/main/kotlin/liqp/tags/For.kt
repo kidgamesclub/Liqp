@@ -20,13 +20,11 @@ class For : LTag() {
    * forloop.last        # => is this the last iteration?
    */
   override fun render(context: LContext, vararg nodes: LNode): Any? {
-
     // The first node in the array denotes whether this is a for-tag
     // over an array, `for item in array ...`, or a for-tag over a
     // range, `for i in (4..item.length)`.
     val isArray:Boolean = nodes[0].execute(context)
     val id:String = nodes[1].execute(context)
-
 
     // attributes start from index 5
     val attributes = ResolvableNamedParams(context,
@@ -50,7 +48,6 @@ class For : LTag() {
                           vararg tokens: LNode): Any? {
 
     val results = mutableListOf<Any?>()
-
     val iterated:List<Any> = tokens[2].executeOrNull(context) ?: emptyList()
 
     val block = tokens[3]
@@ -61,8 +58,7 @@ class For : LTag() {
     }
 
     val length = Math.min(limit, iterated.size)
-
-    val loopName = id + "-" + tokens[2].toString()
+    val loopName = "$id-${tokens[2]}"
     context.startLoop(length, loopName)
 
     var continueIndex = offset
@@ -103,11 +99,9 @@ class For : LTag() {
   }
 
   private fun renderRange(id: String, context: LContext, offset:Int, limit:Int, vararg tokens: LNode): Any {
-
     val results = mutableListOf<Any?>()
     val block = tokens[4]
-
-    val from:Int = tokens[2].executeOrNull<Int>(context) ?: return listOf<Any>()
+    val from:Int = tokens[2].executeOrNull(context) ?: return listOf<Any>()
     val to:Int = tokens[3].execute(context, 0)
 
     val length = to - from
@@ -149,8 +143,6 @@ class For : LTag() {
     }
 
     context[CONTINUE.name] = continueIndex + 1
-
-
     return results
   }
 }

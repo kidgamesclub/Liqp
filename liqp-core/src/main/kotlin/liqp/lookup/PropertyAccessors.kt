@@ -104,8 +104,10 @@ data class PropertyAccessors(
 
     @JvmStatic
     fun <T> findField(type: Class<T>, name: String): Getter<Any>? {
-      return type.declaredFields
-          .filter { it.name == name && Modifier.isPublic(it.modifiers) }
+      return type.declaredFields.asSequence()
+          .plus(type.fields)
+          .distinct()
+          .filter { it.name == name  }
           .map { field ->
             field.isAccessible = true
             field.toGetter()
@@ -114,7 +116,7 @@ data class PropertyAccessors(
     }
 
     fun <T> findGetter(type: Class<T>, name: String): Getter<Any>? {
-      return type.declaredMethods
+      return type.methods
           .filter {
             (it.name == "get${name.capitalize()}"
                 || it.name == "is${name.capitalize()}")

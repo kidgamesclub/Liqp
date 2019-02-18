@@ -3,7 +3,6 @@ package liqp.accessors
 import assertk.assertions.isEqualTo
 import lang.json.JsrObject
 import lang.json.jsrObject
-import liqp.LiquidParser
 import liqp.createTestParser
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -11,9 +10,9 @@ import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
 class AccessorsTest(val name: String, val template: String, val input: Any?, val expected: Any?) {
-  @Test
-  fun run() {
-    val template = createTestParser{}.parse(template)
+
+  @Test fun run() {
+    val template = createTestParser {}.parse(template)
     val rendered = template.render(input)
     assertk.assert(rendered).isEqualTo(expected)
   }
@@ -53,10 +52,9 @@ class AccessorsTest(val name: String, val template: String, val input: Any?, val
       "dudes" *= dudes.toList()
     }
 
-    fun mockGroupMap(vararg dudes: Map<String, Any?>):Map<String, Any?> = mapOf(
+    fun mockGroupMap(vararg dudes: Map<String, Any?>): Map<String, Any?> = mapOf(
         "dudes" to dudes
     )
-
 
     fun mockDude(name: String, age: Int, social: Map<String, Any>): Dude = Dude(name, age, social)
 
@@ -80,5 +78,16 @@ class AccessorsTest(val name: String, val template: String, val input: Any?, val
   data class Dude(val name: String, val age: Int, val social: Map<String, Any>)
   data class Group(val dudes: List<Dude>) {
     constructor(vararg dudes: Dude) : this(dudes.toList())
+  }
+}
+
+class AccessorsMapIteratorTest {
+  @Test fun testMapElements() {
+    val input = mapOf("a" to 1, "b" to 2, "c" to 3)
+    val template = createTestParser {}.parse("{% for pair in _ %}{{ pair.key }}->{{ pair.value}}" +
+        "{% unless last %},{% endunless %}" +
+        "{% endfor %}")
+    val rendered = template.render(input)
+    assertk.assert(rendered).isEqualTo("a->1,b->2,c->3,")
   }
 }
