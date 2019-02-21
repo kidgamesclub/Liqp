@@ -81,7 +81,7 @@ class AccessorsTest(val name: String, val template: String, val input: Any?, val
   }
 }
 
-class AccessorsMapIteratorTest {
+class AccessorsMapFilterIteratorTest {
   @Test fun testMapElements() {
     val input = mapOf("a" to 1, "b" to 2, "c" to 3)
     val template = createTestParser {}.parse("{% for pair in _ %}{{ pair.key }}->{{ pair.value}}" +

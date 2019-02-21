@@ -16,6 +16,6 @@ abstract class NumberOpFilter(private val op: NumberOp) : LFilter() {
 }
 
 class DividedBy : NumberOpFilter(LContext::div)
-class Times :  NumberOpFilter(LContext::mult)
-class Plus :  NumberOpFilter(LContext::add)
-class Minus :  NumberOpFilter(LContext::subtract)
+class TimesFilter : NumberOpFilter(LContext::mult)
+class PlusFilter : NumberOpFilter(LContext::add)
+class MinusFilter : NumberOpFilter(LContext::subtract)

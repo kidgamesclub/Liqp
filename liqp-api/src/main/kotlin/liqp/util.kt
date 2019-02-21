@@ -20,7 +20,7 @@ fun LTag.toSnakeCase(): String {
 }
 
 fun LFilter.toSnakeCase(): String {
-  return this::class.simpleName!!.replace("Tag$", "").toSnakeCase()
+  return this::class.simpleName!!.replace("Filter$", "").toSnakeCase()
 }
 
 inline fun <reified T : Any> swallow(block: () -> T): T? {
