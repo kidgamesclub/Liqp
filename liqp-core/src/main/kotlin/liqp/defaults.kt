@@ -10,7 +10,7 @@ import liqp.filter.Ceil
 import liqp.filter.Compact
 import liqp.filter.Concat
 import liqp.filter.Date
-import liqp.filter.Default
+import liqp.filter.DefaultFilter
 import liqp.filter.DividedBy
 import liqp.filter.Downcase
 import liqp.filter.Escape
@@ -84,7 +84,7 @@ object LiquidDefaults {
         Compact(),
         Concat(),
         Date(),
-        Default(),
+        DefaultFilter(),
         DividedBy(),
         Downcase(),
         Escape(),

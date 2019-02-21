@@ -14,15 +14,31 @@ fun Any?.isFalsy(): Boolean {
 
   return when (value) {
     is Boolean -> !value
-    is CharSequence -> value.isEmpty()
-    is Array<*> -> value.isEmpty()
-    is Collection<*> -> value.isEmpty()
+    is CharSequence -> value.isBlank()
+    is Char-> value.isWhitespace()
+    is Array<*> -> value.asIterable().removeFalsy().isEmpty()
+    is Iterable<*> -> value.removeFalsy().isEmpty()
     is Map<*, *> -> value.isEmpty()
-    is Enumeration<*> -> !value.hasMoreElements()
+    is Enumeration<*> -> !value.removeFalsy().isEmpty()
     is Matcher -> !value.find()
     is Nothing -> true
     is Number -> value == 0
     else -> false
   }
+}
+
+fun Iterable<*>.isEmpty() = !iterator().hasNext()
+fun Enumeration<*>.isEmpty() = !iterator().hasNext()
+
+fun Iterable<*>.removeFalsy():Iterable<*> {
+  return filter {
+    it.isTruthy()
+  }
+}
+
+fun Enumeration<*>.removeFalsy():Iterable<*> {
+  return iterator().asSequence().filter {
+    it.isTruthy()
+  }.asIterable()
 }
 

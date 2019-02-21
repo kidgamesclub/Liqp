@@ -7,10 +7,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
-public class DefaultTest extends LiquifyWithInputTest {
-  public DefaultTest(@NotNull String templateString,
-                     @Nullable String expectedResult,
-                     @Nullable Object inputData) {
+public class DefaultFilterTest extends LiquifyWithInputTest {
+  public DefaultFilterTest(@NotNull String templateString,
+                           @Nullable String expectedResult,
+                           @Nullable Object inputData) {
     super(templateString, expectedResult, inputData);
   }
   /*
