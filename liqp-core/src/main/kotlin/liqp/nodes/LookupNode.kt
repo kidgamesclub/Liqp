@@ -4,6 +4,7 @@ import liqp.context.LContext
 import liqp.exceptions.MissingVariableException
 import liqp.lookup.Indexable
 import liqp.node.LNode
+import liqp.resolve
 
 class LookupNode(val id: String,
                  private val indexes: List<Indexable> = emptyList()) : LNode() {
@@ -34,9 +35,7 @@ class LookupNode(val id: String,
     }
 
     try {
-      for (index in indexes) {
-        value = index[value, context]
-      }
+      value = indexes.resolve(value, context)
     } catch (e: MissingVariableException) {
       throw MissingVariableException(this.variableName, e.variableName)
     }
