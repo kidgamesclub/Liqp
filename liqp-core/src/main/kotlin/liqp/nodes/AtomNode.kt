@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package liqp.nodes
 
 import liqp.context.LContext

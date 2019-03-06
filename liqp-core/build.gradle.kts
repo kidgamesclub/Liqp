@@ -13,7 +13,6 @@ plugins {
 dependencies {
   compile(project(":liqp-api"))
   testCompile(project(":liqp-junit"))
-  compile("com.github.alexheretic:dynamics:4.0")
 }
 
 mverse {
@@ -22,11 +21,10 @@ mverse {
     testCompile(mockito())
     testCompile(assertj())
     testCompile(assertK())
-    fatJar(guava())
-    fatJar(streamEx())
-    fatJar("jackson-databind")
+//    fatJar(guava())
     fatJar("jackson-annotations")
-    fatJar("jackson-core")
+    testCompile("jackson-core")
+    testCompile("jackson-databind")
     fatJar("kotlin-reflect")
     fatJar("kotlin-stdlib")
     fatJar("antlr4-runtime")

@@ -51,10 +51,11 @@ allprojects {
   }
 
   tasks.withType<KotlinCompile> {
+    val isTestSource = name.endsWith("compileTestKotlin")
     kotlinOptions {
       jvmTarget = "1.8"
-      suppressWarnings = false
-      freeCompilerArgs += listOf("-Xjsr305=strict", "-Xuse-experimental=kotlin.Experimental")
+      freeCompilerArgs += listOf("-Xjsr305=strict", "-XXLanguage:+InlineClasses", "-Xuse-experimental=kotlin.Experimental")
+      suppressWarnings = isTestSource
     }
   }
 }

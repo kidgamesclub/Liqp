@@ -5,7 +5,7 @@ plugins {
 
 mverse {
   dependencies {
-    compile(guava())
+//    compile(guava())
     compile("assertk-jvm")
   }
   coverageRequirement = 0.00

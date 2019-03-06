@@ -23,7 +23,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import kotlin.text.Charsets.UTF_8
 
-data class LiquidParser @JvmOverloads constructor(override val parseSettings: LParseSettings) : LParser {
+data class LiquidParser constructor(override val parseSettings: LParseSettings) : LParser {
 
   override fun toRenderSettings(): RenderSettings {
     return RenderSettings(this.parseSettings)
