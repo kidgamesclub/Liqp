@@ -46,7 +46,7 @@ class FirstElementAccessor : AccessorResolutionStrategy {
     }
 
     return when (sample) {
-      is Collection<*> -> { i -> (i as Array<*>).firstOrNull() }
+      is Collection<*> -> { i -> (i as Collection<*>).firstOrNull() }
       is Iterable<*> -> { i -> (i as Iterable<*>).firstOrNull() }
       is Array<*> -> { i -> (i as Array<*>).firstOrNull() }
       else -> null as Getter<Any>?
@@ -64,7 +64,7 @@ class LastElementAccessor : AccessorResolutionStrategy {
     }
 
     return when (sample) {
-      is Collection<*> -> { i -> (i as Array<*>).lastOrNull() }
+      is Collection<*> -> { i -> (i as Collection<*>).lastOrNull() }
       is Iterable<*> -> { i -> (i as Iterable<*>).lastOrNull() }
       is Array<*> -> { i -> (i as Array<*>).lastOrNull() }
       else -> null as Getter<Any>?
