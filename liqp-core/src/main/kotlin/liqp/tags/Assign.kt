@@ -28,7 +28,7 @@ class Assign : LTag() {
     val finalValue = chain.processFilters()
     val id = nodes[0].render(context).toString()
     // Assign causes variable to be saved "globally"
-    context.setRoot(id, finalValue!!)
+    context.setRoot(id, finalValue)
     return null
   }
 }

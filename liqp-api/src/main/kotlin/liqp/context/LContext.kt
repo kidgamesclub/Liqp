@@ -3,7 +3,7 @@ package liqp.context
 import liqp.Getter
 import liqp.HasProperties
 import liqp.LLogic
-import liqp.TypeCoersion
+import liqp.TypeCoercion
 import liqp.config.LParseSettings
 import liqp.config.LRenderSettings
 import liqp.config.MutableRenderSettings
@@ -17,7 +17,7 @@ interface LContext : LLogic, HasProperties {
   val inputData: Any?
   val parseSettings: LParseSettings
   val renderSettings: LRenderSettings
-  val coersion: TypeCoersion
+  val coercion: TypeCoercion
   var result: Any?
   val logs: MutableList<Any>
   val locale: Locale
@@ -26,7 +26,6 @@ interface LContext : LLogic, HasProperties {
   val loopState: LoopState
   val root: LFrame
   val includeFile: File
-
   fun reconfigure(configure: MutableRenderSettings.() -> Unit): LContext
   fun pushFrame(): LFrame
   fun popFrame(): LFrame
@@ -41,7 +40,7 @@ interface LContext : LLogic, HasProperties {
   fun incrementIterations()
   fun endLoop()
 
-  fun setRoot(varName: String, value: Any)
+  fun setRoot(varName: String, value: Any?)
   fun hasVar(name: String): Boolean
   fun remove(varName: String): Any?
   fun parseFile(file: File): LTemplate

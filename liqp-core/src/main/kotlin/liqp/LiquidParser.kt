@@ -3,19 +3,22 @@ package liqp
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
+import lang.string.truncate
 import liqp.config.LParseSettings
 import liqp.config.RenderSettings
 import liqp.config.withSettings
 import liqp.exceptions.InvalidTemplateException
-import liqp.filter.LFilter
 import liqp.node.LTemplate
 import liqp.parser.v4.NodeVisitor
-import liqp.tag.LTag
 import liquid.parser.v4.LiquidLexer
 import liquid.parser.v4.LiquidParser
 import org.antlr.v4.runtime.BaseErrorListener
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.runtime.FailedPredicateException
+import org.antlr.v4.runtime.InputMismatchException
+import org.antlr.v4.runtime.LexerNoViableAltException
+import org.antlr.v4.runtime.NoViableAltException
 import org.antlr.v4.runtime.RecognitionException
 import org.antlr.v4.runtime.Recognizer
 import org.antlr.v4.runtime.tree.ParseTree
@@ -83,13 +86,13 @@ data class LiquidParser constructor(override val parseSettings: LParseSettings) 
 
   val errorHandler = object : BaseErrorListener() {
     override fun syntaxError(recognizer: Recognizer<*, *>?,
-                             offendingSymbol: Any,
+                             offendingSymbol: Any?,
                              line: Int,
                              charPositionInLine: Int,
                              msg: String?,
-                             e: RecognitionException) {
-      throw InvalidTemplateException(String.format("parser error on line %s, index %s", line,
-          charPositionInLine), e)
+                             e: RecognitionException?) {
+      val location = StringBuilder("on line $line, character $charPositionInLine")
+      throw InvalidTemplateException("${msg ?: "Parse error"} $location")
     }
   }
 }

@@ -1,13 +1,13 @@
-package liqp.coersion
+package liqp.coercion
 
-import lang.coersion.coersionOf
+import lang.coercion.coercionOf
 import lang.json.JsrArray
 import lang.json.JsrNumber
 import lang.json.JsrObject
 import lang.json.unbox
 import liqp.toNumberOrNull
 
-val toNumber = coersionOf<Number> { input, _ ->
+val toNumber = coercionOf<Number> { input, _ ->
   when (input) {
     null -> null
     is JsrNumber -> input.numberValue()
@@ -20,7 +20,7 @@ val toNumber = coersionOf<Number> { input, _ ->
   }
 }
 
-val toIterable = coersionOf<Iterable<*>> { input, _ ->
+val toIterable = coercionOf<Iterable<*>> { input, _ ->
   when (input) {
     null -> emptyList<Any>()
     is JsrArray -> input.unbox()

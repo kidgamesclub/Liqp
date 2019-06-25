@@ -5,8 +5,8 @@ import liqp.ComparisonResult.GREATER
 import liqp.ComparisonResult.LESS
 import liqp.ComparisonResult.NOOP
 import liqp.ComparisonResult.NULL
-import liqp.coersion.toIterable
-import liqp.coersion.toNumber
+import liqp.coercion.toIterable
+import liqp.coercion.toNumber
 import liqp.exceptions.LiquidRenderingException
 import kotlin.math.absoluteValue
 

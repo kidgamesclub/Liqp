@@ -12,14 +12,18 @@ class Include : LTag() {
 
   override fun render(context: LContext, vararg nodes: LNode): Any? {
     var entered = false
+    var includeResource: String? = null
     try {
-      val includeResource = context.asString(nodes[0].render(context)) ?: ""
+      includeResource = context.asString(nodes[0].render(context)) ?: ""
       val extension = when {
         '.' in includeResource -> ""
         else -> DEFAULT_EXTENSION
       }
 
       val includeResourceFile = context.includeFile.resolve(includeResource + extension)
+      if (!includeResourceFile.exists()) {
+
+      }
 
       // This will take advantage of caching for better performance, but we should probably
       // also cache the template locally
@@ -48,7 +52,7 @@ class Include : LTag() {
       throw e
     } catch (e: Exception) {
       context.logs += e.toString()
-      return ""
+      throw IncludeException(includeResource ?: "unknown", e)
     } finally {
       if (entered) {
         context.popFrame()

@@ -1,6 +1,6 @@
 package liqp.params
 
-import liqp.TypeCoersion
+import liqp.TypeCoercion
 import liqp.context.LContext
 import liqp.node.LNode
 
@@ -10,7 +10,7 @@ import liqp.node.LNode
  */
 data class ResolvableFilterParams(private val context: LContext,
                                   private val paramNodes: List<LNode?>,
-                                  override val coersion: TypeCoersion = context.coersion) : FilterParams() {
+                                  override val coercion: TypeCoercion = context.coercion) : FilterParams() {
   override val params: List<Any?> by lazy {
     paramNodes
         .map { pnode ->
@@ -22,13 +22,13 @@ data class ResolvableFilterParams(private val context: LContext,
   }
 }
 
-data class ResolvedFilterParams(override val coersion: TypeCoersion?,
+data class ResolvedFilterParams(override val coercion: TypeCoercion?,
                                 override val params: List<Any?>) : FilterParams() {
   constructor(vararg params: Any?) : this(null, listOf(*params))
 }
 
 abstract class FilterParams : Iterable<Any?> {
-  abstract val coersion: TypeCoersion?
+  abstract val coercion: TypeCoercion?
   abstract val params: List<Any?>
 
   val size get() = params.size
@@ -38,7 +38,7 @@ abstract class FilterParams : Iterable<Any?> {
     val value = params.getOrNull(index)
     return when {
       value is T? -> value
-      coersion != null -> coersion!!.coerceOrNull(value, T::class.java)
+      coercion != null -> coercion!!.coerceOrNull(value, T::class.java)
       else -> throw ClassCastException("Unable to convert $value to ${T::class.java}")
     }
   }
@@ -48,7 +48,7 @@ abstract class FilterParams : Iterable<Any?> {
     return when {
       param == null-> default
       param is T -> param
-      coersion != null -> coersion!!.coerceOrNull(param) ?: throw java.lang.ClassCastException("Unable to coerce $param to ${T::class}")
+      coercion != null -> coercion!!.coerceOrNull(param) ?: throw java.lang.ClassCastException("Unable to coerce $param to ${T::class}")
       else -> throw ClassCastException("Unable to convert $param to ${T::class.java}")
     }
   }

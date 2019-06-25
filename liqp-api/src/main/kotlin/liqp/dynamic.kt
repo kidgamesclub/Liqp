@@ -17,7 +17,7 @@ interface InstanceFacts {
   fun size(t: Any?): Int
 }
 
-class TypeCoersion(private val facts: InstanceFacts,
+class TypeCoercion(private val facts: InstanceFacts,
                    private val truth: Truth) : InstanceFacts by facts, Truth by truth {
 
   inline fun <reified T : Any> coerceOrNull(from: Any?): T? {

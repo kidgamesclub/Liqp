@@ -7,7 +7,7 @@ import liqp.LParser
 import liqp.LRenderer
 import liqp.PropertyGetter
 import liqp.RenderFrame
-import liqp.TypeCoersion
+import liqp.TypeCoercion
 import liqp.child
 import liqp.config.LRenderSettings
 import liqp.config.MutableRenderSettings
@@ -42,7 +42,7 @@ data class RenderContext @JvmOverloads constructor(override val inputData: Any?,
   : LContext, LLogic by logic {
 
   override val parseSettings = parser.parseSettings
-  override val coersion = TypeCoersion(logic, logic)
+  override val coercion = TypeCoercion(logic, logic)
   override val includeFile = parseSettings.baseDir.child(parseSettings.includesDir)
   private var iterationCount = 0
   override val logs = mutableListOf<Any>()
@@ -172,7 +172,7 @@ data class RenderContext @JvmOverloads constructor(override val inputData: Any?,
     current.loop = LoopState(length, name)
   }
 
-  override fun setRoot(varName: String, value: Any) {
+  override fun setRoot(varName: String, value: Any?) {
     val frames = stack.iterator()
     var frame = current
     while (frames.hasNext()) {
