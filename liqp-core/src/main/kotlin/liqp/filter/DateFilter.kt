@@ -1,5 +1,6 @@
 package liqp.filter
 
+import com.soywiz.klock.DateTimeTz
 import liqp.context.LContext
 import liqp.exceptions.LiquidRenderingException
 import liqp.params.FilterParams
@@ -63,6 +64,7 @@ class DateFilter : LFilter() {
         "now()" -> ZonedDateTime.now(zone)
         is java.util.Date -> ZonedDateTime.ofInstant(value.toInstant(), zone)
         is OffsetDateTime -> value.atZoneSameInstant(zone)
+        is DateTimeTz -> value.toOffsetDateTime().atZoneSameInstant(zone)
         is Number -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(value.toLong()), zone)
         else -> tryParse(context, value.toString(), locale, zone)
       } ?: throw LiquidRenderingException("Unable to extract date from $value")
@@ -204,3 +206,5 @@ fun findNamedFormat(locale: Locale, ch: Char): DateTimeFormatter? {
         'Z' to DateTimeFormatter.ofPattern("z", locale))
   })[ch]
 }
+
+fun DateTimeTz.toOffsetDateTime(): OffsetDateTime = java.time.OffsetDateTime.ofInstant(java.time.Instant.ofEpochMilli(utc.unixMillisLong), java.time.ZoneId.of("UTC"))

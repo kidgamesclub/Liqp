@@ -19,6 +19,7 @@ allprojects {
 
     coverageRequirement = 0.60
     dependencies {
+      compile("klock-jvm")
       compile("kotlin-stdlib-jdk8")
       compileOnly("kotlin-reflect")
       testCompile("assertk-jvm")
@@ -42,6 +43,14 @@ allprojects {
       dependency("org.antlr:antlr4-runtime:4.7.1")
       dependency("com.willowtreeapps.assertk:assertk-jvm:0.11")
       dependency("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.1")
+
+      val klock:String by rootProject
+      dependencySet("com.soywiz.korlibs.klock:$klock") {
+        entry("klock-jvm")
+        entry("klock")
+        entry("klock-metadata")
+      }
+
     }
   }
 
