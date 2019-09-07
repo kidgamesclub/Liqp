@@ -1,10 +1,8 @@
 package liqp.lookup
 
 import lang.json.JsrObject
-import lang.json.unbox
 import lang.json.unboxAsAny
 import liqp.Getter
-import liqp.HasProperties
 import liqp.PropertyGetter
 import liqp.context.LAccessors
 import liqp.context.LContext
@@ -34,7 +32,7 @@ data class PropertyAccessors(
    * @param value The value that has children properties
    * @return A valid property container, or null if no property accessor could be created
    */
-  override fun getAccessor(lcontext: LContext, sample: Any, propertyName: String): Getter<Any> {
+  override fun getAccessor(sample: Any, propertyName: String): Getter<Any> {
     val type = sample::class
     //
     // 1. First, look for cached accessor.  This should be cheap... the cost of the hash lookup
@@ -46,7 +44,7 @@ data class PropertyAccessors(
       //    looking for the first non-null instance
       //
       for (lookup in lookups.values) {
-        val lookupFn = lookup.getAccessor(lcontext, sample, propertyName)
+        val lookupFn = lookup.getAccessor(sample, propertyName)
         if (lookupFn != null) {
           return@cache lookupFn
         }

@@ -1,7 +1,5 @@
 package liqp.lookup
 
-import liqp.context.LContext
-
 /**
  * Locates a {@link PropertyAccessor} given a node instance and a property name.  For nested
  * properties, this method would be called for each nested property that was accessed.
@@ -9,7 +7,7 @@ import liqp.context.LContext
  * The {@link PropertyAccessor}
  */
 interface AccessorResolutionStrategy {
-  fun getAccessor(lcontext: LContext, sample: Any?, property: String): Getter<Any>?
+  fun getAccessor(sample: Any?, property: String): Getter<Any>?
 }
 
 private const val SIZE = "size"
@@ -20,7 +18,7 @@ private const val LAST = "last"
  * Handles the synthetic "size" property
  */
 class StringSizeAccessor : AccessorResolutionStrategy {
-  override fun getAccessor(lcontext: LContext, sample: Any?, property: String): Getter<Any>? {
+  override fun getAccessor(sample: Any?, property: String): Getter<Any>? {
     return when (property) {
       SIZE -> {
         when (sample) {
@@ -40,7 +38,7 @@ class StringSizeAccessor : AccessorResolutionStrategy {
  * Handles the synthetic "first" property
  */
 class FirstElementAccessor : AccessorResolutionStrategy {
-  override fun getAccessor(lcontext: LContext, sample: Any?, property: String): Getter<Any>? {
+  override fun getAccessor(sample: Any?, property: String): Getter<Any>? {
     if (property != FIRST) {
       return null
     }
@@ -58,7 +56,7 @@ class FirstElementAccessor : AccessorResolutionStrategy {
  * Handles the synthetic "last" property
  */
 class LastElementAccessor : AccessorResolutionStrategy {
-  override fun getAccessor(lcontext: LContext, sample: Any?, property: String): Getter<Any>? {
+  override fun getAccessor(sample: Any?, property: String): Getter<Any>? {
     if (property != LAST) {
       return null
     }

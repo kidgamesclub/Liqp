@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
   java
-  id("com.github.johnrengelman.shadow")
+  id("com.github.johnrengelman.plugin-shadow")
   id("antlr")
   kotlin("jvm")
 }

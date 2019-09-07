@@ -3,14 +3,14 @@ pluginManagement {
     jcenter()
     gradlePluginPortal()
     google()
-
-//    mavenLocal()
     maven("https://dl.bintray.com/mverse-io/mverse-public")
-    maven("https://kotlin.bintray.com/kotlinx")
+    maven ("https://kotlin.bintray.com/kotlinx" )
+    maven ("https://dl.bintray.com/kotlin/kotlin-eap" )
+    mavenLocal()
   }
 
-  val kotlin: String by settings
-  val mversePlugin: String by settings
+  val kotlin:String by settings
+  val mversePlugin:String by settings
 
   val pluginVersionMap = mapOf(
       "kotlinx-serialization" to kotlin,
@@ -18,6 +18,7 @@ pluginManagement {
       "org.jetbrains.kotlin.jvm" to kotlin,
       "org.jetbrains.kotlin.common" to kotlin,
       "io.mverse.project" to mversePlugin,
+      "io.mverse.code-generation" to mversePlugin,
       "io.mverse.multi-module" to mversePlugin,
       "io.mverse.multi-platform" to mversePlugin)
 

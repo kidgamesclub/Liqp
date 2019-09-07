@@ -3,9 +3,10 @@ import io.spring.gradle.dependencymanagement.dsl.DependenciesHandler
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+
   kotlin("jvm")
-  id("io.mverse.project")
-  id("io.mverse.multi-module")
+  id("io.mverse.project") version("0.6.5")
+  id("io.mverse.multi-module") version("0.6.5")
   findbugs
   java
 }

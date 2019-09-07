@@ -8,5 +8,5 @@ interface LAccessors {
    * @param value An example instance that has the child properties
    * @return A valid property container, or null if no property accessor could be created
    */
-  fun getAccessor(lcontext: LContext, sample: Any, propertyName: String): Getter<Any>
+  fun getAccessor(sample: Any, propertyName: String): Getter<Any>
 }
