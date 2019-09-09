@@ -42,7 +42,7 @@ class Index(private val expression: LNode) : Indexable {
       // This will cache the accessor for the path, so if the same expression resolves to the
       // same value, it will use the same accessor
       val accessor = context.getAccessor(value, propertyName.toString())
-      if (context.parseSettings.isStrictVariables && accessor.isNullAccessor()) {
+      if (context.renderSettings.isStrictVariables && accessor.isNullAccessor()) {
         throw MissingVariableException(propertyName.toString())
       }
       return accessor.invoke(value)

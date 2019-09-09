@@ -1,8 +1,10 @@
 package liqp.ext.filters.javatime
 
+import com.soywiz.klock.DateTimeTz
 import liqp.context.LContext
 import liqp.params.FilterParams
 import liqp.filter.LFilter
+import liqp.filter.toOffsetDateTime
 import java.time.LocalTime
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -27,6 +29,7 @@ abstract class DateAdjustmentFilter : LFilter() {
       is LocalTime -> value.localTimeAdjust(num)
       is LocalDate -> value.toLocalDateTime().localDateTimeAdjust(num)
       is LocalDateTime -> value.localDateTimeAdjust(num)
+      is DateTimeTz -> value.toOffsetDateTime().offsetAdjust(num)
       is Date-> value.toZonedDateTime().offsetAdjust(num)
       else -> value
     }

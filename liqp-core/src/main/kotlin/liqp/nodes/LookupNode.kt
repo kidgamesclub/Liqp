@@ -30,7 +30,7 @@ class LookupNode(val id: String,
       else -> context[id]
     }
 
-    if (value == null && context.parseSettings.isStrictVariables) {
+    if (value == null && context.renderSettings.isStrictVariables) {
       throw MissingVariableException(variableName)
     }
 
