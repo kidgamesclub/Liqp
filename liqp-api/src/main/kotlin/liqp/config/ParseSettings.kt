@@ -54,7 +54,7 @@ data class ParseSettings(override val tags: Tags = Liquify.provider.defaultTags,
   }
 
   override fun withFilters(vararg filters: LFilter): ParseSettings {
-    return this.copy(filters = this.filters + listOf(*filter))
+    return this.copy(filters = this.filters + listOf(*filters))
   }
 
   override fun withTags(vararg tags: LTag): ParseSettings {
