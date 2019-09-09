@@ -1,5 +1,6 @@
 package liqp.tag
 
+import liqp.LiquidLog
 import liqp.context.LContext
 import liqp.exceptions.InvalidIncludeException
 import liqp.node.EmptyTemplate
@@ -51,7 +52,7 @@ class Include : LTag() {
     } catch (e: InvalidIncludeException) {
       throw e
     } catch (e: Exception) {
-      context.logs += e.toString()
+      context.logs += LiquidLog.severe(e)
       throw IncludeException(includeResource ?: "unknown", e)
     } finally {
       if (entered) {

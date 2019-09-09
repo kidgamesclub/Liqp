@@ -7,6 +7,7 @@ import liqp.PropertyGetter
 import liqp.context.LAccessors
 import liqp.context.LContext
 import liqp.exceptions.MissingVariableException
+import liqp.onMissingVariable
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
@@ -213,7 +214,7 @@ data class PropertyAccessors(
     override fun invoke(instance: Any): Any? {
       val getter = lcontext.getAccessor(instance, propertyName)
       return when {
-        lcontext.renderSettings.isStrictVariables && getter.isNullAccessor() -> throw MissingVariableException(propertyName)
+        getter.isNullAccessor() -> lcontext.onMissingVariable(propertyName)
         else -> getter.invoke(instance)
       }
     }

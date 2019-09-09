@@ -2,16 +2,15 @@ package liqp.lookup
 
 import liqp.context.LContext
 import liqp.exceptions.MissingVariableException
+import liqp.onMissingVariable
 
 class Property(private val propertyName: String) : Indexable {
 
   var getter: Getter<Any>? = null
 
   override fun get(value: Any?, context: LContext): Any? {
-    if (value == null && context.renderSettings.isStrictVariables) {
-      throw MissingVariableException(propertyName)
-    } else if (value == null) {
-      return null
+    if (value == null) {
+      return context.onMissingVariable(propertyName)
     }
 
     if (getter == null) {
@@ -23,8 +22,8 @@ class Property(private val propertyName: String) : Indexable {
     }
 
     val getter = getter!!
-    if (context.renderSettings.isStrictVariables && getter.isNullAccessor()) {
-      throw MissingVariableException(propertyName)
+    if (getter.isNullAccessor()) {
+      return context.onMissingVariable(propertyName)
     }
 
     return getter.invoke(value)

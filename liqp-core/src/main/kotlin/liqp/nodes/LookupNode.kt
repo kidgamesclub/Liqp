@@ -4,6 +4,7 @@ import liqp.context.LContext
 import liqp.exceptions.MissingVariableException
 import liqp.lookup.Indexable
 import liqp.node.LNode
+import liqp.onMissingVariable
 import liqp.resolve
 
 class LookupNode(val id: String,
@@ -28,16 +29,12 @@ class LookupNode(val id: String,
         context[varName]
       }
       else -> context[id]
-    }
-
-    if (value == null && context.renderSettings.isStrictVariables) {
-      throw MissingVariableException(variableName)
-    }
+    } ?: return context.onMissingVariable(variableName)
 
     try {
       value = indexes.resolve(value, context)
     } catch (e: MissingVariableException) {
-      throw MissingVariableException(this.variableName, e.variableName)
+      return context.onMissingVariable(e.variableName, this.variableName)
     }
 
     return value

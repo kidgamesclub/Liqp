@@ -19,7 +19,7 @@ interface LContext : LLogic, HasProperties {
   val renderSettings: LRenderSettings
   val coercion: TypeCoercion
   var result: Any?
-  val logs: MutableList<Any>
+  val logs: MutableList<LLog>
   val locale: Locale
   val timezone: ZoneId
   val current: LFrame

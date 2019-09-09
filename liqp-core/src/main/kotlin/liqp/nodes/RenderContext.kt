@@ -12,6 +12,7 @@ import liqp.child
 import liqp.config.LRenderSettings
 import liqp.config.MutableRenderSettings
 import liqp.context.LContext
+import liqp.context.LLog
 import liqp.context.LoopState
 import liqp.exceptions.ExceededMaxIterationsException
 import liqp.exceptions.LiquidRenderingException
@@ -45,7 +46,7 @@ data class RenderContext @JvmOverloads constructor(override val inputData: Any?,
   override val coercion = TypeCoercion(logic, logic)
   override val includeFile = parseSettings.baseDir.child(parseSettings.includesDir)
   private var iterationCount = 0
-  override val logs = mutableListOf<Any>()
+  override val logs = mutableListOf<LLog>()
 
   private val stack: Deque<RenderFrame> by lazy { ArrayDeque<RenderFrame>() }
 

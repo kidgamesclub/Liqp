@@ -4,6 +4,7 @@ import liqp.context.LContext
 import liqp.exceptions.MissingVariableException
 import liqp.node.LNode
 import liqp.nodes.RenderContext
+import liqp.onMissingVariable
 
 /**
  * Resolves the expression in brackets first, then resolves the path by using an integer index, or
@@ -42,8 +43,9 @@ class Index(private val expression: LNode) : Indexable {
       // This will cache the accessor for the path, so if the same expression resolves to the
       // same value, it will use the same accessor
       val accessor = context.getAccessor(value, propertyName.toString())
-      if (context.renderSettings.isStrictVariables && accessor.isNullAccessor()) {
-        throw MissingVariableException(propertyName.toString())
+      if (accessor.isNullAccessor()) {
+        context.onMissingVariable(propertyName.toString())
+        return null
       }
       return accessor.invoke(value)
     }
