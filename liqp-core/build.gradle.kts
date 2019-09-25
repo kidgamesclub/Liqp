@@ -1,11 +1,10 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import io.mverse.gradle.main
 import io.mverse.gradle.sourceSets
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
   java
-  id("com.github.johnrengelman.plugin-shadow")
+//  id("com.github.johnrengelman.shadow")
   id("antlr")
   kotlin("jvm")
 }
@@ -37,17 +36,17 @@ mverse {
   }
 }
 
-configurations.compile.extendsFrom(configurations.fatJar)
+//configurations.compile.extendsFrom(configurations.fatJar)
 
 //##### Configure shadow jar ##### //
-val shadowJar: ShadowJar by tasks
-shadowJar.apply {
-  configurations = listOf(project.configurations.fatJar)
-  relocate("com.fasterxml", "kg.com.fasterxml")
-  relocate("one", "kg.one")
-}
+//val shadowJar: ShadowJar by tasks
+//shadowJar.apply {
+//  configurations = listOf(project.configurations.fatJar)
+//  relocate("com.fasterxml", "kg.com.fasterxml")
+//  relocate("one", "kg.one")
+//}
 
-tasks["assemble"].dependsOn(shadowJar)
+//tasks["assemble"].dependsOn(shadowJar)
 
 // #### Configure antlr ##### //
 // ########################## //

@@ -3,26 +3,46 @@ package liqp.filter
 import assertk.assert
 import assertk.assertions.isEqualTo
 import liqp.LiquidDefaults
-import liqp.LiquidParser
-import liqp.Mocks
 import liqp.createTestParser
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.util.Locale.ENGLISH
 
 @RunWith(Parameterized::class)
 class DateFilterTestFilterParameterized(val input: Any?, val args: List<Any?>, val expected: String?) {
- @Test fun run() {
-   assertk.assert(filter.onFilterAction(context, input, *args.toTypedArray())).isEqualTo(expected)
- }
+  @Test fun run() {
+    assertk.assert(filter.onFilterAction(context, input, *args.toTypedArray())).isEqualTo(expected)
+  }
+
   companion object {
-    @JvmStatic @Parameters(name = "{0}") fun params() = arrayOf(
+    @JvmStatic @Parameters(name = "{1} {2}") fun params() = arrayOf(
         arrayOf(secondsOf("2006-05-05 10:00:00"), listOf("%B"), "May"),
         arrayOf(secondsOf("2006-06-05 10:00:00"), listOf("%B"), "June"),
         arrayOf(secondsOf("2006-07-05 10:00:00"), listOf("%B"), "July"),
+        arrayOf(secondsOf("2006-07-05 01:01:00"), listOf("%-I"), "1"),
+        arrayOf(secondsOf("2006-07-05 01:01:00"), listOf("%I"), "01"),
+        arrayOf(secondsOf("2006-07-05 01:01:00"), listOf("%-I"), "1"),
+        arrayOf(secondsOf("2006-07-05 01:01:00"), listOf("%I"), "01"),
+
+        arrayOf(secondsOf("2006-07-05 01:01:00"), listOf("%-d"), "5"),
+        arrayOf(secondsOf("2006-07-05 01:01:00"), listOf("%d"), "05"),
+
+        arrayOf(secondsOf("2006-07-05 01:01:00"), listOf("%-H"), "1"),
+        arrayOf(secondsOf("2006-07-05 01:01:00"), listOf("%H"), "01"),
+
+        arrayOf(secondsOf("2006-01-01 01:01:00"), listOf("%-j"), "1"),
+        arrayOf(secondsOf("2006-01-01 01:01:00"), listOf("%j"), "001"),
+
+        arrayOf(secondsOf("2006-02-01 01:01:00"), listOf("%-m"), "2"),
+        arrayOf(secondsOf("2006-02-01 01:01:00"), listOf("%m"), "02"),
+
+        arrayOf(secondsOf("2006-07-05 01:03:00"), listOf("%-M"), "3"),
+        arrayOf(secondsOf("2006-07-05 01:03:00"), listOf("%M"), "03"),
+
         arrayOf("2006-05-05 10:00:00", listOf("%B"), "May"),
         arrayOf("2006-06-05 10:00:00", listOf("%B"), "June"),
         arrayOf("2006-07-05 10:00:00", listOf("%B"), "July"),
@@ -43,7 +63,7 @@ class DateFilterTestParameterized(val template: String, val expected: String) {
 
   @Test
   fun run() {
-    val template = createTestParser{}.parse(template)
+    val template = createTestParser {}.parse(template)
     val rendered = template.render()
     assert(rendered).isEqualTo(expected)
   }
