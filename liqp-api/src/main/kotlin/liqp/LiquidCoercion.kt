@@ -59,7 +59,7 @@ inline fun <reified R : Any> JsonValue.unboxOrNull(): R? {
                 is JsonString -> jsrValue.string
                 is JsonArray -> jsrValue.unbox()
                 is JsonObject -> jsrValue.unbox()
-                else -> throw error("Don't know how to unbox ${this::class.qualifiedName} ${jsrValue}")
+                else -> throw error("Don't know how to unbox ${this::class.qualifiedName} $jsrValue")
             }
             when (unboxed) {
                 null -> null

@@ -14,6 +14,7 @@ mverse {
 dependencies {
   compile(project(":liqp-api"))
   compile(project(":liqp-core"))
+  implementation("javax.json:javax.json-api:1.1.3")
   compile("org.assertj:assertj-core")
   compile("net.wuerl.kotlin:assertj-core-kotlin:0.2.1")
 }

@@ -5,7 +5,7 @@ import liqp.context.LContext
 import liqp.exceptions.LiquidRenderingException
 
 /**
- * Denotes a node in the AST the parse creates from the
+ * Denotes a node in the AST the parser creates from the
  * input source.
  */
 abstract class LNode {

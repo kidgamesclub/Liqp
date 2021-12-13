@@ -8,6 +8,7 @@ import liqp.LiquidTemplate;
 import liqp.LiquidParser;
 import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 public class OrNodeTest {
@@ -29,7 +30,7 @@ public class OrNodeTest {
             LTemplate template = AssertsKt.createTestParser().parse(test[0]);
             String rendered = template.render();
 
-            assertThat(rendered, is(test[1]));
+            MatcherAssert.assertThat(rendered, is(test[1]));
         }
     }
 }

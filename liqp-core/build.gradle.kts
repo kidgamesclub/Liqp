@@ -17,7 +17,7 @@ dependencies {
 mverse {
   dependencies {
     implementation("guava")
-    implementation("klock-jvm")
+//    implementation("klock-jvm")
 //    implementation("mverse-lang-jvm")
 
     testCompile(junit())
@@ -32,12 +32,19 @@ mverse {
     fatJar("kotlin-stdlib")
     fatJar("antlr4-runtime")
   }
+
   dependencies["antlr"]("antlr4")
   dependencies["testRuntime"]("jsoup")
 
   sourceSets.main?.withConvention(KotlinSourceSet::class) {
     kotlin.srcDir(file("build/classes/generated-src/antlr/main"))
   }
+}
+
+dependencies {
+  // https://mvnrepository.com/artifact/org.antlr/antlr4
+  compile("org.antlr:antlr4:4.9.3")
+
 }
 
 //configurations.compile.extendsFrom(configurations.fatJar)

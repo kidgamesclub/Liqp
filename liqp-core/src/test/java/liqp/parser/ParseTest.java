@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import liqp.AssertsKt;
 import liqp.LiquidParser;
 import liqp.TestUtilsKt;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 public class ParseTest {
@@ -25,7 +26,7 @@ public class ParseTest {
 
     String text = " div { font-weight: bold; } ";
 
-    assertThat(createTestParser().parse(text).render(), is(text));
+    MatcherAssert.assertThat(createTestParser().parse(text).render(), is(text));
   }
 
   /*
@@ -92,7 +93,7 @@ public class ParseTest {
 
     String assigns = "{\"b\" : \"bar\", \"c\" : \"baz\"}";
     String markup = "a == 'foo' or (b == 'bar' and c == 'baz') or false";
-    assertThat(TestUtilsKt.renderJson(createTestParser().parse("{% if " + markup + " %} YES {% endif %}"), assigns), is(" " +
+    MatcherAssert.assertThat(TestUtilsKt.renderJson(createTestParser().parse("{% if " + markup + " %} YES {% endif %}"), assigns), is(" " +
           "YES "));
   }
 
@@ -117,12 +118,12 @@ public class ParseTest {
   @Test
   public void keywords_as_identifier() throws Exception {
 
-    assertThat(
+    MatcherAssert.assertThat(
             TestUtilsKt.renderJson(createTestParser().parse("var2:{{var2}} {%assign var2 = var.comment%} var2:{{var2}}"),
                 " { \"var\": { \"comment\": \"content\" } } "),
           is("var2:  var2:content"));
 
-    assertThat(
+    MatcherAssert.assertThat(
             TestUtilsKt.renderJson(createTestParser().parse("var2:{{var2}} {%assign var2 = var.end%} var2:{{var2}}"),
                     " { \"var\": { \"end\": \"content\" } } "),
           is("var2:  var2:content"));
