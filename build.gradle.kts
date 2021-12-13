@@ -22,7 +22,7 @@ allprojects {
 //      compileOnly("kotlin-reflect")
       testCompile("assertk-jvm")
 //      compile("kotlinx-serialization-runtime")
-      compile("kotlinx-collections-immutable")
+//      compile("kotlinx-collections-immutable")
     }
   }
 
@@ -39,7 +39,7 @@ allprojects {
       dependency("org.antlr:antlr4:4.7.1")
       dependency("org.antlr:antlr4-runtime:4.7.1")
       dependency("com.willowtreeapps.assertk:assertk-jvm:0.11")
-      dependency("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.1")
+//      dependency("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.1")
       dependency("com.fasterxml.jackson.core:jackson-annotations:2.9.2")
 
       val klock:String by rootProject

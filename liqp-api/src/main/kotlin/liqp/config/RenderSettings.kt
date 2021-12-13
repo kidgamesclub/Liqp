@@ -6,6 +6,9 @@ import java.time.ZoneId
 import java.util.*
 import java.util.concurrent.ExecutorService
 
+/**
+ * Settings used when rendering liquid templates
+ */
 interface LRenderSettings {
   val isStrictVariables: Boolean
   val isStrictIncludes: Boolean

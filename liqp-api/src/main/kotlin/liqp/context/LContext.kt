@@ -13,6 +13,9 @@ import java.time.ZoneId
 import java.util.*
 import kotlin.reflect.KProperty
 
+/**
+ * A context object used during the rendering process.  Keeps track of any state.
+ */
 interface LContext : LLogic, HasProperties {
   val inputData: Any?
   val parseSettings: LParseSettings

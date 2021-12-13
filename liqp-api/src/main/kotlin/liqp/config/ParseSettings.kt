@@ -12,6 +12,9 @@ import liqp.tag.Tags
 import java.io.File
 import java.util.function.Consumer
 
+/**
+ * Settings used for parsing liquid templates
+ */
 interface LParseSettings {
   val tags: Tags
   val filters: Filters
