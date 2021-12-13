@@ -1,8 +1,8 @@
 package liqp.node
 
+import liqp.contains
 import liqp.context.LContext
 import liqp.exceptions.LiquidRenderingException
-import kotlin.reflect.full.isSubclassOf
 
 /**
  * Denotes a node in the AST the parse creates from the
@@ -65,8 +65,8 @@ abstract class LNode {
       Double::class -> context.asDouble(rendered) as T?
       else-> {
         when {
-          T::class.isSubclassOf(Number::class)->context.asNumber(rendered) as T?
-          T::class.isSubclassOf(Iterable::class)->context.asIterable(rendered) as T?
+          T::class in Number::class->context.asNumber(rendered) as T?
+          T::class in Iterable::class->context.asIterable(rendered) as T?
           else-> rendered as T?
         }
       }
