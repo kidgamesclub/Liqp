@@ -11,23 +11,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
-object TestCoercion: LiquidCoercion {
-  override fun coerceToNumber(input: Any?): Number? {
-    return if(input is Number) input else null
-  }
-
-  override fun coerceToIterable(input: Any?): Iterable<Any?> {
-   return if(input is Iterable<*>) input else listOf()
-  }
-
-}
-
 @RunWith(Parameterized::class)
 class StrictLogicTestIsTrue(val input: Any?, val expected: Boolean) {
 
   @Test
   fun testIsTrue() {
-    val found = StrictLogic(TestCoercion).isTrue(input)
+    val found = StrictLogic().isTrue(input)
     Assertions.assertThat(found).isEqualTo(expected)
   }
 
@@ -47,7 +36,7 @@ class StrictLogicTestIsTrue(val input: Any?, val expected: Boolean) {
 class StrictLogicTestIsFalse(val input: Any?, val expected: Boolean) {
   @Test
   fun testIsFalse() {
-    val found = StrictLogic(TestCoercion).isFalse(input)
+    val found = StrictLogic().isFalse(input)
     Assertions.assertThat(found).isEqualTo(expected)
   }
 
@@ -65,7 +54,7 @@ class StrictLogicTestIsFalse(val input: Any?, val expected: Boolean) {
 }
 
 class StrictLogicTest {
-  val strict = StrictLogic(TestCoercion)
+  val strict = StrictLogic()
   @Test fun testIsEmpty_String() {
     assert(strict.isEmpty("foo")).isEqualTo(false)
   }

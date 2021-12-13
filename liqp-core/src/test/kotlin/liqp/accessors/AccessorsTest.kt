@@ -1,13 +1,11 @@
 package liqp.accessors
 
 import assertk.assertions.isEqualTo
-import liqp.createTestParser
+import liqp.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import javax.json.Json
-import javax.json.JsonObject
-import javax.json.JsonObjectBuilder
+import javax.json.*
 
 @RunWith(Parameterized::class)
 class AccessorsTest(val name: String, val template: String, val input: Any?, val expected: Any?) {
@@ -50,7 +48,7 @@ class AccessorsTest(val name: String, val template: String, val input: Any?, val
 
     fun mockGroup(vararg dudes: Dude): Group = Group(dudes.toList())
     fun mockGroupJson(vararg dudes: JsonObject) = Json.createObjectBuilder().add("dudes",
-      Json.createArrayBuilder(dudes.toList())).build()
+      Json.createArrayBuilder(dudes.toList().map{it.unboxAsAny()})).build()
 
     fun mockGroupMap(vararg dudes: Map<String, Any?>): Map<String, Any?> = mapOf(
         "dudes" to dudes

@@ -51,7 +51,7 @@ inline fun <reified R : Any> JsonValue.unboxOrNull(): R? {
         else -> {
             val unboxed: Any? = when (jsrValue) {
                 JsonValue.TRUE -> true
-                JsonValue.TRUE -> false
+                JsonValue.FALSE -> false
                 JsonValue.NULL -> null
                 is JsonObjectBuilder -> jsrValue.build().unbox()
                 is JsonArrayBuilder -> jsrValue.build().unbox()
@@ -59,7 +59,7 @@ inline fun <reified R : Any> JsonValue.unboxOrNull(): R? {
                 is JsonString -> jsrValue.string
                 is JsonArray -> jsrValue.unbox()
                 is JsonObject -> jsrValue.unbox()
-                else -> throw error("Don't know how to unbox ${this::class.qualifiedName}")
+                else -> throw error("Don't know how to unbox ${this::class.qualifiedName} ${jsrValue}")
             }
             when (unboxed) {
                 null -> null
