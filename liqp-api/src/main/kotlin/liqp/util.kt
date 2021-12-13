@@ -2,17 +2,21 @@ package liqp
 
 import com.google.common.base.CaseFormat.LOWER_UNDERSCORE
 import com.google.common.base.CaseFormat.UPPER_CAMEL
-import lang.json.parseJsrValue
-import lang.json.unbox
+//import lang.json.parseJsrValue
+//import lang.json.unbox
 import liqp.filter.LFilter
 import liqp.tag.LTag
+import java.io.StringReader
 import java.math.BigInteger
+import javax.json.Json
 
 val SnakeCaseConverter = UPPER_CAMEL.converterTo(LOWER_UNDERSCORE)
 fun String.toSnakeCase() = SnakeCaseConverter.convert(this)!!
 
-fun String.parseJSON(): Map<String, Any?> {
-  return parseJsrValue(this).unbox()
+fun String.parseJSON(): Any? {
+  val reader = Json.createReader(StringReader(this))
+  val parsed = reader.read()
+  return parsed.unboxAsAny()
 }
 
 fun LTag.toSnakeCase(): String {

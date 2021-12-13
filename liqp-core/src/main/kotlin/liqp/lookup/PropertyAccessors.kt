@@ -1,17 +1,17 @@
 package liqp.lookup
 
-import lang.json.JsrObject
-import lang.json.unboxAsAny
 import liqp.Getter
 import liqp.PropertyGetter
 import liqp.context.LAccessors
 import liqp.context.LContext
 import liqp.exceptions.MissingVariableException
 import liqp.onMissingVariable
+import liqp.unboxAsAny
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.function.Function
+import javax.json.JsonObject
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
@@ -63,7 +63,7 @@ data class PropertyAccessors(
       val accessor: Getter<Any> = when (sample) {
         is PropertyGetter -> sample.getter(propertyName)
         is Getter<*> -> sample as Getter<Any>
-        is JsrObject-> {json-> (json as JsrObject).get(propertyName)?.unboxAsAny()}
+        is JsonObject -> { json-> (json as JsonObject).get(propertyName)?.unboxAsAny()}
         is Map<*, *> -> { map -> (map as Map<*, *>)[propertyName] }
         is Pair<*, *> -> ofPair(propertyName)
         is Function1<*, *> -> { i -> (i as Function1<String, Any?>).invoke(propertyName) }

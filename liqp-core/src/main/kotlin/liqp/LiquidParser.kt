@@ -3,7 +3,6 @@ package liqp
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
-import lang.string.truncate
 import liqp.config.LParseSettings
 import liqp.config.RenderSettings
 import liqp.config.withSettings

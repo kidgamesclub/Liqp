@@ -1,10 +1,11 @@
 package liqp.filter
 
-import lang.string.splitting
+
 import liqp.context.LContext
 import liqp.lookup.Property
 import liqp.params.FilterParams
 import liqp.resolve
+import liqp.splitting
 
 class MapFilter : LFilter() {
 

@@ -7,12 +7,10 @@ plugins {
   id("io.mverse.project")
   id("io.mverse.multi-module")
 //  id("com.github.johnrengelman.shadow") version "5.1.0"
-  findbugs
   java
 }
 
 allprojects {
-  plugins.apply("findbugs")
   mverse {
     groupId = "io.mverse"
     isDefaultDependencies = false
@@ -23,26 +21,26 @@ allprojects {
       compile("kotlin-stdlib-jdk8")
       compileOnly("kotlin-reflect")
       testCompile("assertk-jvm")
-      compile("kotlinx-serialization-runtime")
+//      compile("kotlinx-serialization-runtime")
       compile("kotlinx-collections-immutable")
     }
   }
 
   repositories {
-    maven ("https://kotlin.bintray.com/kotlinx" )
+    mavenLocal()
+    maven ("https://kotlin.bintray.com/kotlinx")
   }
-
-  findbugs { isIgnoreFailures = true }
 
   dependencyManagement {
     dependencies {
       installKotlinDeps()
-      installMverseShared()
+//      installMverseShared()
       dependency("org.jsoup:jsoup:1.11.2")
       dependency("org.antlr:antlr4:4.7.1")
       dependency("org.antlr:antlr4-runtime:4.7.1")
       dependency("com.willowtreeapps.assertk:assertk-jvm:0.11")
       dependency("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.1")
+      dependency("com.fasterxml.jackson.core:jackson-annotations:2.9.2")
 
       val klock:String by rootProject
       dependencySet("com.soywiz.korlibs.klock:$klock") {
@@ -106,30 +104,30 @@ fun DependenciesHandler.installKotlinDeps() {
   }
 
   dependencySet("org.jetbrains.kotlinx:$kotlinSerialization") {
-    entry("kotlinx-serialization-runtime")
-    entry("kotlinx-serialization-runtime-common")
-    entry("kotlinx-serialization-runtime-jsonparser")
+//    entry("kotlinx-serialization-runtime")
+//    entry("kotlinx-serialization-runtime-common")
+//    entry("kotlinx-serialization-runtime-jsonparser")
   }
 }
 
 fun DependenciesHandler.installMverseShared() {
   val mverseShared: String by project
 
-  dependencySet("io.mverse:$mverseShared") {
-    entry("mverse-json")
-    entry("mverse-extensions")
-    entry("mverse-i18n")
-    entry("mverse-lang-jvm")
-    entry("mverse-lang-common")
-    entry("mverse-log-common")
-    entry("mverse-log-jvm")
-    entry("mverse-test-common")
-    entry("mverse-test-jvm")
-    entry("mverse-coroutines-common")
-    entry("mverse-coroutines-jvm")
-    entry("mverse-events-common")
-    entry("mverse-events-jvm")
-  }
+//  dependencySet("io.mverse:$mverseShared") {
+//    entry("mverse-json")
+//    entry("mverse-extensions")
+//    entry("mverse-i18n")
+//    entry("mverse-lang-jvm")
+//    entry("mverse-lang-common")
+//    entry("mverse-log-common")
+//    entry("mverse-log-jvm")
+//    entry("mverse-test-common")
+//    entry("mverse-test-jvm")
+//    entry("mverse-coroutines-common")
+//    entry("mverse-coroutines-jvm")
+//    entry("mverse-events-common")
+//    entry("mverse-events-jvm")
+//  }
 }
 
 

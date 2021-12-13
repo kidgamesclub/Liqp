@@ -31,19 +31,19 @@ public class TemplateTest {
 
     final String expected = "Hey";
 
-    String rendered = createTestParser().parse("{{mu}}").renderJson("{\"mu\" : \"" + expected + "\"}");
+    String rendered = TestUtilsKt.renderJson(createTestParser().parse("{{mu}}"), "{\"mu\" : \"" + expected + "\"}");
     assertThat(rendered, is(expected));
   }
 
   @Test
   public void renderJSONStringTestInvalidJSON_NotAccessed() {
-    assertThatCode(() -> createTestParser().parse("mu").renderJson("{\"key : \"value\"}"))
+    assertThatCode(() -> TestUtilsKt.renderJson(createTestParser().parse("mu"), "{\"key : \"value\"}"))
           .isInstanceOf(JsonParsingException.class);
   }
 
   @Test
   public void renderJSONStringTestInvalidJSON_Accessed() {
-    assertThatCode(() -> createTestParser().parse("{{ key }}").renderJson("{\"key : \"value\"}"))
+    assertThatCode(() -> TestUtilsKt.renderJson(createTestParser().parse("{{ key }}"), "{\"key : \"value\"}"))
           .isInstanceOf(JsonParsingException.class);
   }
 

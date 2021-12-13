@@ -19,7 +19,8 @@ typealias executeTemplate = (LTemplate, LContext) -> Any?
 data class LiquidRenderer @JvmOverloads constructor(val accessors: PropertyAccessors = PropertyAccessors.newInstance(),
                                                     override val renderSettings: LRenderSettings,
                                                     val parser: LParser,
-                                                    val logic: LLogic = strictLogic) : LRenderer {
+                                                    val coercion: LiquidCoercion = DefaultLiquidCoercion,
+                                                    val logic: LLogic = StrictLogic(coercion)) : LRenderer {
 
   override fun reconfigure(block: MutableRenderSettings.() -> Unit): LRenderer {
     return this.copy(renderSettings = renderSettings.reconfigure(block))

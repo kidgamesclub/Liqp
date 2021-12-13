@@ -34,10 +34,6 @@ object EmptyTemplate : LTemplate {
     return ""
   }
 
-  override fun renderJson(inputData: String, locale: Locale, timezone: ZoneId): String {
-    return ""
-  }
-
   override val rootNode: LNode = EmptyNode
   val parser = provider.createParser()
   override val renderer: LRenderer = provider.createRenderer(parser, parser.toRenderSettings())

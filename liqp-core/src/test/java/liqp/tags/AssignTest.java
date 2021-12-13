@@ -4,6 +4,7 @@ package liqp.tags;
 
 import liqp.AssertsKt;
 import liqp.LiquidParser;
+import liqp.TestUtilsKt;
 import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
@@ -32,11 +33,11 @@ public class AssignTest {
 
         String json = "{\"values\":[\"A\", [\"B1\", \"B2\"], \"C\"]}";
 
-        assertThat(createTestParser().parse("{% assign foo = values %}.{{ foo[1][1] }}.").renderJson(json), is(".B2."));
+        assertThat(TestUtilsKt.renderJson(createTestParser().parse("{% assign foo = values %}.{{ foo[1][1] }}."), json), is(".B2."));
 
         json = "{\"values\":[\"A\", {\"bar\":{\"xyz\":[\"B1\", \"ok\"]}}, \"C\"]}";
 
-        assertThat(createTestParser().parse("{% assign foo = values %}.{{ foo[1].bar.xyz[1] }}.").renderJson(json), is(".ok."));
+        assertThat(TestUtilsKt.renderJson(createTestParser().parse("{% assign foo = values %}.{{ foo[1].bar.xyz[1] }}."), json), is(".ok."));
     }
 
     /*
@@ -101,8 +102,8 @@ public class AssignTest {
     public void assignTest() throws Exception {
 
         assertThat(
-                createTestParser().parse("var2:{{var2}} {%assign var2 = var%} var2:{{var2}}")
-                        .renderJson("{ \"var\" : \"content\" } "),
+                TestUtilsKt.renderJson(createTestParser().parse("var2:{{var2}} {%assign var2 = var%} var2:{{var2}}")
+                        , "{ \"var\" : \"content\" } "),
                 is("var2:  var2:content"));
     }
 
@@ -116,8 +117,8 @@ public class AssignTest {
     public void hyphenated_assignTest() throws Exception {
 
         assertThat(
-                createTestParser().parse("a-b:{{a-b}} {%assign a-b = 2 %}a-b:{{a-b}}")
-                        .renderJson(" { \"a-b\" : \"1\" } "),
+                TestUtilsKt.renderJson(createTestParser().parse("a-b:{{a-b}} {%assign a-b = 2 %}a-b:{{a-b}}")
+                        ," { \"a-b\" : \"1\" } "),
                 is("a-b:1 a-b:2"));
     }
 
@@ -131,8 +132,8 @@ public class AssignTest {
     public void assign_with_colon_and_spacesTest() throws Exception {
 
         assertThat(
-                createTestParser().parse("{%assign var2 = var[\"a:b c\"].paged %}var2: {{var2}}")
-                        .renderJson("{\"var\" : {\"a:b c\" : {\"paged\" : \"1\" }}}"),
+                TestUtilsKt.renderJson(createTestParser().parse("{%assign var2 = var[\"a:b c\"].paged %}var2: {{var2}}")
+                        ,"{\"var\" : {\"a:b c\" : {\"paged\" : \"1\" }}}"),
                 is("var2: 1"));
     }
 

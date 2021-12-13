@@ -1,12 +1,15 @@
 package liqp.filter
 
-import lang.exception.illegalArgument
 import liqp.context.LContext
 import liqp.params.FilterParams
 import liqp.safeSlice
 import liqp.safeSubstring
 
 typealias Slicer = (Int) -> Any
+
+fun illegalArgument(message:String="Illegal argument"):Nothing {
+  throw IllegalArgumentException(message)
+}
 
 /**
  * Returns a slice of an array or string.

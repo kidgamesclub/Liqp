@@ -2,11 +2,8 @@ package liqp.filter
 
 import assertk.assert
 import assertk.assertions.isEqualTo
-import liqp.LiquidDefaults
+import liqp.*
 import liqp.LiquidDefaults.defaultFilters
-import liqp.LiquidParser
-import liqp.Mocks
-import liqp.createTestParser
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized

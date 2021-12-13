@@ -1,6 +1,5 @@
 package liqp.tag
 
-import lang.exception.illegalArgument
 import kotlin.reflect.KProperty
 
 data class Tags(val tags: List<LTag> = listOf()) : List<LTag> by tags {
@@ -18,7 +17,7 @@ data class Tags(val tags: List<LTag> = listOf()) : List<LTag> by tags {
     return this + listOf(*tags)
   }
 
-  operator fun get(name: String): LTag = mapped[name] ?: illegalArgument("No tag found with name $name")
+  operator fun get(name: String): LTag = mapped[name] ?: error("No tag found with name $name")
   fun getOrNull(name: String): LTag? = mapped[name]
 
   operator fun plus(tags:Iterable<LTag>):Tags = this.copy(tags = this.tags + tags)

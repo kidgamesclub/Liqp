@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import liqp.AssertsKt;
 import liqp.LiquidParser;
+import liqp.TestUtilsKt;
 import org.junit.Test;
 
 public class ParseTest {
@@ -91,7 +92,7 @@ public class ParseTest {
 
     String assigns = "{\"b\" : \"bar\", \"c\" : \"baz\"}";
     String markup = "a == 'foo' or (b == 'bar' and c == 'baz') or false";
-    assertThat(createTestParser().parse("{% if " + markup + " %} YES {% endif %}").renderJson(assigns), is(" " +
+    assertThat(TestUtilsKt.renderJson(createTestParser().parse("{% if " + markup + " %} YES {% endif %}"), assigns), is(" " +
           "YES "));
   }
 
@@ -117,13 +118,13 @@ public class ParseTest {
   public void keywords_as_identifier() throws Exception {
 
     assertThat(
-          createTestParser().parse("var2:{{var2}} {%assign var2 = var.comment%} var2:{{var2}}")
-                .renderJson(" { \"var\": { \"comment\": \"content\" } } "),
+            TestUtilsKt.renderJson(createTestParser().parse("var2:{{var2}} {%assign var2 = var.comment%} var2:{{var2}}"),
+                " { \"var\": { \"comment\": \"content\" } } "),
           is("var2:  var2:content"));
 
     assertThat(
-          createTestParser().parse("var2:{{var2}} {%assign var2 = var.end%} var2:{{var2}}")
-                .renderJson(" { \"var\": { \"end\": \"content\" } } "),
+            TestUtilsKt.renderJson(createTestParser().parse("var2:{{var2}} {%assign var2 = var.end%} var2:{{var2}}"),
+                    " { \"var\": { \"end\": \"content\" } } "),
           is("var2:  var2:content"));
   }
 }

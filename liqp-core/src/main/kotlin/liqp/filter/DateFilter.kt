@@ -1,6 +1,6 @@
 package liqp.filter
 
-import com.soywiz.klock.DateTimeTz
+import com.soywiz.klock.*
 import liqp.context.LContext
 import liqp.exceptions.LiquidRenderingException
 import liqp.params.FilterParams
@@ -158,65 +158,67 @@ private val formatTable = mutableMapOf<Locale, kotlin.collections.Map<String, Da
 private val parsers = mutableMapOf<Locale, Set<DateTimeFormatter>>()
 
 fun findNamedFormat(locale: Locale, format: String): DateTimeFormatter? {
-  return formatTable.getOrPut(locale, {
-    mapOf(
-        "%" to DateTimeFormatter.ofPattern("%", locale),
-        // %a - The abbreviated weekday name (``Sun"")
-        "a" to DateTimeFormatter.ofPattern("EEE", locale),
-        // %A - The  full  weekday  name (``Sunday"")
-        "A" to DateTimeFormatter.ofPattern("EEEE", locale),
-        // %b - The abbreviated month name (``Jan"")
-        "b" to DateTimeFormatter.ofPattern("MMM", locale),
-        "h" to DateTimeFormatter.ofPattern("MMM", locale),
-        // %B - The  full  month  name (``January"")
-        "B" to DateTimeFormatter.ofPattern("MMMM", locale),
-        // %c - The preferred local date and time representation
-        "c" to DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss yyyy", locale),
-        // %d - Day of the month (01..31)
-        "-d" to DateTimeFormatter.ofPattern("d", locale),
-        "d" to DateTimeFormatter.ofPattern("dd", locale),
-        // %H - Hour of the day, 24-hour clock (00..23)
-        "-H" to DateTimeFormatter.ofPattern("H", locale),
-        "H" to DateTimeFormatter.ofPattern("HH", locale),
-        // %I - Hour of the day, 12-hour clock (01..12)
-        "-I" to DateTimeFormatter.ofPattern("h", locale),
-        "I" to DateTimeFormatter.ofPattern("hh", locale),
-        // %j - Day of the year (001..366)
-        "-j" to DateTimeFormatter.ofPattern("D", locale),
-        "j" to DateTimeFormatter.ofPattern("DDD", locale),
-        // %m - Month of the year (01..12)
-        "-m" to DateTimeFormatter.ofPattern("M", locale),
-        "m" to DateTimeFormatter.ofPattern("MM", locale),
-        // %M - Minute of the hour (00..59)
-        "-M" to DateTimeFormatter.ofPattern("m", locale),
-        "M" to DateTimeFormatter.ofPattern("mm", locale),
-        // %p - Meridian indicator (``AM""  or  ``PM"")
-        "p" to DateTimeFormatter.ofPattern("a", locale),
-        // %S - Second of the minute (00..60)
-        "S" to DateTimeFormatter.ofPattern("ss", locale),
-        // %U - Week  number  of the current year,
-        //      starting with the first Sunday as the first
-        //      day of the first week (00..53)
-        "-U" to DateTimeFormatter.ofPattern("w", locale),
-        "U" to DateTimeFormatter.ofPattern("ww", locale),
-        // %W - Week  number  of the current year,
-        //      starting with the first Monday as the first
-        //      day of the first week (00..53)
-        "-W" to DateTimeFormatter.ofPattern("w", locale),
-        "W" to DateTimeFormatter.ofPattern("ww", locale),
-        // %w - Day of the week (Sunday is 0, 0..6)
-        "w" to DateTimeFormatter.ofPattern("e", locale),
-        // %x - Preferred representation for the date alone, no time
-        "x" to DateTimeFormatter.ofPattern("MM/dd/yy", locale),
-        // %X - Preferred representation for the time alone, no date
-        "X" to DateTimeFormatter.ofPattern("HH:mm:ss", locale),
-        // %y - Year without a century (00..99)
-        "y" to DateTimeFormatter.ofPattern("yy", locale),
-        // %Y - Year with century
-        "Y" to DateTimeFormatter.ofPattern("yyyy", locale),
-        // %Z - Time zone name
-        "Z" to DateTimeFormatter.ofPattern("z", locale))
-  })[format]
+  return formatTable.getOrPut(locale) {
+      mapOf(
+          "%" to DateTimeFormatter.ofPattern("%", locale),
+          // %a - The abbreviated weekday name (``Sun"")
+          "a" to DateTimeFormatter.ofPattern("EEE", locale),
+          // %A - The  full  weekday  name (``Sunday"")
+          "A" to DateTimeFormatter.ofPattern("EEEE", locale),
+          // %b - The abbreviated month name (``Jan"")
+          "b" to DateTimeFormatter.ofPattern("MMM", locale),
+          "h" to DateTimeFormatter.ofPattern("MMM", locale),
+          // %B - The  full  month  name (``January"")
+          "B" to DateTimeFormatter.ofPattern("MMMM", locale),
+          // %c - The preferred local date and time representation
+          "c" to DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss yyyy", locale),
+          // %d - Day of the month (01..31)
+          "-d" to DateTimeFormatter.ofPattern("d", locale),
+          "d" to DateTimeFormatter.ofPattern("dd", locale),
+          // %H - Hour of the day, 24-hour clock (00..23)
+          "-H" to DateTimeFormatter.ofPattern("H", locale),
+          "H" to DateTimeFormatter.ofPattern("HH", locale),
+          // %I - Hour of the day, 12-hour clock (01..12)
+          "-I" to DateTimeFormatter.ofPattern("h", locale),
+          "I" to DateTimeFormatter.ofPattern("hh", locale),
+          // %j - Day of the year (001..366)
+          "-j" to DateTimeFormatter.ofPattern("D", locale),
+          "j" to DateTimeFormatter.ofPattern("DDD", locale),
+          // %m - Month of the year (01..12)
+          "-m" to DateTimeFormatter.ofPattern("M", locale),
+          "m" to DateTimeFormatter.ofPattern("MM", locale),
+          // %M - Minute of the hour (00..59)
+          "-M" to DateTimeFormatter.ofPattern("m", locale),
+          "M" to DateTimeFormatter.ofPattern("mm", locale),
+          // %p - Meridian indicator (``AM""  or  ``PM"")
+          "p" to DateTimeFormatter.ofPattern("a", locale),
+          // %S - Second of the minute (00..60)
+          "S" to DateTimeFormatter.ofPattern("ss", locale),
+          // %U - Week  number  of the current year,
+          //      starting with the first Sunday as the first
+          //      day of the first week (00..53)
+          "-U" to DateTimeFormatter.ofPattern("w", locale),
+          "U" to DateTimeFormatter.ofPattern("ww", locale),
+          // %W - Week  number  of the current year,
+          //      starting with the first Monday as the first
+          //      day of the first week (00..53)
+          "-W" to DateTimeFormatter.ofPattern("w", locale),
+          "W" to DateTimeFormatter.ofPattern("ww", locale),
+          // %w - Day of the week (Sunday is 0, 0..6)
+          "w" to DateTimeFormatter.ofPattern("e", locale),
+          // %x - Preferred representation for the date alone, no time
+          "x" to DateTimeFormatter.ofPattern("MM/dd/yy", locale),
+          // %X - Preferred representation for the time alone, no date
+          "X" to DateTimeFormatter.ofPattern("HH:mm:ss", locale),
+          // %y - Year without a century (00..99)
+          "y" to DateTimeFormatter.ofPattern("yy", locale),
+          // %Y - Year with century
+          "Y" to DateTimeFormatter.ofPattern("yyyy", locale),
+          // %Z - Time zone name
+          "Z" to DateTimeFormatter.ofPattern("z", locale)
+      )
+  }[format]
 }
 
-fun DateTimeTz.toOffsetDateTime(): OffsetDateTime = java.time.OffsetDateTime.ofInstant(java.time.Instant.ofEpochMilli(utc.unixMillisLong), java.time.ZoneId.of("UTC"))
+fun DateTimeTz.toOffsetDateTime(): OffsetDateTime =
+ OffsetDateTime.ofInstant(Instant.ofEpochMilli(this.utc.unixMillisLong), ZoneId.of("UTC"))

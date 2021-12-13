@@ -1,8 +1,8 @@
 package liqp.filter
 
-import lang.isIntegral
 import liqp.context.LContext
 import liqp.exceptions.LiquidRenderingException
+import liqp.isIntegral
 import liqp.isIntegralType
 import liqp.params.FilterParams
 

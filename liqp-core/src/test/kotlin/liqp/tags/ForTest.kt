@@ -4,6 +4,7 @@ import liqp.LiquidParser
 import liqp.assertThat
 import liqp.createTestParser
 import liqp.parameterized.LiquifyNoInputTest
+import liqp.renderJson
 import org.antlr.runtime.RecognitionException
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat

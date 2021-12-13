@@ -1,6 +1,5 @@
 package liqp.nodes
 
-import lang.json.JsrObject
 import liqp.Getter
 import liqp.LLogic
 import liqp.LParser
@@ -26,6 +25,7 @@ import liqp.node.LTemplate
 import java.io.File
 import java.time.ZoneId
 import java.util.*
+import javax.json.JsonObject
 import kotlin.reflect.KProperty
 
 const val FORLOOP = "forloop"
@@ -53,7 +53,7 @@ data class RenderContext @JvmOverloads constructor(override val inputData: Any?,
   private val inputProperties: PropertyGetter by lazy {
     when (val input = inputData) {
       is PropertyGetter -> input
-      is JsrObject -> JsonPropertyGetter
+      is JsonObject -> JsonPropertyGetter
       is Map<*, *> -> MapPropertyGetter
       is Pair<*, *> -> propertyContainer(input.first.toString(), input.second)
       else -> accessors.propertyContainer(this, input)

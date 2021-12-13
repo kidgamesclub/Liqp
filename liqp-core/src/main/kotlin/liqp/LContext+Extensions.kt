@@ -1,6 +1,5 @@
 package liqp
 
-import lang.string.after
 import liqp.context.LContext
 import liqp.exceptions.MissingVariable
 import liqp.exceptions.MissingVariableException
@@ -15,4 +14,10 @@ fun LContext.onMissingVariable(variableName: String, rootName: String? = null): 
     logs += MissingVariable("Missing variable $variableName ${rootName after " at root path: "}")
   }
   return null
+}
+
+infix fun CharSequence?.after(append: CharSequence): String = when {
+  this == null -> ""
+  this.isBlank() -> ""
+  else -> "$append$this"
 }

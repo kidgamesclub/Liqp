@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import liqp.AssertsKt;
 import liqp.LiquidParser;
+import liqp.TestUtilsKt;
 import liqp.parameterized.LiquifyNoInputTest;
 import org.antlr.runtime.RecognitionException;
 import org.jetbrains.annotations.NotNull;
@@ -84,9 +85,8 @@ public class UnlessTest extends LiquifyNoInputTest {
   public void unless_in_loopTest() throws RecognitionException {
 
     assertThat(
-          AssertsKt.createTestParser().parse("{% for i in choices %}{% unless i %}{{ forloop.index }}{% endunless %}{% " +
-                "endfor %}")
-                .renderJson("{ \"choices\" : [1, null, false] }"),
+            TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% for i in choices %}{% unless i %}{{ forloop.index }}{% endunless %}{% " +
+                "endfor %}"),"{ \"choices\" : [1, null, false] }"),
           is("23"));
   }
 
@@ -100,9 +100,9 @@ public class UnlessTest extends LiquifyNoInputTest {
   public void unless_else_in_loopTest() throws RecognitionException {
 
     assertThat(
-          AssertsKt.createTestParser().parse("{% for i in choices %}{% unless i %} {{ forloop.index }} {% else %} TRUE " +
-                "{% endunless %}{% endfor %}")
-                .renderJson("{ \"choices\" : [1, null, false] }"),
+            TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% for i in choices %}{% unless i %} {{ forloop.index }} {% else %} TRUE " +
+                "{% endunless %}{% endfor %}"),
+                "{ \"choices\" : [1, null, false] }"),
           is(" TRUE  2  3 "));
   }
 }

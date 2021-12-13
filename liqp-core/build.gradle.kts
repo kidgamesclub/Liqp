@@ -16,6 +16,10 @@ dependencies {
 
 mverse {
   dependencies {
+    implementation("guava")
+    implementation("klock-jvm")
+//    implementation("mverse-lang-jvm")
+
     testCompile(junit())
     testCompile(mockito())
     testCompile(assertj())

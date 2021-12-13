@@ -1,10 +1,9 @@
 package liqp.lookup
 
-import lang.json.JsrObject
-import lang.json.unboxAsAny
-import lang.suppress.Suppressions.UNCHECKED_CAST
 import liqp.Getter
 import liqp.PropertyGetter
+import liqp.unboxOrNull
+import javax.json.JsonObject
 
 object MapPropertyGetter : PropertyGetter {
   val properties = mutableMapOf<String, MapGetter>()
@@ -22,7 +21,7 @@ object JsonPropertyGetter : PropertyGetter {
 
 data class JsonGetter(val property: String) : Getter<Any> {
   override fun invoke(p1: Any): Any? {
-    return (p1 as JsrObject)[property]?.unboxAsAny()
+    return (p1 as JsonObject)[property]?.unboxOrNull()
   }
 }
 

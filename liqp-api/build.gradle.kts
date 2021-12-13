@@ -5,6 +5,8 @@ plugins {
 
 mverse {
   dependencies {
-    compile("mverse-lang-jvm")
+//    implementation("mverse-lang-jvm")
+    implementation("guava")
+    implementation("javax.json:javax.json-api")
   }
 }

@@ -4,6 +4,7 @@ import assertk.assert
 import assertk.assertions.isEqualTo
 import liqp.LiquidParser
 import liqp.createTestParser
+import liqp.renderJson
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized

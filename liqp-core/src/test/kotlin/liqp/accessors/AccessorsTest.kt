@@ -1,12 +1,13 @@
 package liqp.accessors
 
 import assertk.assertions.isEqualTo
-import lang.json.JsrObject
-import lang.json.jsrObject
 import liqp.createTestParser
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import javax.json.Json
+import javax.json.JsonObject
+import javax.json.JsonObjectBuilder
 
 @RunWith(Parameterized::class)
 class AccessorsTest(val name: String, val template: String, val input: Any?, val expected: Any?) {
@@ -48,9 +49,8 @@ class AccessorsTest(val name: String, val template: String, val input: Any?, val
     val mockTemplateExpect2 = "Jim Oldie -> smarty\nOliver  -> ollie\n"
 
     fun mockGroup(vararg dudes: Dude): Group = Group(dudes.toList())
-    fun mockGroupJson(vararg dudes: JsrObject) = jsrObject {
-      "dudes" *= dudes.toList()
-    }
+    fun mockGroupJson(vararg dudes: JsonObject) = Json.createObjectBuilder().add("dudes",
+      Json.createArrayBuilder(dudes.toList())).build()
 
     fun mockGroupMap(vararg dudes: Map<String, Any?>): Map<String, Any?> = mapOf(
         "dudes" to dudes
@@ -58,12 +58,12 @@ class AccessorsTest(val name: String, val template: String, val input: Any?, val
 
     fun mockDude(name: String, age: Int, social: Map<String, Any>): Dude = Dude(name, age, social)
 
-    fun mockDudeJson(name: String, age: Int, social: Map<String, Any>): JsrObject {
-      return jsrObject {
-        "name" *= name
-        "age" *= age
-        "social" *= social
-      }
+    fun mockDudeJson(name: String, age: Int, social: Map<String, Any>): JsonObject {
+      return Json.createObjectBuilder()
+        .add("name", name)
+        .add("age", age)
+        .add("social", Json.createObjectBuilder(social))
+        .build()
     }
 
     fun mockDudeMap(name: String, age: Int, social: Map<String, Any>): Map<String, Any?> {

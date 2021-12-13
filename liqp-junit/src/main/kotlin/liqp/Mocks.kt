@@ -13,7 +13,7 @@ class Mocks {
       val parser = provider.createParser()
 
       return RenderContext(emptyMap<Any, Any>(),
-          logic = strictLogic,
+          logic = StrictLogic(),
           parser = parser,
           renderer = parser.toRenderer())
     }

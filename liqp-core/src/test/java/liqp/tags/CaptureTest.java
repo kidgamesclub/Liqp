@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import liqp.AssertsKt;
 import liqp.LiquidParser;
+import liqp.TestUtilsKt;
 import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
@@ -116,8 +117,7 @@ public class CaptureTest {
         String assigns = "{ \"var\" : \"content\" }";
 
         assertThat(
-                createTestParser().parse("{{ var2 }}{% capture var2 %}{{ var }} foo {% endcapture %}{{ var2 }}{{ var2 }}")
-                        .renderJson(assigns),
+                TestUtilsKt.renderJson(createTestParser().parse("{{ var2 }}{% capture var2 %}{{ var }} foo {% endcapture %}{{ var2 }}{{ var2 }}"),assigns),
                 is("content foo content foo "));
     }
 

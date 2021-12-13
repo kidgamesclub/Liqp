@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import liqp.AssertsKt;
 import liqp.LiquidParser;
+import liqp.TestUtilsKt;
 import liqp.node.LTemplate;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class IfTest {
         for (String[] test : tests) {
 
             LTemplate template = AssertsKt.createTestParser().parse(test[0]);
-            String rendered = String.valueOf(template.renderJson(json));
+            String rendered = String.valueOf(TestUtilsKt.renderJson(template, json));
 
             assertThat(rendered, is(test[1]));
         }
@@ -82,7 +83,7 @@ public class IfTest {
     @Test
     public void if_booleanTest() throws RecognitionException {
 
-        assertThat(AssertsKt.createTestParser().parse("{% if var %} YES {% endif %}").renderJson("{ \"var\":true }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if var %} YES {% endif %}"), "{ \"var\":true }"), is(" YES "));
     }
 
     /*
@@ -99,13 +100,13 @@ public class IfTest {
     @Test
     public void if_orTest() throws RecognitionException {
 
-        assertThat(AssertsKt.createTestParser().parse("{% if a or b %} YES {% endif %}").renderJson("{ \"a\":true, \"b\":true }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if a or b %} YES {% endif %}").renderJson("{ \"a\":true, \"b\":false }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if a or b %} YES {% endif %}").renderJson("{ \"a\":false, \"b\":true }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if a or b %} YES {% endif %}").renderJson("{ \"a\":false, \"b\":false }"), is(""));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if a or b %} YES {% endif %}"),"{ \"a\":true, \"b\":true }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if a or b %} YES {% endif %}"),"{ \"a\":true, \"b\":false }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if a or b %} YES {% endif %}"),"{ \"a\":false, \"b\":true }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if a or b %} YES {% endif %}"),"{ \"a\":false, \"b\":false }"), is(""));
 
-        assertThat(AssertsKt.createTestParser().parse("{% if a or b or c %} YES {% endif %}").renderJson("{ \"a\":false, \"b\":false, \"c\":true }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if a or b or c %} YES {% endif %}").renderJson("{ \"a\":false, \"b\":false, \"c\":false }"), is(""));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if a or b or c %} YES {% endif %}"),"{ \"a\":false, \"b\":false, \"c\":true }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if a or b or c %} YES {% endif %}"),"{ \"a\":false, \"b\":false, \"c\":false }"), is(""));
     }
 
     /*
@@ -118,9 +119,9 @@ public class IfTest {
     @Test
     public void if_or_with_operatorsTest() throws RecognitionException {
 
-        assertThat(AssertsKt.createTestParser().parse("{% if a == true or b == true %} YES {% endif %}").renderJson("{ \"a\":true, \"b\":true }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if a == true or b == false %} YES {% endif %}").renderJson("{ \"a\":true, \"b\":true }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if a == false or b == false %} YES {% endif %}").renderJson("{ \"a\":true, \"b\":true }"), is(""));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if a == true or b == true %} YES {% endif %}"),"{ \"a\":true, \"b\":true }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if a == true or b == false %} YES {% endif %}"),"{ \"a\":true, \"b\":true }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if a == false or b == false %} YES {% endif %}"),"{ \"a\":true, \"b\":true }"), is(""));
     }
 
     /*
@@ -141,7 +142,7 @@ public class IfTest {
                 .replace("'", "\"")
                 .replace("=>", ":");
 
-        assertThat(AssertsKt.createTestParser().parse("{% if " + awfulMarkup + " %} YES {% endif %}").renderJson(assigns), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if " + awfulMarkup + " %} YES {% endif %}"), assigns), is(" YES "));
     }
 
     /*
@@ -166,8 +167,8 @@ public class IfTest {
                 .replace("'", "\"")
                 .replace("=>", ":");
 
-        assertThat(AssertsKt.createTestParser().parse("{% if android.name == 'Roy' %}YES{% endif %}").renderJson(assigns), is("YES"));
-        assertThat(AssertsKt.createTestParser().parse("{% if order.items_count == 0 %}YES{% endif %}").renderJson(assigns), is("YES"));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if android.name == 'Roy' %}YES{% endif %}"), assigns), is("YES"));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if order.items_count == 0 %}YES{% endif %}"), assigns), is("YES"));
     }
 
     /*
@@ -193,7 +194,7 @@ public class IfTest {
     @Test
     public void hash_miss_generates_falseTest() throws RecognitionException {
 
-        assertThat(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% endif %}").renderJson("{ \"foo\" : {} }"), is(""));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% endif %}"), "{ \"foo\" : {} }"), is(""));
     }
 
     /*
@@ -233,36 +234,36 @@ public class IfTest {
     @Test
     public void if_from_variableTest() throws RecognitionException {
 
-        assertThat(AssertsKt.createTestParser().parse("{% if var %} NO {% endif %}").renderJson("{ \"var\" : false }"), is(""));
-        assertThat(AssertsKt.createTestParser().parse("{% if var %} NO {% endif %}").renderJson("{ \"var\" : null }"), is(""));
-        assertThat(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% endif %}").renderJson("{ \"foo\" : {\"bar\" : false} }"), is(""));
-        assertThat(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% endif %}").renderJson("{ \"foo\" : {} }"), is(""));
-        assertThat(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% endif %}").renderJson("{ \"foo\" : null }"), is(""));
-        assertThat(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% endif %}").renderJson("{ \"foo\" : true }"), is(""));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if var %} NO {% endif %}"),"{ \"var\" : false }"), is(""));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if var %} NO {% endif %}"),"{ \"var\" : null }"), is(""));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% endif %}"),"{ \"foo\" : {\"bar\" : false} }"), is(""));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% endif %}"),"{ \"foo\" : {} }"), is(""));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% endif %}"),"{ \"foo\" : null }"), is(""));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% endif %}"),"{ \"foo\" : true }"), is(""));
 
-        assertThat(AssertsKt.createTestParser().parse("{% if var %} YES {% endif %}").renderJson("{ \"var\" : \"text\" }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if var %} YES {% endif %}").renderJson("{ \"var\" : true }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if var %} YES {% endif %}").renderJson("{ \"var\" : 1 }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if var %} YES {% endif %}").renderJson("{ \"var\" : {} }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if var %} YES {% endif %}").renderJson("{ \"var\" : [] }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if var %} YES {% endif %}"),"{ \"var\" : \"text\" }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if var %} YES {% endif %}"),"{ \"var\" : true }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if var %} YES {% endif %}"),"{ \"var\" : 1 }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if var %} YES {% endif %}"),"{ \"var\" : {} }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if var %} YES {% endif %}"),"{ \"var\" : [] }"), is(" YES "));
         assertThat(AssertsKt.createTestParser().parse("{% if \"foo\" %} YES {% endif %}").render(), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if foo.bar %} YES {% endif %}").renderJson("{ \"foo\" : {\"bar\" : true} }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if foo.bar %} YES {% endif %}").renderJson("{ \"foo\" : {\"bar\" : \"text\"} }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if foo.bar %} YES {% endif %}").renderJson("{ \"foo\" : {\"bar\" : 1 } }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if foo.bar %} YES {% endif %}").renderJson("{ \"foo\" : {\"bar\" : {} } }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if foo.bar %} YES {% endif %}").renderJson("{ \"foo\" : {\"bar\" : [] } }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if foo.bar %} YES {% endif %}"),"{ \"foo\" : {\"bar\" : true} }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if foo.bar %} YES {% endif %}"),"{ \"foo\" : {\"bar\" : \"text\"} }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if foo.bar %} YES {% endif %}"),"{ \"foo\" : {\"bar\" : 1 } }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if foo.bar %} YES {% endif %}"),"{ \"foo\" : {\"bar\" : {} } }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if foo.bar %} YES {% endif %}"),"{ \"foo\" : {\"bar\" : [] } }"), is(" YES "));
 
-        assertThat(AssertsKt.createTestParser().parse("{% if var %} NO {% else %} YES {% endif %}").renderJson("{ \"var\" : false }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if var %} NO {% else %} YES {% endif %}").renderJson("{ \"var\" : null }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if var %} YES {% else %} NO {% endif %}").renderJson("{ \"var\" : true }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if \"foo\" %} YES {% else %} NO {% endif %}").renderJson("{ \"var\" : \"text\" }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if var %} NO {% else %} YES {% endif %}"),"{ \"var\" : false }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if var %} NO {% else %} YES {% endif %}"),"{ \"var\" : null }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if var %} YES {% else %} NO {% endif %}"),"{ \"var\" : true }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if \"foo\" %} YES {% else %} NO {% endif %}"),"{ \"var\" : \"text\" }"), is(" YES "));
 
-        assertThat(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% else %} YES {% endif %}").renderJson("{ \"foo\" : {\"bar\" : false} }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if foo.bar %} YES {% else %} NO {% endif %}").renderJson("{ \"foo\" : {\"bar\" : true} }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if foo.bar %} YES {% else %} NO {% endif %}").renderJson("{ \"foo\" : {\"bar\" : \"text\"} }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% else %} YES {% endif %}").renderJson("{ \"foo\" : {\"notbar\" : true} }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% else %} YES {% endif %}").renderJson("{ \"foo\" : {} }"), is(" YES "));
-        assertThat(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% else %} YES {% endif %}").renderJson("{ \"notfoo\" : {\"bar\" : true} }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% else %} YES {% endif %}"),"{ \"foo\" : {\"bar\" : false} }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if foo.bar %} YES {% else %} NO {% endif %}"),"{ \"foo\" : {\"bar\" : true} }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if foo.bar %} YES {% else %} NO {% endif %}"),"{ \"foo\" : {\"bar\" : \"text\"} }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% else %} YES {% endif %}"),"{ \"foo\" : {\"notbar\" : true} }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% else %} YES {% endif %}"),"{ \"foo\" : {} }"), is(" YES "));
+        assertThat(TestUtilsKt.renderJson(AssertsKt.createTestParser().parse("{% if foo.bar %} NO {% else %} YES {% endif %}"),"{ \"notfoo\" : {\"bar\" : true} }"), is(" YES "));
     }
 
     /*

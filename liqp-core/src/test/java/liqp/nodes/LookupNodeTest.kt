@@ -5,12 +5,9 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
-import liqp.LParser
-import liqp.LRenderer
+import liqp.*
 import liqp.TestUtils.getNode
 import liqp.context.LContext
-import liqp.createTestParser
-import liqp.createTestRenderer
 import org.junit.Before
 import org.junit.Test
 import java.time.ZoneId
@@ -37,7 +34,7 @@ class LookupNodeTest {
     for (test in tests) {
 
       val template = createTestParser {}.parse(test[0])
-      val rendered = template.renderJson(json)
+      val rendered = template.render(json.parseJSON())
 
       assert(rendered).isEqualTo(test[1])
     }
@@ -315,7 +312,7 @@ class LookupNodeTest {
 
     assert(createTestParser {}
         .parse("array has {{ array.size }} elements")
-        .renderJson(assigns)).isEqualTo("array has 4 elements")
+        .render(assigns.parseJSON())).isEqualTo("array has 4 elements")
   }
 
   /*

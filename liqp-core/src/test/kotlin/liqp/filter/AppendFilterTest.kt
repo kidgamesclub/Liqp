@@ -3,6 +3,7 @@ package liqp.filter
 import liqp.LiquidParser
 import liqp.createTestParser
 import liqp.parameterized.LiquifyNoInputTest
+import liqp.renderJson
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Test

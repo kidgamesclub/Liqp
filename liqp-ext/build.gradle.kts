@@ -13,7 +13,7 @@ mverse {
     testCompile(junit())
     testCompile(mockito())
     compile("jsoup")
-    compile("mverse-lang-jvm")
+//    compile("mverse-lang-jvm")
   }
 }
 

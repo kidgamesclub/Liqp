@@ -1,14 +1,20 @@
 
 pluginManagement {
   repositories {
+    mavenLocal()
     jcenter()
     gradlePluginPortal()
     google()
-    maven("https://dl.bintray.com/mverse-io/mverse-public")
-    maven ("https://kotlin.bintray.com/kotlinx" )
-    maven ("https://dl.bintray.com/kotlin/kotlin-eap" )
+    maven {
+      setUrl("https://edspuzzle.jfrog.io/artifactory/edspuzzle-gradle-release/")
+      credentials {
+          username = System.getProperty("ARTIFACTORY_USERNAME")
+          password = System.getProperty("ARTIFACTORY_PASSWORD")
+      }
+    }
+    maven("https://kotlin.bintray.com/kotlinx")
+    maven("https://dl.bintray.com/kotlin/kotlin-eap")
 
-    mavenLocal()
   }
 
   val kotlin:String by settings
@@ -22,7 +28,8 @@ pluginManagement {
       "io.mverse.project" to mversePlugin,
       "io.mverse.code-generation" to mversePlugin,
       "io.mverse.multi-module" to mversePlugin,
-      "io.mverse.multi-platform" to mversePlugin)
+      "io.mverse.multi-platform" to mversePlugin
+  )
 
   resolutionStrategy {
     eachPlugin {

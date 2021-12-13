@@ -3,22 +3,31 @@ package liqp
 import assertk.assert
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
-import liqp.ComparisonResult.EQUAL
-import liqp.ComparisonResult.GREATER
-import liqp.ComparisonResult.LESS
-import liqp.ComparisonResult.NULL
+import liqp.ComparisonResult.*
 import liqp.LogicResult.*
+import liqp.LogicResult.NOOP
 import org.assertj.core.api.Assertions
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+
+object TestCoercion: LiquidCoercion {
+  override fun coerceToNumber(input: Any?): Number? {
+    return if(input is Number) input else null
+  }
+
+  override fun coerceToIterable(input: Any?): Iterable<Any?> {
+   return if(input is Iterable<*>) input else listOf()
+  }
+
+}
 
 @RunWith(Parameterized::class)
 class StrictLogicTestIsTrue(val input: Any?, val expected: Boolean) {
 
   @Test
   fun testIsTrue() {
-    val found = strictLogic.isTrue(input)
+    val found = StrictLogic(TestCoercion).isTrue(input)
     Assertions.assertThat(found).isEqualTo(expected)
   }
 
@@ -38,7 +47,7 @@ class StrictLogicTestIsTrue(val input: Any?, val expected: Boolean) {
 class StrictLogicTestIsFalse(val input: Any?, val expected: Boolean) {
   @Test
   fun testIsFalse() {
-    val found = strictLogic.isFalse(input)
+    val found = StrictLogic(TestCoercion).isFalse(input)
     Assertions.assertThat(found).isEqualTo(expected)
   }
 
@@ -56,7 +65,7 @@ class StrictLogicTestIsFalse(val input: Any?, val expected: Boolean) {
 }
 
 class StrictLogicTest {
-  val strict = StrictLogic()
+  val strict = StrictLogic(TestCoercion)
   @Test fun testIsEmpty_String() {
     assert(strict.isEmpty("foo")).isEqualTo(false)
   }
