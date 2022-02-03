@@ -68,7 +68,7 @@ data class ParseSettings(override val tags: Tags = Liquify.provider.defaultTags,
  * This class is largely to support interop with java builders.  kotlin code should avoid this,
  * and just use the copy methods on {@link RenderSettings} directly
  */
-data class MutableParseSettings(var tags: Tags = Liquify.provider.defaultTags,
+data class MutableParseSettings @JvmOverloads constructor(var tags: Tags = Liquify.provider.defaultTags,
                                 var filters: Filters = Liquify.provider.defaultFilters,
                                 var baseDir: File,
                                 var includesDir: String,

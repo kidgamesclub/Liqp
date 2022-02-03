@@ -27,7 +27,7 @@ interface LRenderSettings {
   fun reconfigure(block: MutableRenderSettings.() -> Unit): LRenderSettings = toMutableSettings().build(block)
 }
 
-data class RenderSettings(override val baseDir: File,
+data class RenderSettings @JvmOverloads constructor(override val baseDir: File,
                           override val includesDir: String,
                           override val isStrictVariables: Boolean = false,
                           override val isStrictIncludes: Boolean,
@@ -51,7 +51,7 @@ data class RenderSettings(override val baseDir: File,
   }
 }
 
-data class MutableRenderSettings(internal var settings: RenderSettings = RenderSettings(
+data class MutableRenderSettings @JvmOverloads constructor(internal var settings: RenderSettings = RenderSettings(
     baseDir = File("./"),
     includesDir = LIQUID.includesDirName,
     isStrictIncludes = false)) {
