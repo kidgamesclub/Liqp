@@ -1,3 +1,4 @@
+@file:JvmName("LiqStrings")
 package liqp
 
 /**
@@ -11,4 +12,8 @@ fun CharSequence.safeSubstring(from: Int, to: Int): String {
   val start = from.coerceIn(0, size)
   val end = to.coerceIn(start-1, size)
   return this.substring(start until end)
+}
+
+fun CharSequence.capitalizeFirstLetter(): String {
+  return this.toString().capitalize()
 }
