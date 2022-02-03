@@ -17,3 +17,7 @@ fun CharSequence.safeSubstring(from: Int, to: Int): String {
 fun CharSequence.capitalizeFirstLetter(): String {
   return this.toString().capitalize()
 }
+
+fun CharSequence.uncapitalizeFirstLetter(): String {
+  return this.toString().decapitalize()
+}
