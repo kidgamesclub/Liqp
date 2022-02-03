@@ -23,6 +23,14 @@ class StrictLogic(val coercion: LiquidCoercion = DefaultLiquidCoercion) : LLogic
         }
     }
 
+    override fun isTruthy(t: Any?): Boolean {
+        return t.isTruthy();
+    }
+
+    override fun isFalsy(t: Any?): Boolean {
+        return t.isFalsy();
+    }
+
     override fun compareTo(a: Any?, b: Any?): ComparisonResult {
         return when {
             a === b -> EQUAL

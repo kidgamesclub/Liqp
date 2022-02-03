@@ -1,3 +1,4 @@
+@file:JvmName("Truths")
 package liqp
 
 import liqp.LogicResult.FALSE
