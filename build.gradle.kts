@@ -36,8 +36,9 @@ allprojects {
       installKotlinDeps()
 //      installMverseShared()
       dependency("org.jsoup:jsoup:1.11.2")
-      dependency("org.antlr:antlr4:4.7.1")
-      dependency("org.antlr:antlr4-runtime:4.7.1")
+
+      dependency("org.antlr:antlr4:4.9.3")
+      dependency("org.antlr:antlr4-runtime:4.9.3")
       dependency("com.willowtreeapps.assertk:assertk-jvm:0.11")
 //      dependency("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.1")
       dependency("com.fasterxml.jackson.core:jackson-annotations:2.9.2")

@@ -23,12 +23,12 @@ mverse {
     testCompile(assertj())
     testCompile(assertK())
 //    fatJar(guava())
-    fatJar("jackson-annotations")
+//    fatJar("jackson-annotations")
     testCompile("jackson-core")
     testCompile("jackson-databind")
-    fatJar("kotlin-reflect")
-    fatJar("kotlin-stdlib")
-    fatJar("antlr4-runtime")
+//    fatJar("kotlin-reflect")
+//    fatJar("kotlin-stdlib")
+//    fatJar("antlr4-runtime")
   }
 
   dependencies["antlr"]("antlr4")
@@ -41,7 +41,9 @@ mverse {
 
 dependencies {
   // https://mvnrepository.com/artifact/org.antlr/antlr4
-  api("org.antlr:antlr4:4.9.3")
+  implementation("org.antlr:antlr4:4.9.3")
+  implementation("org.antlr:antlr4-runtime:4.9.3")
+
   testImplementation("junit:junit")
 }
 
