@@ -41,7 +41,7 @@ mverse {
 
 dependencies {
   // https://mvnrepository.com/artifact/org.antlr/antlr4
-  implementation("org.antlr:antlr4:4.9.3")
+  api("org.antlr:antlr4:4.9.3")
   testImplementation("junit:junit")
 }
 
