@@ -14,7 +14,8 @@ import java.util.concurrent.ExecutorService
 
 val provider = Liquify.provider
 
-data class LiquidEngine(private var internalParseSettings: LParseSettings = provider.defaultParseSettings,
+
+data class LiquidEngine @JvmOverloads constructor(private var internalParseSettings: LParseSettings = provider.defaultParseSettings,
                         private var internalRenderSettings: LRenderSettings = provider.defaultRenderSettings,
                         private var internalParser: LParser = internalParseSettings.toParser(),
                         private var internalRenderer: LRenderer = provider.createRenderer(internalParser, internalRenderSettings)) : LEngine, LParser, LRenderer {

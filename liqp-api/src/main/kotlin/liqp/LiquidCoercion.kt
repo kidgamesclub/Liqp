@@ -1,8 +1,10 @@
 package liqp
 
-import com.google.common.math.DoubleMath
+import java.lang.Double.*
+import java.lang.Math.getExponent
 import javax.json.*
 import kotlin.reflect.KClass
+
 
 interface LiquidCoercion {
     fun coerceToNumber(input: Any?): Number?
@@ -71,8 +73,33 @@ inline fun <reified R : Any> JsonValue.unboxOrNull(): R? {
     }
 }
 
+fun isFinite(d: Number): Boolean {
+    return Math.getExponent(d.toDouble()) <= MAX_EXPONENT
+}
+
+const val SIGNIFICAND_BITS = 52
+
 fun Number.isIntegral(): Boolean {
-    return DoubleMath.isMathematicalInteger(this.toDouble())
+
+        return isFinite(this)
+                && (this == 0.0
+                || SIGNIFICAND_BITS - java.lang.Long.numberOfTrailingZeros(getSignificand(this)) <= getExponent(this.toDouble()));
+}
+
+// The mask for the sign, according to the {@link
+// Double#doubleToRawLongBits(double)} spec.
+const val SIGNIFICAND_MASK: Long = 0x000fffffffffffffL
+
+/** The implicit 1 bit that is omitted in significands of normal doubles.  */
+const val IMPLICIT_BIT = SIGNIFICAND_MASK + 1
+
+fun getSignificand(d: Number): Long {
+    assert(isFinite(d)) { -> "not a normal value" }
+    val d = d.toDouble()
+    val exponent = getExponent(d)
+    var bits = doubleToRawLongBits(d)
+    bits = bits and SIGNIFICAND_MASK
+    return if (exponent == MIN_EXPONENT - 1) bits shl 1 else bits or IMPLICIT_BIT
 }
 
 val JsonNumber.integral: Boolean get() = numberValue()!!.isIntegral()

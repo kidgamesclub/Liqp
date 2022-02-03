@@ -1,6 +1,5 @@
 package liqp
 
-import com.google.common.collect.ImmutableList
 import liqp.filter.AbsFilter
 import liqp.filter.AppendFilter
 import liqp.filter.AtLeastFilter
@@ -75,7 +74,8 @@ object LiquidDefaults {
   @JvmStatic
   val defaultFilters: Filters by lazy {
     // Register all standard filter.
-    Filters(ImmutableList.of(
+    Filters(
+        listOf(
         AbsFilter(),
         AppendFilter(),
         AtLeastFilter(),
@@ -126,11 +126,12 @@ object LiquidDefaults {
         UniqFilter(),
         UpcaseFilter(),
         UrlDecodeFilter(),
-        UrlEncodeFilter()))
+        UrlEncodeFilter())
+    )
   }
 
   @JvmStatic
-  val defaultTags = Tags(ImmutableList.of(
+  val defaultTags = Tags(listOf(
       Assign(),
       Break(),
       Capture(),

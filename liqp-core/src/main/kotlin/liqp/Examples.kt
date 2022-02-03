@@ -2,7 +2,6 @@ package liqp
 
 import java.util.Collections.singletonMap
 
-import com.google.common.collect.ImmutableList
 import liqp.context.LContext
 import liqp.params.FilterParams
 import liqp.filter.LFilter
@@ -100,7 +99,7 @@ object Examples {
         }).toParser()
 
     val template = ctx.parse("{{ numbers | sum }}")
-    val rendered = template.render(singletonMap("numbers", ImmutableList.of(1, 2, 3, 4, 5)))
+    val rendered = template.render(singletonMap("numbers", listOf(1, 2, 3, 4, 5)))
     println(rendered)
   }
 

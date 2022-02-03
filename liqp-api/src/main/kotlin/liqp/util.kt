@@ -1,17 +1,13 @@
 package liqp
 
-import com.google.common.base.CaseFormat.LOWER_UNDERSCORE
-import com.google.common.base.CaseFormat.UPPER_CAMEL
-//import lang.json.parseJsrValue
-//import lang.json.unbox
+
 import liqp.filter.LFilter
 import liqp.tag.LTag
 import java.io.StringReader
 import java.math.BigInteger
 import javax.json.Json
 
-val SnakeCaseConverter = UPPER_CAMEL.converterTo(LOWER_UNDERSCORE)
-fun String.toSnakeCase() = SnakeCaseConverter.convert(this)!!
+
 
 fun String.parseJSON(): Any? {
   val reader = Json.createReader(StringReader(this))
@@ -54,4 +50,45 @@ fun <T : Any> Iterator<T>.find(filter: (T) -> Boolean): T {
   }
 
   throw NoSuchElementException()
+}
+
+fun String.toSnakeCase():String {
+
+
+  // Empty String
+  // Empty String
+  var result = ""
+
+  // Append first character(in lower case)
+  // to result string
+
+  // Append first character(in lower case)
+  // to result string
+  val c: Char = this[0]
+  result += c.lowercaseChar()
+
+  // Traverse the string from
+  // ist index to last index
+
+  // Traverse the string from
+  // ist index to last index
+  for (i in 1 until this.length) {
+    val ch: Char = this[i]
+
+    // Check if the character is upper case
+    // then append '_' and such character
+    // (in lower case) to result string
+    if (Character.isUpperCase(ch)) {
+      result = result + '_'
+      result = (result
+              + ch.lowercaseChar())
+    } else {
+      result = result + ch
+    }
+  }
+
+  // return the result
+
+  // return the result
+  return result
 }

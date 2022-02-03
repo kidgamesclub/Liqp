@@ -18,9 +18,9 @@ allprojects {
     coverageRequirement = 0.60
     dependencies {
 //      compile("klock-jvm")
-      compile("kotlin-stdlib-jdk8")
+      implementation("kotlin-stdlib-jdk8")
 //      compileOnly("kotlin-reflect")
-      testCompile("assertk-jvm")
+      testImplementation("assertk-jvm")
 //      compile("kotlinx-serialization-runtime")
 //      compile("kotlinx-collections-immutable")
     }

@@ -1,6 +1,5 @@
 package liqp.config
 
-import com.google.common.cache.CacheBuilder
 import liqp.LParser
 import liqp.Liquify
 import liqp.filter.Filters
@@ -26,7 +25,6 @@ interface LParseSettings {
   val isStripSingleLine: Boolean
   val maxTemplateSize: Long?
   val isKeepParseTree: Boolean
-  val cacheSettings: CacheSetup?
 
   fun withFilters(vararg filters: LFilter): LParseSettings
   fun withTags(vararg tags: LTag): LParseSettings
@@ -45,12 +43,11 @@ data class ParseSettings(override val tags: Tags = Liquify.provider.defaultTags,
                          override val isStripSpacesAroundTags: Boolean = false,
                          override val isStripSingleLine: Boolean = false,
                          override val maxTemplateSize: Long? = null,
-                         override val isKeepParseTree: Boolean = false,
-                         override val cacheSettings: CacheSetup? = null) : LParseSettings {
+                         override val isKeepParseTree: Boolean = false) : LParseSettings {
 
   constructor(settings: MutableParseSettings) : this(settings.tags, settings.filters, settings.baseDir, settings.includesDir,
       settings.isStrictVariables, settings.isStrictIncludes, settings.isStripSpacesAroundTags, settings.isStripSingleLine,
-      settings.maxTemplateSize, settings.isKeepParseTree, settings.cacheSettings)
+      settings.maxTemplateSize, settings.isKeepParseTree)
 
   override fun toMutableSettings(): MutableParseSettings {
     return MutableParseSettings(this)
@@ -85,7 +82,7 @@ data class MutableParseSettings(var tags: Tags = Liquify.provider.defaultTags,
 
   constructor(settings: ParseSettings) : this(settings.tags, settings.filters, settings.baseDir, settings.includesDir,
       settings.isStrictVariables, settings.isStrictIncludes, settings.isStripSpacesAroundTags, settings.isStripSingleLine,
-      settings.maxTemplateSize, settings.isKeepParseTree, settings.cacheSettings)
+      settings.maxTemplateSize, settings.isKeepParseTree)
 
   @JvmOverloads fun build(block: MutableParseSettings.() -> Unit = {}): ParseSettings = ParseSettings(this.apply(block))
 
@@ -159,18 +156,12 @@ data class MutableParseSettings(var tags: Tags = Liquify.provider.defaultTags,
     return this
   }
 
-  fun cacheSettings(cacheSettings: CacheSetup): MutableParseSettings {
-    this.cacheSettings = cacheSettings
-    return this
-  }
-
-
 }
 
-interface CacheSetup : Consumer<CacheBuilder<*, *>>
-
-fun <K, V> CacheBuilder<K, V>.withSettings(setup: CacheSetup?): CacheBuilder<K, V> {
-  setup?.accept(this)
-  return this
-}
-
+interface CacheSetup : Consumer<Any>
+//
+//fun <K, V> CacheBuilder<K, V>.withSettings(setup: CacheSetup?): CacheBuilder<K, V> {
+//  setup?.accept(this)
+//  return this
+//}
+//

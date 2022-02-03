@@ -10,24 +10,22 @@ plugins {
 }
 
 dependencies {
-  compile(project(":liqp-api"))
-  testCompile(project(":liqp-junit"))
+  implementation(project(":liqp-api"))
+  testImplementation(project(":liqp-junit"))
 }
 
 mverse {
   dependencies {
-    implementation("guava")
-//    implementation("klock-jvm")
-//    implementation("mverse-lang-jvm")
-
-    testCompile(junit())
-    testCompile(mockito())
-    testCompile(assertj())
-    testCompile(assertK())
+    implementation(guava())
+    implementation("kotlin-reflect")
+    testImplementation(junit())
+    testImplementation(mockito())
+    testImplementation(assertj())
+    testImplementation(assertK())
 //    fatJar(guava())
     fatJar("jackson-annotations")
-    testCompile("jackson-core")
-    testCompile("jackson-databind")
+    testImplementation("jackson-core")
+    testImplementation("jackson-databind")
     fatJar("kotlin-reflect")
     fatJar("kotlin-stdlib")
     fatJar("antlr4-runtime")
@@ -43,8 +41,8 @@ mverse {
 
 dependencies {
   // https://mvnrepository.com/artifact/org.antlr/antlr4
-  compile("org.antlr:antlr4:4.9.3")
-
+  implementation("org.antlr:antlr4:4.9.3")
+  testImplementation("junit:junit")
 }
 
 //configurations.compile.extendsFrom(configurations.fatJar)

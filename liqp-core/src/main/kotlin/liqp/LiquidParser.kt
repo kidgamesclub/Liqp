@@ -5,21 +5,12 @@ import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
 import liqp.config.LParseSettings
 import liqp.config.RenderSettings
-import liqp.config.withSettings
 import liqp.exceptions.InvalidTemplateException
 import liqp.node.LTemplate
 import liqp.parser.v4.NodeVisitor
 import liquid.parser.v4.LiquidLexer
 import liquid.parser.v4.LiquidParser
-import org.antlr.v4.runtime.BaseErrorListener
-import org.antlr.v4.runtime.CharStreams
-import org.antlr.v4.runtime.CommonTokenStream
-import org.antlr.v4.runtime.FailedPredicateException
-import org.antlr.v4.runtime.InputMismatchException
-import org.antlr.v4.runtime.LexerNoViableAltException
-import org.antlr.v4.runtime.NoViableAltException
-import org.antlr.v4.runtime.RecognitionException
-import org.antlr.v4.runtime.Recognizer
+import org.antlr.v4.runtime.*
 import org.antlr.v4.runtime.tree.ParseTree
 import java.io.File
 import java.io.FileNotFoundException
@@ -43,7 +34,7 @@ data class LiquidParser constructor(override val parseSettings: LParseSettings) 
   }
 
   private val cache: LoadingCache<String?, LiquidTemplate> = CacheBuilder.newBuilder()
-      .withSettings(parseSettings.cacheSettings)
+
       .build(CacheLoader.from { template: String? ->
         internalCreateTemplate(template!!)
       })
