@@ -21,5 +21,6 @@ interface LRenderer {
   fun executeWithContext(template: LTemplate, context: LContext): Any?
   fun renderWithContext(template: LTemplate, context: LContext): String
   fun getAccessor(lContext: LContext, prototype: Any, prop: String): Getter<Any>
+  fun getAccessorKey(prototype: Any, prop: String): String
   fun reconfigure(block: MutableRenderSettings.() -> Unit): LRenderer
 }

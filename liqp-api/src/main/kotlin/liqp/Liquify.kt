@@ -19,8 +19,13 @@ interface Liquify {
         createRenderer(parser, RenderSettings(parser.parseSettings).reconfigure { configure.accept(this) })
 
     fun createEngineJvm(
-        configureParser: Consumer<MutableParseSettings>?,
-        configureRenderer: Consumer<MutableRenderSettings>?
+        configureParser: Consumer<MutableParseSettings>? = null,
+        configureRenderer: Consumer<MutableRenderSettings>? = null,
+    ): LEngine
+
+    fun createEngine(
+        configureParser: Consumer<MutableParseSettings>?=null,
+        configureRenderer: Consumer<MutableRenderSettings>?=null
     ): LEngine
 
     fun createRenderer(parser: LParser, renderSettings: LRenderSettings = defaultRenderSettings): LRenderer

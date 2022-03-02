@@ -38,4 +38,20 @@ class DefaultLiquidSpi : Liquify {
         return LiquidEngine(parseSettings, renderSettings)
 
     }
+
+    override fun createEngine(
+        configureParser: Consumer<MutableParseSettings>?,
+        configureRenderer: Consumer<MutableRenderSettings>?
+    ): LEngine {
+        val parseSettings = defaultParseSettings.reconfigure {
+            configureParser?.accept(this)
+        }
+
+        val renderSettings = RenderSettings(parseSettings).reconfigure {
+            configureRenderer?.accept(this)
+        }
+
+        return LiquidEngine(parseSettings, renderSettings)
+
+    }
 }

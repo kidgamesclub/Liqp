@@ -28,6 +28,17 @@ data class PropertyAccessors(
       mutableMapOf(),
       mutableMapOf())
 
+  override fun getAccessorKey(sample: Any, propertyName: String):String {
+    val type = sample::class
+    return when (sample) {
+      is JsonObject -> "JSON.$propertyName"
+      is Map<*, *> -> "Map.$propertyName"
+      is Iterable<*> -> "List.$propertyName"
+      is Array<*> -> "List.$propertyName"
+      else -> "${type.jvmName}.$propertyName"
+    }
+  }
+
   /**
    * Wraps a value as a [PropertyAccessor] so we can resolve the child properties.
    * @param value The value that has children properties
@@ -35,10 +46,11 @@ data class PropertyAccessors(
    */
   override fun getAccessor(sample: Any, propertyName: String): Getter<Any> {
     val type = sample::class
+
     //
     // 1. First, look for cached accessor.  This should be cheap... the cost of the hash lookup
     //
-    val key = "${type.jvmName}.$propertyName"
+    val key = getAccessorKey(sample, propertyName)
     return cache.getOrPut(key) cache@{
       //
       // 1. Look in the synthetic methods.  These can be overridden at runtime, so we're
@@ -119,8 +131,8 @@ data class PropertyAccessors(
           .filter {
             (it.name == "get${name.capitalize()}"
                 || it.name == "is${name.capitalize()}")
-                && it.returnType != Unit::class
-                && it.returnType != Void::class
+                && it.returnType != Unit::class.java
+                && it.returnType != Void::class.java
                 && Modifier.isPublic(it.modifiers)
                 && it.parameterCount == 0
           }
@@ -135,8 +147,8 @@ data class PropertyAccessors(
     fun <T> findGetMethodForClass(type: Class<T>): Method? {
       return type.declaredMethods.firstOrNull {
         (it.name == "get"
-            && it.returnType != Unit::class
-            && it.returnType != Void::class
+            && it.returnType != Unit::class.java
+            && it.returnType != Void::class.java
             && Modifier.isPublic(it.modifiers)
             && it.parameterCount == 1
             && it.parameterTypes[0] == String::class.java)

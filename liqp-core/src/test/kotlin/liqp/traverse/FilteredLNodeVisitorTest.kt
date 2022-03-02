@@ -1,11 +1,13 @@
 package liqp.traverse
 
+import assertk.assert
+import assertk.assertions.contains
+import assertk.assertions.containsAll
 import liqp.isTag
 import liqp.createParseSettings
 import liqp.nodes.LookupNode
 import liqp.tags.If
 import liqp.toParser
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class FilteredLNodeVisitorTest {
@@ -25,7 +27,7 @@ class FilteredLNodeVisitorTest {
         .map { it.toString() }
         .toSet()
 
-    assertThat(lookupNames).containsExactlyInAnyOrder("root.branch.leaf",
+    assert(lookupNames).containsAll("root.branch.leaf",
         "child.parent.grandparent.name",
         "parents.children",
         "person.name")
@@ -50,7 +52,7 @@ class FilteredLNodeVisitorTest {
       }
     }
 
-    assertThat(namesInsideIfs).containsExactlyInAnyOrder("child.parent.grandparent.name",
+    assert(namesInsideIfs).containsAll("child.parent.grandparent.name",
         "parents.children",
         "person.name")
   }

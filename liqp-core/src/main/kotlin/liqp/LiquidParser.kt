@@ -34,7 +34,6 @@ data class LiquidParser constructor(override val parseSettings: LParseSettings) 
   }
 
   private val cache: LoadingCache<String?, LiquidTemplate> = CacheBuilder.newBuilder()
-
       .build(CacheLoader.from { template: String? ->
         internalCreateTemplate(template!!)
       })
@@ -55,7 +54,7 @@ data class LiquidParser constructor(override val parseSettings: LParseSettings) 
       true -> tree
     }
     val renderer = LiquidRenderer(parser = this, renderSettings = this.toRenderSettings())
-    return LiquidTemplate(rootNode, parseTree, this, renderer)
+    return LiquidTemplate(rootNode, parseTree, this, providedRenderer = renderer)
   }
 
   fun createLexer(template: String): LiquidLexer {

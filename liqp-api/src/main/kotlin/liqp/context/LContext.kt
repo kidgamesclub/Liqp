@@ -49,6 +49,7 @@ interface LContext : LLogic, HasProperties {
   fun parseFile(file: File): LTemplate
   fun render(template: LTemplate): String
   fun getAccessor(container: Any, prop: String): Getter<Any>
+  fun getAccessorKey(container: Any, prop: String): String
   fun reset(): LContext
 
   operator fun <R> invoke(block: LContext.() -> R): R = block()

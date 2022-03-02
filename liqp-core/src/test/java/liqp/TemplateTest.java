@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.google.common.collect.ImmutableMap;
 import javax.json.stream.JsonParsingException;
 import org.junit.Test;

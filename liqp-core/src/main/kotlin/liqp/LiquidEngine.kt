@@ -37,6 +37,7 @@ data class LiquidEngine @JvmOverloads constructor(private var internalParseSetti
   override fun executeWithContext(template: LTemplate, context: LContext): Any? = renderer.executeWithContext(template, context)
   override fun renderWithContext(template: LTemplate, context: LContext): String = renderer.renderWithContext(template, context)
   override fun getAccessor(lContext: LContext, prototype: Any, prop: String): Getter<Any> = renderer.getAccessor(lContext, prototype, prop)
+  override fun getAccessorKey(prototype: Any, prop: String) = renderer.getAccessorKey(prototype, prop)
   override fun reconfigure(block: MutableRenderSettings.() -> Unit): LRenderer = renderer.reconfigure(block)
 
   override fun reset() {

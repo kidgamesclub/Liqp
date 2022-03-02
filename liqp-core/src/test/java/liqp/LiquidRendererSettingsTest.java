@@ -32,11 +32,11 @@ public class LiquidRendererSettingsTest {
   @Test
   public void renderstrictVariables2() {
     Assertions.assertThatCode(() -> liquify.createParserJvm(settings -> settings.setStrictVariables(true))
-          .parse("{{mu}} {{qwe.asd.zxc}}")
-          .render(Collections.singletonMap("mu", "muValue"), Locale.US, ZoneId.systemDefault()))
-          .describedAs("Should throw missing variable exception")
-          .isInstanceOf(MissingVariableException.class)
-          .matches(ex -> {
+                                           .parse("{{mu}} {{qwe.asd.zxc}}")
+                                           .render(Collections.singletonMap("mu", "muValue"), Locale.US, ZoneId.systemDefault()))
+              .describedAs("Should throw missing variable exception")
+              .isInstanceOf(MissingVariableException.class)
+              .matches(ex -> {
             Assertions.assertThat(((MissingVariableException) ex).getVariableName()).isEqualToIgnoringCase("qwe.asd" +
                   ".zxc");
             return true;

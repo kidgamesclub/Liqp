@@ -195,6 +195,7 @@ data class RenderContext @JvmOverloads constructor(override val inputData: Any?,
   override fun parseFile(file: File): LTemplate = parser.parseFile(file)
   override fun render(template: LTemplate): String = renderer.renderWithContext(template, this)
   override fun getAccessor(container: Any, prop: String): Getter<Any> = renderer.getAccessor(this, container, prop)
+  override fun getAccessorKey(container: Any, prop: String) = renderer.getAccessorKey(container, prop)
 
   override fun withFrame(block: () -> Any?): Any? {
     pushFrame()

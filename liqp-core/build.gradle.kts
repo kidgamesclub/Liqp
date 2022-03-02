@@ -45,6 +45,9 @@ dependencies {
   implementation("org.antlr:antlr4-runtime:4.9.3")
 
   testImplementation("junit:junit")
+  // https://mvnrepository.com/artifact/org.assertj/assertj-core
+  testImplementation("org.assertj:assertj-core:3.22.0")
+
 }
 
 //configurations.compile.extendsFrom(configurations.fatJar)

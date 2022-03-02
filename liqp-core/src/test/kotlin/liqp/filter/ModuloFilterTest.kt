@@ -7,7 +7,6 @@ import liqp.LiquidParser
 import liqp.Mocks
 import liqp.createTestParser
 import liqp.exceptions.LiquidRenderingException
-import org.assertj.core.api.Assertions
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -40,7 +39,7 @@ class ModuloFilterTestParameterized(val template: String, val expected: String) 
 class ModuloFilterTest {
   @Test(expected = LiquidRenderingException::class)
   fun invalid1() {
-    Assertions.assertThat(
+    assert(
         modulo.onFilterAction(context, 1))
         .isEqualTo(1L)
   }

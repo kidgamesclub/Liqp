@@ -1,9 +1,9 @@
 package liqp.parameterized
 
-import liqp.LiquidParser
+import assertk.assert
+import assertk.assertions.isEqualTo
 import liqp.createTestParser
 import liqp.parseIfNecessary
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -20,6 +20,6 @@ abstract class LiquifyNoInputTest @JvmOverloads constructor(val templateString: 
     }
     val rendered = template.render(input)
 
-    assertThat(rendered).isEqualTo(expectedResult)
+    assert(rendered).isEqualTo(expectedResult)
   }
 }

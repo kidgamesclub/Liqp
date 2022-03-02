@@ -9,4 +9,5 @@ interface LAccessors {
    * @return A valid property container, or null if no property accessor could be created
    */
   fun getAccessor(sample: Any, propertyName: String): Getter<Any>
+  fun getAccessorKey(sample: Any, propertyName: String): String
 }

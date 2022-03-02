@@ -23,6 +23,9 @@ interface HasProperties : PropertyGetter {
   }
 }
 
+/**
+ * Hides some of the kotlin-y things
+ */
 @Suppress("UNCHECKED_CAST")
 abstract class HasPropertiesJvm() : HasProperties {
   abstract override fun <T:Any> getValue(propName: String): T?

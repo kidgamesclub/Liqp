@@ -6,7 +6,6 @@ import assertk.assertions.isFalse
 import liqp.ComparisonResult.*
 import liqp.LogicResult.*
 import liqp.LogicResult.NOOP
-import org.assertj.core.api.Assertions
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -17,7 +16,7 @@ class StrictLogicTestIsTrue(val input: Any?, val expected: Boolean) {
   @Test
   fun testIsTrue() {
     val found = StrictLogic().isTrue(input)
-    Assertions.assertThat(found).isEqualTo(expected)
+    assert(found).isEqualTo(expected)
   }
 
   companion object {
@@ -37,7 +36,7 @@ class StrictLogicTestIsFalse(val input: Any?, val expected: Boolean) {
   @Test
   fun testIsFalse() {
     val found = StrictLogic().isFalse(input)
-    Assertions.assertThat(found).isEqualTo(expected)
+    assert(found).isEqualTo(expected)
   }
 
   companion object {
