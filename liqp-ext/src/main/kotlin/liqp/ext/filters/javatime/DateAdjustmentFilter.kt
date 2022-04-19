@@ -15,9 +15,9 @@ typealias LocalDateTimeAdjustment = LocalDateTime.(Long)->LocalDateTime
 
 abstract class DateAdjustmentFilter : LFilter() {
 
-  abstract val offsetAdjust:OffsetAdjustment
-  abstract val localTimeAdjust:LocalTimeAdjustment
-  abstract val localDateTimeAdjust:LocalDateTimeAdjustment
+  open val offsetAdjust: OffsetAdjustment = { _ -> this }
+  open val localTimeAdjust: LocalTimeAdjustment = { _ -> this }
+  open val localDateTimeAdjust: LocalDateTimeAdjustment = { _ -> this }
 
   override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
     val num = params[0, 0L]
