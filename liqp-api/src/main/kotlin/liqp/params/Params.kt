@@ -34,12 +34,24 @@ abstract class FilterParams : Iterable<Any?> {
   val size get() = params.size
   val isEmpty: Boolean by lazy { params.isEmpty() }
 
+
   inline operator fun <reified T : Any> get(index: Int): T? {
     val value = params.getOrNull(index)
     return when {
       value is T? -> value
       coercion != null -> coercion!!.coerceOrNull(value, T::class.java)
       else -> throw ClassCastException("Unable to convert $value to ${T::class.java}")
+    }
+  }
+
+  @JvmOverloads
+  fun getParam(index: Int, type: Class<*>? = null): Any? {
+    val value = params.getOrNull(index)
+    return when{
+      value == null -> null
+      type == null -> value
+      type.isAssignableFrom(value.javaClass) -> value
+      else-> coercion!!.coerceOrNull(value, type)
     }
   }
 

@@ -15,6 +15,7 @@ interface LRenderSettings {
   val maxIterations: Int
   val maxStackSize: Int
   val isUseTruthyChecks: Boolean
+  val ignoreProvidedTimezone: Boolean
   val baseDir: File
   val includesDir: String
   val maxSizeRenderedString: Int
@@ -34,6 +35,7 @@ data class RenderSettings @JvmOverloads constructor(override val baseDir: File,
                           override val maxIterations: Int = Integer.MAX_VALUE,
                           override val maxStackSize: Int = 100,
                           override val isUseTruthyChecks: Boolean = false,
+                          override val ignoreProvidedTimezone: Boolean = false,
                           override val maxSizeRenderedString: Int = Integer.MAX_VALUE,
                           override val maxRenderTimeMillis: Long = Long.MAX_VALUE,
                           override val defaultDateFormat: Char = 'c',
@@ -66,6 +68,7 @@ data class MutableRenderSettings @JvmOverloads constructor(internal var settings
   var maxSizeRenderedString by delegate(settings::maxSizeRenderedString, this::withMaxSizeRenderedString)
   var maxRenderTimeMillis by delegate(settings::maxRenderTimeMillis, this::withMaxRenderTimeMillis)
   var defaultDateFormat by delegate(settings::defaultDateFormat, this::withDefaultDateFormat)
+  var ignoreProvidedTimezone by delegate(settings::ignoreProvidedTimezone, this::withIgnoreProvidedTimezone)
   var defaultLocale by delegate(settings::defaultLocale, this::withDefaultLocale)
   var defaultTimezone by delegate(settings::defaultTimezone, this::withDefaultTimezone)
   var executor by delegate(settings::executor, this::withExecutor)
@@ -117,6 +120,11 @@ data class MutableRenderSettings @JvmOverloads constructor(internal var settings
 
   fun withDefaultDateFormat(defaultDateFormat: Char): MutableRenderSettings {
     settings = settings.copy(defaultDateFormat = defaultDateFormat)
+    return this
+  }
+
+  fun withIgnoreProvidedTimezone(ignoreProvidedTimezone: Boolean): MutableRenderSettings {
+    settings = settings.copy(ignoreProvidedTimezone = ignoreProvidedTimezone)
     return this
   }
 

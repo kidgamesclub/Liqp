@@ -56,18 +56,13 @@ class DateFilter : LFilter() {
                               params: FilterParams): Any? {
 
     context.run {
+      val ignoreTimezone = renderSettings.ignoreProvidedTimezone
+      var date = convertToZonedDateTime(context, value) ?: return null
       val zone = context.timezone
-      val locale = context.locale
-      val date: TemporalAccessor? = when (value) {
-        null -> return value //Exits completely
-        "now" -> ZonedDateTime.now(zone)
-        "now()" -> ZonedDateTime.now(zone)
-        is java.util.Date -> ZonedDateTime.ofInstant(value.toInstant(), zone)
-        is OffsetDateTime -> value.atZoneSameInstant(zone)
-//        is DateTimeTz -> value.toOffsetDateTime().atZoneSameInstant(zone)
-        is Number -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(value.toLong()), zone)
-        else -> tryParse(context, value.toString(), locale, zone)
-      } ?: throw LiquidRenderingException("Unable to extract date from $value")
+
+      if (!ignoreTimezone) {
+          date = date.withZoneSameInstant(zone)
+      }
 
       // Default date format provided by render context.  Defaults to 'c' (see format table below)
       val outputFormat = asString(params[0])
@@ -103,41 +98,59 @@ class DateFilter : LFilter() {
     }
   }
 
-  /**
-   * Try to parse `str` into a Date and return this Date as seconds
-   * since EPOCH, or null if it could not be parsed.
-   */
-  private fun tryParse(context:LContext, str: String, locale: Locale, zone: ZoneId): ZonedDateTime? {
-    if (context.isIntegral(str)) {
-      return ZonedDateTime.ofInstant(Instant.ofEpochSecond(context.asLong(str)!!), zone)
-    }
-
-    val parsed = parsers
-        .getOrPut(locale, {
-          setOf(
-              DateTimeFormatter.ISO_ZONED_DATE_TIME,
-              DateTimeFormatter.ISO_OFFSET_DATE_TIME,
-              DateTimeFormatter.ISO_DATE_TIME,
-              *parseFmtStrings.map {
-                DateTimeFormatter.ofPattern(it, locale)
-                    .withResolverStyle(ResolverStyle.SMART)
-
-              }.toTypedArray())
-        })
-        .mapNotNull {
-          swallow {
-            val parsed = it.parse(str)
-            parsed
+  companion object {
+      @JvmStatic
+      fun convertToZonedDateTime(context:LContext, value: Any?) :ZonedDateTime? {
+          val zone = context.timezone
+          val locale = context.locale
+          var date: ZonedDateTime = when (value) {
+              null -> return null //Exits completely
+              "now" -> ZonedDateTime.now(zone)
+              "now()" -> ZonedDateTime.now(zone)
+              is java.util.Date -> ZonedDateTime.ofInstant(value.toInstant(), zone)
+              is OffsetDateTime -> value.toZonedDateTime()
+//        is DateTimeTz -> value.toOffsetDateTime().atZoneSameInstant(zone)
+              is Number -> ZonedDateTime.ofInstant(Instant.ofEpochSecond(value.toLong()), zone)
+              is ZonedDateTime -> value
+              else -> tryParse(context, value.toString(), locale, zone)
+          } ?: throw LiquidRenderingException("Unable to extract date from $value")
+          return date
+      }
+      /**
+       * Try to parse `str` into a Date and return this Date as seconds
+       * since EPOCH, or null if it could not be parsed.
+       */
+      @JvmStatic
+      fun tryParse(context:LContext, str: String, locale: Locale, zone: ZoneId): ZonedDateTime? {
+          if (context.isIntegral(str)) {
+              return ZonedDateTime.ofInstant(Instant.ofEpochSecond(context.asLong(str)!!), zone)
           }
-        }
-        .firstOrNull() ?: return null
 
-    // Do some safe checks to see what type of date/time we can support
-    return when {
-      parsed.isSupported(ChronoField.OFFSET_SECONDS) -> OffsetDateTime.from(parsed).atZoneSameInstant(zone)
-      parsed.isSupported(ChronoField.HOUR_OF_DAY) -> LocalDateTime.from(parsed).atZone(zone)
-      else -> LocalDate.from(parsed).atStartOfDay(zone)
-    }
+          val parsed = parsers
+              .getOrPut(locale) {
+                  setOf(
+                      DateTimeFormatter.ISO_ZONED_DATE_TIME,
+                      DateTimeFormatter.ISO_OFFSET_DATE_TIME,
+                      DateTimeFormatter.ISO_DATE_TIME,
+                      *parseFmtStrings.map {
+                          DateTimeFormatter.ofPattern(it, locale)
+                              .withResolverStyle(ResolverStyle.SMART)
+                      }.toTypedArray()
+                  )
+              }.firstNotNullOfOrNull {
+                  swallow {
+                      val parsed = it.parse(str)
+                      parsed
+                  }
+              } ?: return null
+
+          // Do some safe checks to see what type of date/time we can support
+          return when {
+              parsed.isSupported(ChronoField.OFFSET_SECONDS) -> OffsetDateTime.from(parsed).toZonedDateTime()
+              parsed.isSupported(ChronoField.HOUR_OF_DAY) -> LocalDateTime.from(parsed).atZone(zone)
+              else -> LocalDate.from(parsed).atStartOfDay(zone)
+          }
+      }
   }
 }
 
