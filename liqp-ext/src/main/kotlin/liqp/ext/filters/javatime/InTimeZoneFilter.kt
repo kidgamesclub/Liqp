@@ -11,7 +11,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 
-class InTimeZoneFilter : LFilter("in_timezone") {
+class InTimeZoneFilter : LFilter("in_timezone", "in_time_zone") {
     override fun onFilterAction(
         context: LContext, value: Any?, params: FilterParams): Any? {
         val date = DateFilter.convertToZonedDateTime(context, value) ?: return null
