@@ -17,6 +17,8 @@ val EXTRA_FILTERS = Filters(
     DarkenFilter(),
     ToRgbFilter(),
     CustomDateTimeFormatFilter(),
+    DurationFilter(),
+    AddDurationFilter(),
     InTimeZoneFilter(),
     FullDateTimeFormatFilter(),
     IsoDateTimeFormatFilter(),
