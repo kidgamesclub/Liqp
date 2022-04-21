@@ -5,6 +5,8 @@ import assertk.assertions.isEqualTo
 import liqp.LiquidParser
 import liqp.assertThat
 import liqp.createParseSettings
+import liqp.ext.filters.javatime.DurationFilter
+import liqp.ext.filters.javatime.PlusDurationFilter
 import liqp.ext.filters.strings.StripHtmlFilter
 import liqp.toParser
 import org.junit.Test

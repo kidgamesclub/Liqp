@@ -4,10 +4,9 @@ import liqp.context.LContext
 import liqp.filter.DateFilter
 import liqp.filter.LFilter
 import liqp.params.FilterParams
-import java.util.*
 import kotlin.time.Duration
 
-class AddDurationFilter : LFilter("plus_duration") {
+class PlusDurationFilter : LFilter("plus_duration") {
     override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
         val date = DateFilter.convertToZonedDateTime(context, value) ?: return null
 

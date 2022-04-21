@@ -10,8 +10,8 @@ import kotlin.time.Duration
 class DurationFilter : LFilter("duration") {
     override fun onFilterAction(
         context: LContext, value: Any?, params: FilterParams): Any? {
-
-        val isoDuration = Duration.parseIsoString(context.asString(value) ?: return null)
+        val durationString = context.asString(value) ?: return null
+        val isoDuration = Duration.parseIsoString(durationString)
         return formatDuration(isoDuration)
     }
 
@@ -22,17 +22,19 @@ class DurationFilter : LFilter("duration") {
                 parts.add(plural(days, "day"))
             }
             if (hours > 0) {
-                parts.add(plural(hours.toLong(), "hour"))
+                parts.add(plural(hours, "hour"))
             }
             if (minutes > 0) {
-                parts.add(plural(minutes.toLong(), "minute"))
+                parts.add(plural(minutes, "minute"))
             }
-            parts.add(plural(seconds.toLong(), "second"))
+            if(seconds > 0) {
+                parts.add(plural(seconds, "second"))
+            }
             parts.join(", ");
         }
 
     }
-    private fun plural(num: Long, unit: String): String {
-        return num.toString() + " " + unit + if (num == 1L) "" else "s"
+    private fun plural(num: Number, unit: String): String {
+        return num.toString() + " " + unit + if (num.toLong() == 1L) "" else "s"
     }
 }
