@@ -7,6 +7,7 @@ import liqp.node.LNode
 import liqp.params.ResolvableNamedParams
 import liqp.safeSlice
 import liqp.tag.LTag
+import java.util.*
 
 class For : LTag() {
 
@@ -94,7 +95,7 @@ class For : LTag() {
       i++
     }
 
-    context.setRoot(CONTINUE.name.toLowerCase(), continueIndex + 1)
+    context.setRoot(CONTINUE.name.lowercase(Locale.getDefault()), continueIndex + 1)
     return results
   }
 

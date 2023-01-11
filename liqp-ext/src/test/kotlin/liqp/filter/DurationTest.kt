@@ -20,7 +20,7 @@ class DurationFilterTestParameterized(val template: String, val expected: String
     fun params() =
         arrayOf(
             arrayOf("{{ '2012-10-01T00:00:00Z' | plus_duration: 'PT25H' }}", "2012-10-02T01:00Z"),
-            arrayOf("{{ 'P3DT10M15S' | duration }}", "3 days, 12 minutes, 15 seconds"))
+            arrayOf("{{ 'P3DT12M15S' | duration }}", "3 days, 12 minutes, 15 seconds"))
   }
 
   @Test

@@ -17,12 +17,8 @@ allprojects {
 
     coverageRequirement = 0.60
     dependencies {
-//      compile("klock-jvm")
       implementation("kotlin-stdlib-jdk8")
-//      compileOnly("kotlin-reflect")
       testImplementation("assertk-jvm")
-//      compile("kotlinx-serialization-runtime")
-//      compile("kotlinx-collections-immutable")
     }
   }
 
@@ -59,11 +55,16 @@ allprojects {
     }
   }
 
+  tasks.withType<JavaCompile> {
+    sourceCompatibility = "11"
+    targetCompatibility = "11"
+  }
+
   tasks.withType<KotlinCompile> {
     val isTestSource = name.endsWith("compileTestKotlin")
     kotlinOptions {
       jvmTarget = "11"
-      freeCompilerArgs += listOf("-Xjsr305=strict", "-Xjvm-default-option", "-XXLanguage:+InlineClasses", "-Xuse-experimental=kotlin.Experimental", "-Xno-optimized-callable-references")
+      freeCompilerArgs += listOf("-Xjsr305=strict", "-Xjvm-default-option", "-Xopt-in=kotlin.Experimental", "-Xno-optimized-callable-references")
       suppressWarnings = isTestSource
     }
   }
@@ -105,30 +106,12 @@ fun DependenciesHandler.installKotlinDeps() {
   }
 
   dependencySet("org.jetbrains.kotlinx:$kotlinSerialization") {
-//    entry("kotlinx-serialization-runtime")
-//    entry("kotlinx-serialization-runtime-common")
-//    entry("kotlinx-serialization-runtime-jsonparser")
+
   }
 }
 
 fun DependenciesHandler.installMverseShared() {
   val mverseShared: String by project
-
-//  dependencySet("io.mverse:$mverseShared") {
-//    entry("mverse-json")
-//    entry("mverse-extensions")
-//    entry("mverse-i18n")
-//    entry("mverse-lang-jvm")
-//    entry("mverse-lang-common")
-//    entry("mverse-log-common")
-//    entry("mverse-log-jvm")
-//    entry("mverse-test-common")
-//    entry("mverse-test-jvm")
-//    entry("mverse-coroutines-common")
-//    entry("mverse-coroutines-jvm")
-//    entry("mverse-events-common")
-//    entry("mverse-events-jvm")
-//  }
 }
 
 

@@ -2,6 +2,7 @@ package liqp.filter
 
 import liqp.context.LContext
 import liqp.params.FilterParams
+import java.util.*
 
 class SortNaturalFilter : LFilter() {
 
@@ -11,7 +12,7 @@ class SortNaturalFilter : LFilter() {
         return value
       }
       return asIterable(value)
-          .sortedBy{context.asString(it)?.toLowerCase()}
+          .sortedBy { context.asString(it)?.lowercase(Locale.getDefault()) }
     }
   }
 }

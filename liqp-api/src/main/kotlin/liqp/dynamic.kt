@@ -3,6 +3,7 @@ package liqp
 import liqp.ComparisonResult.EQUAL
 import liqp.ComparisonResult.GREATER
 import liqp.ComparisonResult.LESS
+import java.util.*
 
 interface InstanceFacts {
   fun isIterable(t: Any?): Boolean
@@ -99,12 +100,12 @@ enum class ComparisonResult {
 }
 
 enum class LogicResult {
-  NOOP,
-  TRUE,
-  FALSE;
+    NOOP,
+    TRUE,
+    FALSE;
 
-  val str = name.toLowerCase()
-  override fun toString() = str
+    val str = name.lowercase(Locale.getDefault())
+    override fun toString() = str
 }
 
 fun Int.toComparisonResult(): ComparisonResult {

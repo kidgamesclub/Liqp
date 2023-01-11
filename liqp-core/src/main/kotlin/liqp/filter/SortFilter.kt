@@ -20,7 +20,7 @@ class SortFilter : LFilter() {
     val v = value ?: return null
 
     context.run {
-      val list: List<Any?> = asIterable(value).toList()
+      val list: List<Any?> = asIterable(v).toList()
       val property = asString(params[0])
 
       val sorter:Sorter = when (property) {

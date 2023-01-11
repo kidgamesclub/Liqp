@@ -2,6 +2,7 @@ package liqp.filter
 
 import liqp.context.LContext
 import liqp.params.FilterParams
+import java.util.*
 
 class UpcaseFilter : LFilter("upcase", "upper") {
 
@@ -11,6 +12,6 @@ class UpcaseFilter : LFilter("upcase", "upper") {
    * convert a input string to UPCASE
    */
   override fun onFilterAction(context: LContext, value: Any?, params: FilterParams): Any? {
-    return context.asString(value)?.toUpperCase()
+    return context.asString(value)?.uppercase(Locale.getDefault())
   }
 }

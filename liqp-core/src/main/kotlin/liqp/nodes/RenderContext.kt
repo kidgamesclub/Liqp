@@ -94,8 +94,8 @@ data class RenderContext @JvmOverloads constructor(override val inputData: Any?,
     }
   }
 
-  override fun reconfigure(block: MutableRenderSettings.() -> Unit): LContext {
-    val renderSettings = renderSettings.toMutableSettings().apply(block).build()
+  override fun reconfigure(configure: MutableRenderSettings.() -> Unit): LContext {
+    val renderSettings = renderSettings.toMutableSettings().apply(configure).build()
     return copy(
         renderer = renderer.withRenderSettings(renderSettings),
         renderSettings = renderSettings)

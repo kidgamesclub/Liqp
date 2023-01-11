@@ -4,6 +4,7 @@ import liqp.context.LContext
 import liqp.params.FilterParams
 import liqp.filter.LFilter
 import java.awt.Color
+import java.util.*
 
 class DarkenFilter : LFilter() {
 
@@ -11,12 +12,12 @@ override fun onFilterAction(context: LContext, value: Any?, params: FilterParams
     var ret = value
 
     if (value is String && params.size == 1) {
-      val darkenAmount = params[0, 0.0]
+        val darkenAmount = params[0, 0.0]
 
-      val decoded = Color.decode(value)
-      val darker = darker(decoded, darkenAmount)
+        val decoded = Color.decode(value)
+        val darker = darker(decoded, darkenAmount)
 
-      ret = "#" + Integer.toHexString(darker.rgb).substring(2).toUpperCase()
+        ret = "#" + Integer.toHexString(darker.rgb).substring(2).uppercase(Locale.getDefault())
     }
 
     return ret

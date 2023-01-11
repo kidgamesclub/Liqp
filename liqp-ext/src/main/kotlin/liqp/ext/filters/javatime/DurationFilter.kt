@@ -4,14 +4,13 @@ import liqp.context.LContext
 import liqp.filter.LFilter
 import liqp.join
 import liqp.params.FilterParams
-import java.util.*
 import kotlin.time.Duration
 
 class DurationFilter : LFilter("duration") {
     override fun onFilterAction(
         context: LContext, value: Any?, params: FilterParams): Any? {
         val durationString = context.asString(value) ?: return null
-        val isoDuration = Duration.parseIsoString(durationString)
+        val isoDuration = Duration.parseIsoStringOrNull(durationString) ?: return null
         return formatDuration(isoDuration)
     }
 
