@@ -6,7 +6,6 @@ plugins {
   kotlin("jvm")
   id("io.mverse.project")
   id("io.mverse.multi-module")
-//  id("com.github.johnrengelman.shadow") version "5.1.0"
   java
 }
 
