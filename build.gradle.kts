@@ -3,7 +3,8 @@ import io.spring.gradle.dependencymanagement.dsl.DependenciesHandler
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-
+  id("io.mverse.project")
+  id("io.mverse.multi-module")
 }
 
 
