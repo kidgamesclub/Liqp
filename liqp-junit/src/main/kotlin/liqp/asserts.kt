@@ -119,7 +119,7 @@ inline fun <reified T : Any> T?.asserting(): Assert<T> {
             fail("Expected non-null value for ${T::class.qualifiedName}")
             TODO()
         }
-        else -> assertk.assert(this)
+        else -> assertk.assertThat(this)
     }
 }
 
@@ -147,11 +147,11 @@ fun <T : Any> assertThat(subject: T?): Assert<T> {
             fail("Expected non-null value")
             TODO()
         }
-        else -> assertk.assert(subject)
+        else -> assertk.assertThat(subject)
     }
 }
 
 inline fun <reified T : Any> T?.assertNullable(): Assert<T?> {
-    return assertk.assert(this)
+    return assertk.assertThat(this)
 }
 

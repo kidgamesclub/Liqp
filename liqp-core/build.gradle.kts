@@ -3,74 +3,40 @@ import io.mverse.gradle.sourceSets
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
-  java
-//  id("com.github.johnrengelman.shadow")
+    id("java-project-conventions")
   id("antlr")
-  kotlin("jvm")
 }
 
 dependencies {
+  implementation(libs.guava)
+  implementation(libs.kotlin.reflect)
+  testImplementation(libs.bundles.testLibs)
+  testImplementation(libs.bundles.jackson)
+
   implementation(project(":liqp-api"))
   testImplementation(project(":liqp-junit"))
+  implementation(rootProject.libs.guava)
+  implementation(libs.bundles.antlr)
+
+  antlr(libs.antlr4)
+  testImplementation(libs.jsoup)
+}
+tasks["compileKotlin"].dependsOn("generateGrammarSource")
+
+sourceSets.main?.withConvention(KotlinSourceSet::class) {
+
+  kotlin.srcDir(file("build/classes/generated-src/antlr/main"))
 }
 
-mverse {
-  dependencies {
-    implementation(guava())
-    implementation("kotlin-reflect")
-    testCompile(junit())
-    testCompile(mockito())
-    testCompile(assertj())
-    testCompile(assertK())
-//    fatJar(guava())
-//    fatJar("jackson-annotations")
-    testCompile("jackson-core")
-    testCompile("jackson-databind")
-//    fatJar("kotlin-reflect")
-//    fatJar("kotlin-stdlib")
-//    fatJar("antlr4-runtime")
-  }
-
-  dependencies["antlr"]("antlr4")
-  dependencies["testRuntime"]("jsoup")
-
-  sourceSets.main?.withConvention(KotlinSourceSet::class) {
-    kotlin.srcDir(file("build/classes/generated-src/antlr/main"))
-  }
-}
-
-dependencies {
-  // https://mvnrepository.com/artifact/org.antlr/antlr4
-  implementation("org.antlr:antlr4:4.9.3")
-  implementation("org.antlr:antlr4-runtime:4.9.3")
-
-  testImplementation("junit:junit")
-  // https://mvnrepository.com/artifact/org.assertj/assertj-core
-  testImplementation("org.assertj:assertj-core:3.22.0")
-
-}
-
-//configurations.compile.extendsFrom(configurations.fatJar)
-
-//##### Configure shadow jar ##### //
-//val shadowJar: ShadowJar by tasks
-//shadowJar.apply {
-//  configurations = listOf(project.configurations.fatJar)
-//  relocate("com.fasterxml", "kg.com.fasterxml")
-//  relocate("one", "kg.one")
-//}
-
-//tasks["assemble"].dependsOn(shadowJar)
-
-// #### Configure antlr ##### //
-// ########################## //
 sourceSets.main?.withConvention(KotlinSourceSet::class) {
   kotlin.srcDir(file("build/generated-src/antlr/main"))
 }
+
+// #### Configure antlr ##### //
+// ########################## //
 
 tasks.withType(AntlrTask::class.java) {
   arguments = listOf("-visitor", "-package", "liquid.parser.v4", "-Xexact-output-dir")
   outputDirectory = project.file("build/generated-src/antlr/main/liquid/parser/v4")
 }
 
-tasks["compileKotlin"].dependsOn("generateGrammarSource")

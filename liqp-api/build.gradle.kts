@@ -1,10 +1,8 @@
 plugins {
-  kotlin("jvm")
-  java
+    id("java-project-conventions")
 }
 
-mverse {
-  dependencies {
-    implementation("javax.json:javax.json-api:1.1.3")
-  }
+dependencies {
+  implementation("javax.json:javax.json-api:1.1.3")
 }
+
