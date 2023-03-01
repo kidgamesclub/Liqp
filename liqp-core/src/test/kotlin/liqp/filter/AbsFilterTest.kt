@@ -1,6 +1,6 @@
 package liqp.filter
 
-import assertk.assert
+import assertk.assertThat
 import assertk.assertions.isEqualTo
 import liqp.LiquidParser
 import liqp.createTestParser
@@ -16,7 +16,7 @@ class AbsFilterTest(val template: String, val expected: String) {
   fun applyTest() {
     val template = createTestParser{}.parse(template)
     val rendered = template.render()
-    assert(rendered).isEqualTo(expected)
+    assertThat(rendered).isEqualTo(expected)
   }
 
   companion object {

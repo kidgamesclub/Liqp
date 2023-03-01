@@ -53,17 +53,17 @@ class TemplateRenderAssert(val template: LTemplate? = null,
   @JvmOverloads
   fun hasRenderError(type: Class<out Throwable> = Throwable::class.java): TemplateRenderAssert {
     if (template == null && error != null) {
-      fail("There was a failure, but it happened during parsing $error")
+      return fail("There was a failure, but it happened during parsing $error")
     }
     assertThat(error).`as`("Should have thrown error but didn't Rendered: %s", this.renderResult)
-        .isNotNull()
+        .isNotNull
         .isInstanceOf(type)
     return this
   }
 
   fun isParseError(type: Class<out Throwable> = Throwable::class.java): TemplateRenderAssert {
     assertThat(template).`as`("There was an error, but not during parse").isNull()
-    assertThat(error).isNotNull().isInstanceOf(type)
+    assertThat(error).isNotNull.isInstanceOf(type)
     return this
   }
 

@@ -1,6 +1,5 @@
 package liqp.nodes
 
-import assertk.assert
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isNotNull
@@ -36,7 +35,7 @@ class LookupNodeTest {
       val template = createTestParser {}.parse(test[0])
       val rendered = template.render(json.parseJSON())
 
-      assert(rendered).isEqualTo(test[1])
+      assertk.assertThat(rendered).isEqualTo(test[1])
     }
   }
 
@@ -63,7 +62,7 @@ class LookupNodeTest {
 
     context["numbers"] = arrayOf(1, 2, 3, 4)
 
-    assert(getNode("numbers.size").render(context)).isEqualTo(4 as Any)
+    assertk.assertThat(getNode("numbers.size").render(context)).isEqualTo(4 as Any)
 
     context["numbers"] = object : HashMap<Any, Any>() {
       init {
@@ -73,7 +72,7 @@ class LookupNodeTest {
         put(4, 4)
       }
     }
-    assert(getNode("numbers.size").render(context)).isEqualTo(4)
+    assertThat(getNode("numbers.size").render(context)).isEqualTo(4)
 
     context["numbers"] = object : HashMap<Any, Any>() {
       init {
@@ -84,7 +83,7 @@ class LookupNodeTest {
         put("size", 1000)
       }
     }
-    assert(getNode("numbers.size").render(context)).isEqualTo(1000)
+    assertThat(getNode("numbers.size").render(context)).isEqualTo(1000)
   }
 
   /*
@@ -107,13 +106,13 @@ class LookupNodeTest {
   @Test
   fun tryFirstTest() {
     context["test"] = arrayOf(1, 2, 3, 4, 5)
-    assert(getNode("test.first").render(context)).isEqualTo(1)
-    assert(getNode("test.last").render(context)).isEqualTo(5)
+    assertThat(getNode("test.first").render(context)).isEqualTo(1)
+    assertThat(getNode("test.last").render(context)).isEqualTo(5)
 
     val context2 = this.createTestContext()
     context2["test"] = context
-    assert(getNode("test.test.first").render(context2)).isEqualTo(1)
-    assert(getNode("test.test.last").render(context2)).isEqualTo(5)
+    assertThat(getNode("test.test.first").render(context2)).isEqualTo(1)
+    assertThat(getNode("test.test.last").render(context2)).isEqualTo(5)
   }
 
   /*
@@ -153,13 +152,13 @@ class LookupNodeTest {
     context["products"] = products
     context["product"] = product
 
-    assert(getNode("products[\"count\"]").render(context)).isEqualTo(5)
-    assert(getNode("products[\"tags\"][0]").render(context)).isEqualTo("deepsnow")
-    assert(getNode("products[\"tags\"].first").render(context)).isEqualTo("deepsnow")
-    assert(getNode("product[\"variants\"][0][\"title\"]").render(context)).isEqualTo("draft151cm")
-    assert(getNode("product[\"variants\"][1][\"title\"]").render(context)).isEqualTo("element151cm")
-    assert(getNode("product[\"variants\"][0][\"title\"]").render(context)).isEqualTo("draft151cm")
-    assert(getNode("product[\"variants\"].last[\"title\"]").render(context)).isEqualTo("element151cm")
+    assertThat(getNode("products[\"count\"]").render(context)).isEqualTo(5)
+    assertThat(getNode("products[\"tags\"][0]").render(context)).isEqualTo("deepsnow")
+    assertThat(getNode("products[\"tags\"].first").render(context)).isEqualTo("deepsnow")
+    assertThat(getNode("product[\"variants\"][0][\"title\"]").render(context)).isEqualTo("draft151cm")
+    assertThat(getNode("product[\"variants\"][1][\"title\"]").render(context)).isEqualTo("element151cm")
+    assertThat(getNode("product[\"variants\"][0][\"title\"]").render(context)).isEqualTo("draft151cm")
+    assertThat(getNode("product[\"variants\"].last[\"title\"]").render(context)).isEqualTo("element151cm")
   }
 
   /*
@@ -177,19 +176,19 @@ class LookupNodeTest {
     context["foo"] = "baz"
     context["bar"] = "foo"
 
-    assert(getNode("[\"foo\"]").render(context)).isEqualTo("baz")
-    assert(getNode("[bar]").render(context)).isEqualTo("baz")
+    assertThat(getNode("[\"foo\"]").render(context)).isEqualTo("baz")
+    assertThat(getNode("[bar]").render(context)).isEqualTo("baz")
   }
 
   @Test
   fun accessRootVariableTest() {
     val context = engine.createRenderContext(Locale.US, ZoneId.systemDefault(), "Plain ol string")
-    assert(getNode("_").render(context)).isEqualTo("Plain ol string")
+    assertThat(getNode("_").render(context)).isEqualTo("Plain ol string")
   }
 
   @Test
   fun accessNestedVariableTest() {
-    assert(parser
+    assertThat(parser
         .parse("{% for i in _ %}{{ i }} -> {{ _ }}\n{% endfor %}")
         .render(listOf(1, 2))).isEqualTo("1 -> 12\n2 -> 12\n")
   }
@@ -222,8 +221,8 @@ class LookupNodeTest {
       }
     }
 
-    assert(getNode("products[var].first").render(context)).isEqualTo("deepsnow")
-    assert(getNode("products[nested.var].last").render(context)).isEqualTo("freestyle")
+    assertThat(getNode("products[var].first").render(context)).isEqualTo("deepsnow")
+    assertThat(getNode("products[nested.var].last").render(context)).isEqualTo("freestyle")
   }
 
   /*
@@ -247,9 +246,9 @@ class LookupNodeTest {
       }
     }
 
-    assert(getNode("array.first").render(context)).isEqualTo(1)
-    assert(getNode("array[\"first\"]").render(context)).isNull()
-    assert(getNode("hash[\"first\"]").render(context)).isEqualTo("Hello")
+    assertk.assertThat(getNode("array.first").render(context)).isEqualTo(1)
+    assertk.assertThat(getNode("array[\"first\"]").render(context)).isNull()
+    assertk.assertThat(getNode("hash[\"first\"]").render(context)).isEqualTo("Hello")
   }
 
   /*
@@ -282,20 +281,18 @@ class LookupNodeTest {
       }
     }
 
-    assert(getNode("product.variants[0].title").render(context)).isEqualTo("draft151cm")
-    assert(getNode("product.variants[1].title").render(context)).isEqualTo("element151cm")
-    assert(getNode("product.variants.first.title").render(context)).isEqualTo("draft151cm")
-    assert(getNode("product.variants.last.title").render(context)).isEqualTo("element151cm")
+    assertThat(getNode("product.variants[0].title").render(context)).isEqualTo("draft151cm")
+    assertThat(getNode("product.variants[1].title").render(context)).isEqualTo("element151cm")
+    assertThat(getNode("product.variants.first.title").render(context)).isEqualTo("draft151cm")
+    assertThat(getNode("product.variants.last.title").render(context)).isEqualTo("element151cm")
   }
 
   @Test
   @Throws(Exception::class)
   fun resolvesGetterAndPropertyContainer() {
     context["props"] = RecursivePropertyContainer()
-    assert(getNode("props.foo.bar.title").render(context)).isEqualTo("Lord of the Grapes")
-    assert(getNode("props.foo.bar").render(context)).isNotNull {
-      it.isInstanceOf(RecursivePropertyContainer::class)
-    }
+    assertThat(getNode("props.foo.bar.title").render(context)).isEqualTo("Lord of the Grapes")
+    assertThat(getNode("props.foo.bar").render(context)).isNotNull().isInstanceOf(RecursivePropertyContainer::class)
   }
 
   /*
@@ -310,7 +307,7 @@ class LookupNodeTest {
 
     val assigns = "{ \"array\" : [1,2,3,4] }"
 
-    assert(createTestParser {}
+    assertThat(createTestParser {}
         .parse("array has {{ array.size }} elements")
         .render(assigns.parseJSON())).isEqualTo("array has 4 elements")
   }
@@ -327,7 +324,7 @@ class LookupNodeTest {
 
     val assigns = "{ \"hash\" : { \"a\" : 1, \"b\" : 2, \"c\" : 3, \"d\" : 4 } }"
 
-    assert(createTestParser {}.parse("hash has {{ hash.size }} elements").renderJson(assigns)).isEqualTo("hash has" + " 4 elements")
+    assertThat(createTestParser {}.parse("hash has {{ hash.size }} elements").renderJson(assigns)).isEqualTo("hash has" + " 4 elements")
   }
 
   private fun createTestContext(): LContext {

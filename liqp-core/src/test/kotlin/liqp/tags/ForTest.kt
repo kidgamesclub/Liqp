@@ -1,5 +1,6 @@
 package liqp.tags
 
+import assertk.assertions.isEqualTo
 import liqp.LiquidParser
 import liqp.assertThat
 import liqp.createTestParser
@@ -249,9 +250,8 @@ class ForTest {
     fun offsetOnlyTest() {
 
       val assigns = "{ \"array\":[1,2,3,4,5,6,7,8,9,0] }"
-
-      assertThat(createTestParser{}.parse("{%for i in array offset:7 %}{{ i }}{%endfor%}").renderJson(assigns),
-          `is`("890"))
+        assertk.assertThat(createTestParser{}.parse("{%for i in array offset:7 %}{{ i }}{%endfor%}").renderJson(assigns))
+            .isEqualTo("890")
     }
 
     /*
@@ -372,7 +372,7 @@ class ForTest {
           "next\n" +
           "7890"
 
-      assertThat(createTestParser{}.parse(markup).renderJson(assigns), `is`(expected))
+      assertk.assertThat(createTestParser{}.parse(markup).renderJson(assigns)).isEqualTo(expected)
     }
 
     /*

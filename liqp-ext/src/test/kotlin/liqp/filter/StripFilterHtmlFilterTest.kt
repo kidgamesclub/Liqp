@@ -1,6 +1,5 @@
 package liqp.filter
 
-import assertk.assert
 import assertk.assertions.isEqualTo
 import liqp.LiquidParser
 import liqp.assertThat
@@ -35,7 +34,7 @@ class StripFilterHtmlFilterTestParameterized(val template: String, val expected:
         .toParser()
         .parse(template)
     val rendered = template.renderJson(json)
-    assert(rendered).isEqualTo(expected)
+      assertk.assertThat(rendered).isEqualTo(expected)
   }
 }
 

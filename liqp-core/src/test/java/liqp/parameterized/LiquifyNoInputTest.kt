@@ -1,6 +1,6 @@
 package liqp.parameterized
 
-import assertk.assert
+import assertk.assertThat
 import assertk.assertions.isEqualTo
 import liqp.createTestParser
 import liqp.parseIfNecessary
@@ -20,6 +20,6 @@ abstract class LiquifyNoInputTest @JvmOverloads constructor(val templateString: 
     }
     val rendered = template.render(input)
 
-    assert(rendered).isEqualTo(expectedResult)
+    assertThat(rendered).isEqualTo(expectedResult)
   }
 }

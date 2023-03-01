@@ -1,5 +1,6 @@
 plugins {
   id  ("java-project-conventions")
+  id("release-conventions")
 }
 
 dependencies {
@@ -7,7 +8,6 @@ dependencies {
   implementation(project(":liqp-core"))
   testImplementation(project(":liqp-junit"))
   testImplementation(libs.bundles.testLibs)
-
   implementation(libs.jsoup)
 }
 

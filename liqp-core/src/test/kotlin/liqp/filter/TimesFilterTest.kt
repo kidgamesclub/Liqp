@@ -1,6 +1,5 @@
 package liqp.filter
 
-import assertk.assert
 import assertk.assertions.isEqualTo
 import assertk.assertions.matches
 import liqp.LiquidDefaults
@@ -60,8 +59,8 @@ class TimesFilterTest {
 
     val filter = LiquidDefaults.defaultFilters.getFilter<LFilter>("times")
 
-    assert(filter.onFilterAction(context, 3L, 4L)).isEqualTo(12L as Any)
+     assertThat(filter.onFilterAction(context, 3L, 4L)).isEqualTo(12L as Any)
     // assert_template_result "0", "{{ 'foo' | times:4 }}" // see: applyTest()
-    assert(filter.onFilterAction(context, 2.1, 3L).toString()).matches("6[.,]30{10,}1".toRegex())
+      assertThat(filter.onFilterAction(context, 2.1, 3L).toString()).matches("6[.,]30{10,}1".toRegex())
   }
 }

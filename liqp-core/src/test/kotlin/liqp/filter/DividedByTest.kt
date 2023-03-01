@@ -1,6 +1,7 @@
 package liqp.filter
 
-import assertk.assert
+
+import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.matches
 import liqp.LiquidDefaults
@@ -27,7 +28,8 @@ class DividedByTest {
 
   @Test
   fun applyTestInvalid1() {
-    assert(LiquidDefaults.defaultFilters
+      assertThat(
+          defaultFilters
         .getFilter<LFilter>("divided_by")
         .onFilterAction(mockRenderContext(), 1))
         .isEqualTo(1)
@@ -36,7 +38,7 @@ class DividedByTest {
   @Test
   fun applyTestInvalid2() {
     val filter = defaultFilters.getFilter<LFilter>("divided_by")
-    assert(filter.onFilterAction(mockRenderContext(), 1, 2.0, 3))
+      assertThat(filter.onFilterAction(mockRenderContext(), 1, 2.0, 3))
         .isEqualTo(1.0 / 6)
   }
 
@@ -62,9 +64,9 @@ class DividedByTest {
 
     val filter = defaultFilters.getFilter<LFilter>("divided_by")
 
-    assert(filter.onFilterAction(mockRenderContext(), 12L, 3L)).isEqualTo(4L)
-    assert(filter.onFilterAction(mockRenderContext(), 14L, 3L)).isEqualTo(4L)
-    assert(filter.onFilterAction(mockRenderContext(), 14L, 3.0).toString()).matches("4[,.]6{10,}7".toRegex())
+      assertThat(filter.onFilterAction(mockRenderContext(), 12L, 3L)).isEqualTo(4L)
+      assertThat(filter.onFilterAction(mockRenderContext(), 14L, 3L)).isEqualTo(4L)
+      assertThat(filter.onFilterAction(mockRenderContext(), 14L, 3.0).toString()).matches("4[,.]6{10,}7".toRegex())
 
     // see: applyTestInvalid3()
     // assert_template_result "Liquid error: divided by 0", "{{ 5 | divided_by:0 }}"

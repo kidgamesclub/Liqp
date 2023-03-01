@@ -1,6 +1,6 @@
 package liqp.filter
 
-import assertk.assert
+import assertk.assertThat
 import assertk.assertions.isEqualTo
 import liqp.LiquidDefaults
 import liqp.createTestParser
@@ -15,7 +15,7 @@ import java.util.Locale.ENGLISH
 @RunWith(Parameterized::class)
 class DateFilterTestFilterParameterized(val input: Any?, val args: List<Any?>, val expected: String?) {
   @Test fun run() {
-    assertk.assert(filter.onFilterAction(context, input, *args.toTypedArray())).isEqualTo(expected)
+    assertk.assertThat(filter.onFilterAction(context, input, *args.toTypedArray())).isEqualTo(expected)
   }
 
   companion object {
@@ -65,7 +65,7 @@ class DateFilterTestParameterized(val template: String, val expected: String) {
   fun run() {
     val template = createTestParser {}.parse(template)
     val rendered = template.render()
-    assert(rendered).isEqualTo(expected)
+    assertThat(rendered).isEqualTo(expected)
   }
 
   companion object {

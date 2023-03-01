@@ -1,8 +1,7 @@
 package liqp.traverse
 
-import assertk.assert
-import assertk.assertions.contains
 import assertk.assertions.containsAll
+import liqp.assertThat
 import liqp.isTag
 import liqp.createParseSettings
 import liqp.nodes.LookupNode
@@ -27,7 +26,7 @@ class FilteredLNodeVisitorTest {
         .map { it.toString() }
         .toSet()
 
-    assert(lookupNames).containsAll("root.branch.leaf",
+    assertThat(lookupNames).containsAll("root.branch.leaf",
         "child.parent.grandparent.name",
         "parents.children",
         "person.name")
@@ -52,7 +51,7 @@ class FilteredLNodeVisitorTest {
       }
     }
 
-    assert(namesInsideIfs).containsAll("child.parent.grandparent.name",
+    assertThat(namesInsideIfs).containsAll("child.parent.grandparent.name",
         "parents.children",
         "person.name")
   }

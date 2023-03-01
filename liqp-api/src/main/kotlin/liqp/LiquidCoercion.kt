@@ -82,9 +82,9 @@ fun isFinite(d: Number): Boolean {
 const val SIGNIFICAND_BITS = 52
 
 fun Number.isIntegral(): Boolean {
-
         return isFinite(this)
                 && (this == 0.0
+                || this == 0
                 || SIGNIFICAND_BITS - java.lang.Long.numberOfTrailingZeros(getSignificand(this)) <= getExponent(this.toDouble()));
 }
 

@@ -1,37 +1,35 @@
 plugins {
- id('java')
-  id("org.jetbrains.kotlin.jvm")
+    id('java')
+    id("org.jetbrains.kotlin.jvm")
+
+
 }
 
 group = "liqp"
 
 repositories {
-  mavenLocal()
-  mavenCentral()
-  maven {
-    setUrl("https://edspuzzle.jfrog.io/artifactory/edspuzzle-gradle-release/")
-    credentials {
-      username = System.getProperty("ARTIFACTORY_USERNAME")
-      password = System.getProperty("ARTIFACTORY_PASSWORD")
+    mavenLocal()
+    mavenCentral()
+    maven {
+        setUrl("https://edspuzzle.jfrog.io/artifactory/edspuzzle-gradle-release/")
+        credentials {
+            username = System.getProperty("ARTIFACTORY_USERNAME")
+            password = System.getProperty("ARTIFACTORY_PASSWORD")
+        }
     }
-  }
 }
 
-//mverse {
-//  groupId = "io.mverse"
-//  isDefaultDependencies = false
-//  coverageRequirement = 0.60
-//}
-
-dependencies{
-  testImplementation(rootProject.libs.bundles.testLibs)
+dependencies {
+    testImplementation(rootProject.libs.bundles.testLibs)
+    implementation(platform(rootProject.libs.kotlinBom))
 }
 
-tasks.withType(JavaCompile).all{
-  sourceCompatibility = "11"
-  targetCompatibility = "11"
+tasks.withType(JavaCompile).all {
+    sourceCompatibility = "11"
+    targetCompatibility = "11"
 }
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all{
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         jvmTarget = "11"
         freeCompilerArgs += ["-Xjsr305=strict", "-opt-in=kotlin.Experimental"]

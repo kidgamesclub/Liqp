@@ -1,6 +1,6 @@
 package liqp.tags
 
-import assertk.assert
+import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.isEqualTo
 import liqp.Liquify
@@ -46,7 +46,7 @@ class IncludeTest {
 
     val rendered = template.render()
 
-    assert(rendered).isEqualTo("\n" +
+    assertThat(rendered).isEqualTo("\n" +
         "color: ''\n" +
         "shape: 'circle'\n" +
         "color: 'red'\n" +
@@ -70,7 +70,7 @@ class IncludeTest {
     val template = parser.parseFile(index)
 
     val result = template.render()
-    assert(result).contains("HEADER")
+    assertThat(result).contains("HEADER")
   }
 
   @Test
@@ -84,7 +84,7 @@ class IncludeTest {
         .parseFile(index)
 
     val result = template.render()
-    assert(result).contains("HEADER")
+      assertThat(result).contains("HEADER")
   }
 
   @Test
@@ -96,7 +96,7 @@ class IncludeTest {
         .toParser()
         .parseFile(index)
     val result = template.render()
-    assert(result).contains("HEADER")
+    assertThat(result).contains("HEADER")
   }
 
   @Test
@@ -107,7 +107,7 @@ class IncludeTest {
         .baseDir(testBaseDir)
         .toParser().parseFile(index)
     val result = template.render()
-    assert(result).contains("HEADER")
+    assertThat(result).contains("HEADER")
   }
 
   // https://github.com/bkiers/Liqp/issues/75
@@ -123,7 +123,7 @@ class IncludeTest {
         .toParser()
         .parse(source).render()
 
-    assert(rendered).contains("HEADER")
+    assertThat(rendered).contains("HEADER")
   }
 
   // https://github.com/bkiers/Liqp/issues/75
@@ -134,7 +134,7 @@ class IncludeTest {
     val rendered = createParseSettings()
         .baseDir(testBaseDir)
         .toParser().parse(source).render()
-    assert(rendered).contains("LIQUID_HEADER")
+    assertThat(rendered).contains("LIQUID_HEADER")
   }
 
   // https://github.com/bkiers/Liqp/issues/75

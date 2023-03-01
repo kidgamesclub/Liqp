@@ -58,6 +58,8 @@ dependencyResolutionManagement {
 
                 val kotlin: String by settings
                 group(name = "org.jetbrains.kotlin", version = kotlin) {
+
+                    library("kotlin-bom","kotlinBom")
                     library("kotlin-stdlib")
                     library("kotlin-runtime")
                     library("kotlin-stdlib-common")
@@ -84,6 +86,15 @@ dependencyResolutionManagement {
                     }
                 }
 
+                bundle("json" ) {
+                    val javaxJson="1.1.4"
+                    group("javax.json", version=javaxJson) {
+                        library("javax.json-api","javaxJsonApi")
+                    }
+
+                    library("org.glassfish:javax.json:$javaxJson")
+                }
+
                 bundle("testLibs") {
                     library("junit:junit:4.13.2")
                     library("org.mockito:mockito-core:5.1.1")
@@ -93,6 +104,7 @@ dependencyResolutionManagement {
                     library("jackson-core")
                     library("jackson-databind")
                     library("jsoup")
+                    library("javax.json")
                 }
 
                 bundle("antlr") {

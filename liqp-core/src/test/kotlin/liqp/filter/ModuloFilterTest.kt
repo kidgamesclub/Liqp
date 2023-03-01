@@ -1,6 +1,7 @@
 package liqp.filter
 
-import assertk.assert
+
+import assertk.assertThat
 import assertk.assertions.isEqualTo
 import liqp.LiquidDefaults.defaultFilters
 import liqp.LiquidParser
@@ -21,7 +22,7 @@ class ModuloFilterTestParameterized(val template: String, val expected: String) 
   fun run() {
     val template = createTestParser {  }.parse(template)
     val rendered = template.render()
-    assert(rendered).isEqualTo(expected)
+      assertThat(rendered).isEqualTo(expected)
   }
 
   companion object {
@@ -39,14 +40,14 @@ class ModuloFilterTestParameterized(val template: String, val expected: String) 
 class ModuloFilterTest {
   @Test(expected = LiquidRenderingException::class)
   fun invalid1() {
-    assert(
+      assertThat(
         modulo.onFilterAction(context, 1))
         .isEqualTo(1L)
   }
 
   @Test
   fun invalid2() {
-    assert(modulo.onFilterAction(context, 4, 2, 3))
+      assertThat(modulo.onFilterAction(context, 4, 2, 3))
         .isEqualTo(0L)
   }
 
@@ -57,6 +58,6 @@ class ModuloFilterTest {
    */
   @Test
   fun applyOriginalTest() {
-    assert(createTestParser {  }.parse("{{ 3 | modulo:2 }}").render()).isEqualTo("1")
+      assertThat(createTestParser {  }.parse("{{ 3 | modulo:2 }}").render()).isEqualTo("1")
   }
 }

@@ -7,10 +7,8 @@ import liqp.config.MutableRenderSettings
 import liqp.filter.LFilter
 import liqp.node.LTemplate
 import java.io.File
-import java.io.StringReader
 import java.time.ZoneId
 import java.util.*
-import javax.json.Json
 
 
 typealias ParseConfigurer = MutableParseSettings.() -> Unit
@@ -31,7 +29,7 @@ fun assertStringTemplate(
     renderer: RenderConfigurer = { this },
     parser: ParseConfigurer = { this }
 ): TemplateRenderAssert {
-    return createTemplateAssert({ parse(templateString) }, data.parseIfNecessary(), parser, renderer)
+    return createTemplateassertThat({ parse(templateString) }, data.parseIfNecessary(), parser, renderer)
 }
 
 fun Any?.parseIfNecessary(): Any? = when (this) {
@@ -45,10 +43,10 @@ fun assertFileTemplate(
     parser: ParseConfigurer = { this }
 ): TemplateRenderAssert {
 
-    return createTemplateAssert({ parseFile(templateFile) }, data, parser, renderer)
+    return createTemplateassertThat({ parseFile(templateFile) }, data, parser, renderer)
 }
 
-private fun createTemplateAssert(
+private fun createTemplateassertThat(
     createTestTemplate: CreateTestTemplate, data: Any? = null,
     configureParser: ParseConfigurer = { },
     configureRenderer: RenderConfigurer = { }
@@ -63,10 +61,10 @@ private fun createTemplateAssert(
         return TemplateRenderAssert(error = e)
     }
 
-    return executeTemplateAndAssert(template, renderer, data)
+    return executeTemplateAndassertThat(template, renderer, data)
 }
 
-fun executeTemplateAndAssert(template: LTemplate, engine: LRenderer, data: Any? = null): TemplateRenderAssert {
+fun executeTemplateAndassertThat(template: LTemplate, engine: LRenderer, data: Any? = null): TemplateRenderAssert {
     return try {
         val context = engine.createRenderContext(Locale.US, ZoneId.systemDefault(), data)
         val results = engine.executeWithContext(template, context)
@@ -82,7 +80,7 @@ fun executeTemplateAndAssert(template: LTemplate, engine: LRenderer, data: Any? 
     }
 }
 
-fun renderTemplateAndAssert(template: LTemplate, engine: LRenderer, data: Any? = null): TemplateRenderAssert {
+fun renderTemplateAndassertThat(template: LTemplate, engine: LRenderer, data: Any? = null): TemplateRenderAssert {
     return try {
         val context = engine.createRenderContext(Locale.US, ZoneId.systemDefault(), data)
         val results = engine.renderWithContext(template, context)
@@ -98,11 +96,11 @@ fun renderTemplateAndAssert(template: LTemplate, engine: LRenderer, data: Any? =
 }
 
 fun LTemplate.executing(data: Any? = null, renderer: MutableRenderSettings.() -> Unit = {}): TemplateRenderAssert {
-    return executeTemplateAndAssert(this, createTestRenderer(renderer), data)
+    return executeTemplateAndassertThat(this, createTestRenderer(renderer), data)
 }
 
 fun LTemplate.rendering(data: Any? = null, renderer: MutableRenderSettings.() -> Unit = {}): TemplateRenderAssert {
-    return renderTemplateAndAssert(this, createTestRenderer(renderer), data.parseIfNecessary())
+    return renderTemplateAndassertThat(this, createTestRenderer(renderer), data.parseIfNecessary())
 }
 
 fun LTemplate.assertThat(): TemplateAssert {
@@ -145,7 +143,6 @@ fun <T : Any> assertThat(subject: T?): Assert<T> {
     return when (subject) {
         null -> {
             fail("Expected non-null value")
-            TODO()
         }
         else -> assertk.assertThat(subject)
     }

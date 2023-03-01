@@ -13,7 +13,7 @@ class AccessorsTest(val name: String, val template: String, val input: Any?, val
   @Test fun run() {
     val template = createTestParser {}.parse(template)
     val rendered = template.render(input)
-    assertk.assert(rendered).isEqualTo(expected)
+    assertk.assertThat(rendered).isEqualTo(expected)
   }
 
   companion object {
@@ -25,7 +25,6 @@ class AccessorsTest(val name: String, val template: String, val input: Any?, val
       val mockOliverObj = mockDude("Oliver", 22, mapOf("facebook" to "ollie"))
       val mockOliverJson = mockDudeJson("Oliver", 22, mapOf("facebook" to "ollie"))
       val mockOliverMap = mockDudeMap("Oliver", 22, mapOf("facebook" to "ollie"))
-
       val mockGroupObj = mockGroup(mockJimObj, mockOliverObj)
       val mockGroupJson = mockGroupJson(mockJimJson, mockOliverJson)
       val mockGroupMap = mockGroupMap(mockJimMap, mockOliverMap)
@@ -86,6 +85,6 @@ class AccessorsMapFilterIteratorTest {
         "{% unless last %},{% endunless %}" +
         "{% endfor %}")
     val rendered = template.render(input)
-    assertk.assert(rendered).isEqualTo("a->1,b->2,c->3,")
+    assertk.assertThat(rendered).isEqualTo("a->1,b->2,c->3,")
   }
 }

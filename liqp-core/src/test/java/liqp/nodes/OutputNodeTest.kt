@@ -1,6 +1,6 @@
 package liqp.nodes
 
-import assertk.assert
+import assertk.assertThat
 import assertk.assertions.isEqualTo
 import liqp.LiquidParser
 import liqp.createTestParser
@@ -17,7 +17,7 @@ class OutputNodeTest(val template: String, val expect: String) {
     val template = createTestParser{}.parse(template)
     val rendered = template.renderJson("{\"X\" : \"mu\"}")
 
-    assert(rendered).isEqualTo(expect)
+    assertThat(rendered).isEqualTo(expect)
   }
 
   companion object {
@@ -37,7 +37,7 @@ class OutputNodeKeywordTest(val keyword:String) {
     val template = createTestParser {  }.parse(test)
     val rendered = template.renderJson(json)
 
-    assert(rendered).isEqualTo(expected)
+    assertThat(rendered).isEqualTo(expected)
   }
 
   companion object {
@@ -60,7 +60,7 @@ class OutputNodeBadKeywordTest(val keyword: String, val expected: String) {
     val template = createTestParser { }.parse(test)
     val rendered = template.renderJson(json)
 
-    assert(rendered).isEqualTo(expected)
+    assertThat(rendered).isEqualTo(expected)
   }
 
   companion object {

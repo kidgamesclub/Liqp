@@ -1,5 +1,7 @@
 plugins {
     id("java-project-conventions")
+    id("release-conventions")
+
 }
 
 dependencies {

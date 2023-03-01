@@ -1,7 +1,7 @@
 package liqp.config
 
 import assertk.all
-import assertk.assert
+import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import org.junit.Test
@@ -26,20 +26,20 @@ class MutableRenderSettingsTest {
         .withDefaultTimezone(ZoneId.systemDefault())
         .withUseTruthyChecks(true)
         .build()
-    assert(settings).all {
-      assert(settings.baseDir).isEqualTo(File("ttt"))
-      assert(settings.defaultDateFormat).isEqualTo('d')
-      assert(settings.executor).isNotNull()
-      assert(settings.includesDir).isEqualTo("ink")
-      assert(settings.maxIterations).isEqualTo(345)
-      assert(settings.maxRenderTimeMillis).isEqualTo(444L)
-      assert(settings.maxStackSize).isEqualTo(334)
-      assert(settings.isStrictIncludes).isEqualTo(true)
-      assert(settings.isStrictVariables).isEqualTo(true)
-      assert(settings.isUseTruthyChecks).isEqualTo(true)
-      assert(settings.defaultLocale).isEqualTo(Locale.US)
-      assert(settings.defaultTimezone).isEqualTo(ZoneId.systemDefault())
-      assert(settings.isUseTruthyChecks).isEqualTo(true)
+    assertThat(settings).all {
+      assertThat(settings.baseDir).isEqualTo(File("ttt"))
+      assertThat(settings.defaultDateFormat).isEqualTo('d')
+      assertThat(settings.executor).isNotNull()
+      assertThat(settings.includesDir).isEqualTo("ink")
+      assertThat(settings.maxIterations).isEqualTo(345)
+      assertThat(settings.maxRenderTimeMillis).isEqualTo(444L)
+      assertThat(settings.maxStackSize).isEqualTo(334)
+      assertThat(settings.isStrictIncludes).isEqualTo(true)
+      assertThat(settings.isStrictVariables).isEqualTo(true)
+      assertThat(settings.isUseTruthyChecks).isEqualTo(true)
+      assertThat(settings.defaultLocale).isEqualTo(Locale.US)
+      assertThat(settings.defaultTimezone).isEqualTo(ZoneId.systemDefault())
+      assertThat(settings.isUseTruthyChecks).isEqualTo(true)
     }
   }
 
@@ -59,19 +59,19 @@ class MutableRenderSettingsTest {
       defaultTimezone = ZoneId.systemDefault()
       defaultLocale = Locale.US
     }
-    assert(settings).all {
-      assert(settings.baseDir).isEqualTo(File("ttt"))
-      assert(settings.defaultDateFormat).isEqualTo('d')
-      assert(settings.executor).isNotNull()
-      assert(settings.includesDir).isEqualTo("ink")
-      assert(settings.maxIterations).isEqualTo(345)
-      assert(settings.maxRenderTimeMillis).isEqualTo(444L)
-      assert(settings.maxStackSize).isEqualTo(334)
-      assert(settings.isStrictIncludes).isEqualTo(true)
-      assert(settings.isStrictVariables).isEqualTo(true)
-      assert(settings.defaultLocale).isEqualTo(Locale.US)
-      assert(settings.defaultTimezone).isEqualTo(ZoneId.systemDefault())
-      assert(settings.isUseTruthyChecks).isEqualTo(true)
+    assertThat(settings).all {
+      assertThat(settings.baseDir).isEqualTo(File("ttt"))
+      assertThat(settings.defaultDateFormat).isEqualTo('d')
+      assertThat(settings.executor).isNotNull()
+      assertThat(settings.includesDir).isEqualTo("ink")
+      assertThat(settings.maxIterations).isEqualTo(345)
+      assertThat(settings.maxRenderTimeMillis).isEqualTo(444L)
+      assertThat(settings.maxStackSize).isEqualTo(334)
+      assertThat(settings.isStrictIncludes).isEqualTo(true)
+      assertThat(settings.isStrictVariables).isEqualTo(true)
+      assertThat(settings.defaultLocale).isEqualTo(Locale.US)
+      assertThat(settings.defaultTimezone).isEqualTo(ZoneId.systemDefault())
+      assertThat(settings.isUseTruthyChecks).isEqualTo(true)
     }
   }
 }

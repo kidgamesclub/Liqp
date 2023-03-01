@@ -1,6 +1,6 @@
 package liqp.filter
 
-import assertk.assert
+
 import assertk.assertions.isEqualTo
 import liqp.*
 import liqp.LiquidDefaults.defaultFilters
@@ -17,19 +17,20 @@ data class MinusFilterTest(val test: String, val expected: String) {
     val template = createTestParser {  }.parse(test)
     val rendered = template.render()
 
-    assert(rendered).isEqualTo(expected)
+      assertk.assertThat(rendered).isEqualTo(expected)
   }
 
   @Test
   fun invalid1() {
-    assert(defaultFilters["minus"].onFilterAction(lcontext, 1))
+      assertk.assertThat(defaultFilters["minus"].onFilterAction(lcontext, 1))
         .isEqualTo(1)
   }
 
   @Test
   fun invalid2() {
-    assert(
-        defaultFilters["minus"].onFilterAction(lcontext, 1, 2, 3))
+      assertk.assertThat(
+          defaultFilters["minus"].onFilterAction(lcontext, 1, 2, 3)
+      )
         .isEqualTo(-4L)
   }
 
@@ -42,10 +43,14 @@ data class MinusFilterTest(val test: String, val expected: String) {
   @Test
   fun originalTest() {
 
-    assert(createTestParser {  }.parse("{{ input | minus:operand }}")
-        .renderJson("{\"input\":5, \"operand\":1}")).isEqualTo("4")
-    assert(createTestParser {  }.parse("{{ '4.3' | minus:'2' }}")
-        .render()).isEqualTo("2.3")
+      assertk.assertThat(
+          createTestParser { }.parse("{{ input | minus:operand }}")
+              .renderJson("{\"input\":5, \"operand\":1}")
+      ).isEqualTo("4")
+      assertk.assertThat(
+          createTestParser { }.parse("{{ '4.3' | minus:'2' }}")
+              .render()
+      ).isEqualTo("2.3")
   }
 
   companion object {

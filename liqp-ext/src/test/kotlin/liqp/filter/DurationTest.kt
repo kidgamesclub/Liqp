@@ -1,12 +1,11 @@
 package liqp.filter
 
-import assertk.assert
+
 import assertk.assertions.isEqualTo
 import liqp.assertThat
 import liqp.createParseSettings
 import liqp.ext.filters.javatime.DurationFilter
 import liqp.ext.filters.javatime.PlusDurationFilter
-import liqp.ext.filters.strings.StripHtmlFilter
 import liqp.toParser
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,7 +30,7 @@ class DurationFilterTestParameterized(val template: String, val expected: String
         .toParser()
         .parse(template)
     val rendered = template.render(emptyMap<String, Any?>())
-    assert(rendered).isEqualTo(expected)
+      assertk.assertThat(rendered).isEqualTo(expected)
   }
 }
 
@@ -49,6 +48,6 @@ class DurationFilterTest(val name: String, val template: String?, val expected: 
     @JvmStatic @Parameterized.Parameters(name = "{0}")
     fun params() =
         arrayOf(
-            arrayOf("Simple duration format", "{{ 'P3D' | duration }}", "3 days"))
+            arrayOf("Simple duration format", "P3D", "3 days"))
   }
 }

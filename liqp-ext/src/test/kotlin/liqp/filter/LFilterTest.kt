@@ -1,16 +1,16 @@
 package liqp.filter
 
-import assertk.assert
 import assertk.assertAll
+import assertk.assertThat
 import assertk.assertions.isEqualTo
 import org.junit.Test
 
 class LFilterTest {
   @Test fun testFilterName() {
     assertAll {
-      assert(BFilter().name).isEqualTo("b")
-      assert(BlankFilter().name).isEqualTo("blank")
-      assert(BlankTagFilter().name).isEqualTo("blank_tag")
+      assertThat(BFilter().name).isEqualTo("b")
+      assertThat(BlankFilter().name).isEqualTo("blank")
+      assertThat(BlankTagFilter().name).isEqualTo("blank_tag")
     }
   }
 

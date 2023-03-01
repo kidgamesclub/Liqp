@@ -1,0 +1,89 @@
+plugins {
+    id("nebula.maven-nebula-publish")
+    id("nebula.release")
+    id("com.jfrog.artifactory")
+    id ("nebula.source-jar")
+}
+
+def isRootProject=this==rootProject
+
+afterEvaluate {
+
+    def sourceJar = tasks.findByName("sourceJar")
+
+    def expectedBy = project.configurations.findByName("expectedBy")
+
+    // If a jvm plugin, then include any expectedBy sources within this library
+    if (sourceJar != null && expectedBy != null && plugins.hasPlugin(KotlinPlatformJvmPlugin)) {
+        sourceJar.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+        expectedBy.allDependencies.forEach { dependency ->
+            def expectedSources = project(":" + dependency.name).sourceSets["main"].allSource
+            sourceJar.from(expectedSources)
+        }
+    }
+
+    def artifactoryUserName = System.getProperty("ARTIFACTORY_USERNAME")
+    def artifactoryPassword = System.getProperty("ARTIFACTORY_PASSWORD")
+    def artifactoryRepo= System.getProperty("ARTIFACTORY_REPO")
+
+    if (artifactoryPassword && artifactoryUserName && artifactoryRepo) {
+
+
+        artifactory {
+            if (isRootProject) {
+                log.warn { "Configuring bintray publishing: " }
+                log.warn { "  - user: ${artifactoryUserName}" }
+                log.warn { "  - repo: ${artifactoryRepo}" }
+            }
+
+            setContextUrl("https://edspuzzle.jfrog.io/artifactory")
+
+            publish {
+                repository {
+                    setRepoKey(artifactoryRepo)
+                    setUsername(artifactoryUserName)
+                    setPassword(artifactoryPassword)
+                    setMavenCompatible(true)
+                }
+                setPublishPom(true)
+                defaults {
+                    if (!hasPublications()) {
+                        publications("nebula")
+                    }
+                }
+            }
+
+            resolve {
+                repository {
+                    setRepoKey(artifactoryRepo)
+                    setUsername(artifactoryUserName)
+                    setPassword(artifactoryPassword)
+                    setMavenCompatible(true)
+                }
+            }
+
+//            publish = true
+//            dryRun = false
+//            pkg.repo = mverse.bintrayRepo
+//            pkg.name = project.name
+//            pkg.setLicenses("Apache-2.0")
+//            pkg.vcsUrl = "https://github.com/ericmartineau/${project.rootProject.name}.git"
+//
+//            if (publications == null) {
+//              setPublications("nebula")
+//            }
+        }
+
+        if (tasks.findByName("publish") != null) {
+            tasks["publish"].finalizedBy(tasks["artifactoryPublish"])
+        }
+
+        if (tasks.findByName("release") != null) {
+            tasks["release"].finalizedBy(tasks["publish"])
+        }
+    } else {
+        print('Missing artifactory configuration.  Proceeding without publishing')
+    }
+
+}
