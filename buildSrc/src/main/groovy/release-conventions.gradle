@@ -52,6 +52,7 @@ afterEvaluate {
                         publications("nebula")
                     }
                 }
+                group = "liqp"
             }
 
             resolve {
@@ -85,5 +86,4 @@ afterEvaluate {
     } else {
         print('Missing artifactory configuration.  Proceeding without publishing')
     }
-
 }

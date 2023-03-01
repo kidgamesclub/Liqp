@@ -13,62 +13,29 @@ pluginManagement {
         }
         maven("https://kotlin.jfrog.io/kotlinx")
     }
-
-    enableFeaturePreview("VERSION_CATALOGS")
-
-    val kotlin: String by settings
-    val mversePlugin: String by settings
-
-    val pluginVersionMap = mapOf(
-        "kotlinx-serialization" to kotlin,
-        "kotlin-multiplatform" to kotlin,
-        "org.jetbrains.kotlin.jvm" to kotlin,
-        "org.jetbrains.kotlin.common" to kotlin,
-        "io.mverse.project" to mversePlugin,
-        "io.mverse.code-generation" to mversePlugin,
-        "io.mverse.multi-module" to mversePlugin,
-        "io.mverse.multi-platform" to mversePlugin
-    )
-
-    resolutionStrategy {
-        eachPlugin {
-
-            if (requested.id.id in pluginVersionMap) {
-                useVersion(pluginVersionMap[requested.id.id])
-            }
-
-            if (requested.id.id == "kotlin-multiplatform") {
-                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${target.version}")
-            }
-
-            if (requested.id.id == "kotlinx-serialization") {
-                useModule("org.jetbrains.kotlin:kotlin-serialization:${target.version}")
-            }
-        }
-    }
 }
 
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
-
             bundles {
                 library("org.jsoup:jsoup:1.11.2")
                 library("com.google.guava:guava:31.1-jre")
 
                 val kotlin: String by settings
-                group(name = "org.jetbrains.kotlin", version = kotlin) {
-
-                    library("kotlin-bom","kotlinBom")
-                    library("kotlin-stdlib")
-                    library("kotlin-runtime")
-                    library("kotlin-stdlib-common")
-                    library("kotlin-stdlib-jdk7")
-                    library("kotlin-stdlib-jdk8")
-                    library("kotlin-reflect")
-                    library("kotlin-test-annotations-common")
-                    library("kotlin-test")
-                    library("kotlin-test-junit")
+                bundle("kotlin") {
+                    group(name = "org.jetbrains.kotlin", version = kotlin) {
+                        library("kotlin-bom", "kotlinBom")
+                        library("kotlin-stdlib")
+                        library("kotlin-runtime")
+                        library("kotlin-stdlib-common")
+                        library("kotlin-stdlib-jdk7")
+                        library("kotlin-stdlib-jdk8")
+                        library("kotlin-reflect")
+                        library("kotlin-test-annotations-common")
+                        library("kotlin-test")
+                        library("kotlin-test-junit")
+                    }
                 }
                 val kotlinCoroutines: String by settings
 

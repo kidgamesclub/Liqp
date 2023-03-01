@@ -1,8 +1,6 @@
 plugins {
     id('java')
     id("org.jetbrains.kotlin.jvm")
-
-
 }
 
 group = "liqp"
@@ -22,6 +20,7 @@ repositories {
 dependencies {
     testImplementation(rootProject.libs.bundles.testLibs)
     implementation(platform(rootProject.libs.kotlinBom))
+    implementation(rootProject.libs.kotlin.stdlib)
 }
 
 tasks.withType(JavaCompile).all {

@@ -19,6 +19,7 @@ dependencies {
     antlr(libs.antlr4)
     testImplementation(libs.jsoup)
 }
+
 val generateGrammarSource by tasks.getting(AntlrTask::class)
 tasks["compileKotlin"].dependsOn(generateGrammarSource)
 
