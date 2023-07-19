@@ -9,6 +9,16 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven {
+        setUrl("https://infusionsoft.jfrog.io/infusionsoft/mvn-clean/")
+        credentials {
+            username = System.getProperty("externalProxyRepositoryUsername")
+            password = System.getProperty("externalProxyRepositoryPassword")
+        }
+        authentication {
+            basic(BasicAuthentication)
+        }
+    }
+    maven {
         setUrl("https://edspuzzle.jfrog.io/artifactory/edspuzzle-gradle-release/")
         credentials {
             username = System.getProperty("ARTIFACTORY_USERNAME")

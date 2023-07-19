@@ -1,9 +1,20 @@
+
 pluginManagement {
     repositories {
         mavenLocal()
         jcenter()
         gradlePluginPortal()
         google()
+        maven {
+            setUrl("https://infusionsoft.jfrog.io/infusionsoft/mvn-clean/")
+            credentials {
+                username = System.getProperty("externalProxyRepositoryUsername")
+                password = System.getProperty("externalProxyRepositoryPassword")
+            }
+            authentication {
+                create<BasicAuthentication>("basic")
+            }
+        }
         maven {
             setUrl("https://edspuzzle.jfrog.io/artifactory/edspuzzle-gradle-release/")
             credentials {
