@@ -3,7 +3,7 @@ plugins {
 //    id("com.keap.build")
 //    id("com.keap.library-build")
     id("antlr")
-    //id("release-conventions")
+    id("release-conventions")
 }
 
 dependencies {

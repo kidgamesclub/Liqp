@@ -4,7 +4,7 @@ plugins {
 //  id("com.keap.library-build")
 
 
-  //id("release-conventions")
+  id("release-conventions")
 }
 
 dependencies {

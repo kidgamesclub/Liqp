@@ -1,7 +1,8 @@
 plugins {
     id("java-project-conventions")
-    id("com.keap.build")
-    id("com.keap.library-build")
+//    id("com.keap.build")
+//    id("com.keap.library-build")
+    id("release-conventions")
 }
 
 dependencies {

@@ -1,6 +1,6 @@
 plugins {
     id("java-project-conventions")
-    //id("release-conventions")
+    id("release-conventions")
 }
 
 dependencies {
